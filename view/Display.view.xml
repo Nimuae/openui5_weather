@@ -1,0 +1,38 @@
+<core:View
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns="sap.m"
+    controllerName="hss.weather.controller.Main"
+    xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+
+    <Page
+        backgroundDesign="Solid"
+        showHeader="false">
+        <content>
+            <TileContainer>
+                <tiles>
+                    <StandardTile
+                        title="Wetter"
+                        info="Bla"
+                        icon="sap-icon://wrench"
+                        class="Test" />
+                    <StandardTile
+                        title="Wetter"
+                        info="Bla"
+                        icon="sap-icon://wrench"
+                        class="Test" />
+                    <StandardTile
+                        title="Wetter"
+                        info="Bla"
+                        icon="sap-icon://wrench"
+                        class="Test" />
+                    <StandardTile
+                        title="Wetter"
+                        info="Bla"
+                        icon="dickbutt.png"
+                        class="Test" />
+                </tiles>
+            </TileContainer>
+        </content>
+    </Page>
+</core:View>

@@ -4,6 +4,8 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
 
+		<!-- https://openui5.hana.ondemand.com/1.30.8/resources/sap-ui-core.js -->
+		<!-- //localhost/openui5-sdk/resources/sap-ui-core.js -->
 		<script src="https://openui5.hana.ondemand.com/1.30.8/resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.ui.core, sap.m"
@@ -12,25 +14,33 @@
 				data-sap-ui-preload="async"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
+
+		<link rel="stylesheet" href="./style/style.css" />
 		
 		<script>
-			sap.ui.localResources("view");
+			//sap.ui.localResources("view");
 
 			jQuery.sap.require("sap.m.App");
 			
 			var oApp = new sap.m.App({
 				pages: [
-					new sap.m.Page({
-						title: "Hello!",
-						showHeader: false,
-						backgroundDesign: "Solid"
+					sap.ui.view("viewDisplay", {
+						type: "XML",
+						viewName: "hss.weather.view.Display"
 					})
 				]
 			});
 			oApp.placeAt("content");
+
+			var oBtn = new sap.ui.core.Icon({
+				src: "sap-icon://action-settings"
+			});
+			oBtn.placeAt("customizeBtn");
 		</script>
 		
 	</head>
-	<body class="sapUiBody" role="application" id="content">
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+		<div id="customizeBtn"></div>
 	</body>
 </html>

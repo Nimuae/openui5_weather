@@ -1,0 +1,27 @@
+.sapMTile{
+
+}
+
+.sapMTileActive{
+
+}
+
+#customizeBtn{
+	position: fixed;
+
+	top: 0px;
+	right: 0px;
+
+	margin: 5px;
+
+	opacity: 0.25;
+	color: #007cc0;
+
+	font-size: 1.25rem;
+
+	cursor: pointer !important;
+}
+
+#customizeBtn:hover{
+	opacity: 1.0;
+}
