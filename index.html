@@ -15,13 +15,15 @@
 		
 		<script>
 			sap.ui.localResources("view");
-			
+
 			jQuery.sap.require("sap.m.App");
 			
 			var oApp = new sap.m.App({
 				pages: [
 					new sap.m.Page({
-						title: "Hello!"
+						title: "Hello!",
+						showHeader: false,
+						backgroundDesign: "Solid"
 					})
 				]
 			});
