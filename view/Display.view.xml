@@ -15,11 +15,14 @@
                         title="Wetter"
                         info="Bla"
                         icon="sap-icon://wrench"
-                        class="Test" />
+                        class="Test"
+                        type="Monitor" />
                     <StandardTile
-                        title="Wetter"
-                        info="Bla"
-                        icon="sap-icon://wrench"
+                        number="13"
+                        numberUnit="°C"
+                        title="Heiter"
+                        info="20°3'2''N / 10°12'59''W"
+                        icon="http://icons.wxug.com/i/c/v4/partlycloudy.svg"
                         class="Test" />
                     <StandardTile
                         title="Wetter"

@@ -25,3 +25,8 @@
 #customizeBtn:hover{
 	opacity: 1.0;
 }
+
+.sapMStdTileNum{
+	font-family: Arial !important;
+	font-stretch: normal !important;
+}
