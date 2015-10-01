@@ -30,3 +30,23 @@
 	font-family: Arial !important;
 	font-stretch: normal !important;
 }
+
+.CustomTile{
+	padding: 10px;
+}
+.CustomTile .Temp{
+	font-size: 2rem;
+}
+.CustomTile .Temp .Number{
+	font-size: 4.3rem;
+}
+.CustomTile .Temp .Unit{
+	font-size: 1.4rem;
+}
+.CustomTile .Icon{
+	margin-top: -20px;
+	opacity: 0.5;
+}
+.CustomTile .City{
+	font-size: 1.7rem;
+}

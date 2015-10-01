@@ -29,15 +29,45 @@
                         icon="sap-icon://wrench"
                         class="Test"
                         type="Create" />
-                    <StandardTile
+                    <!-- <StandardTile
                         title="Wetter"
                         info="Bla"
                         icon="dickbutt.png"
-                        class="Test" />
-                    <CustomTile>
-                        <HBox>
-                            <Label text="Test" />
-                        </HBox>
+                        class="Test" /> -->
+                    <CustomTile
+                        class="sapMTile CustomTile">
+                        <VBox
+                            fitContainer="true"
+                            justifyContent="SpaceBetween">
+                            <Label
+                                text="Wiesloch"
+                                class="City" />
+                            <HBox
+                                justifyContent="SpaceBetween">
+                                <HBox
+                                    class="Temp">
+                                    <Label
+                                        text="30"
+                                        class="Number" />
+                                    <Label
+                                        text="°C"
+                                        class="Unit" />
+                                </HBox>
+                                <Image
+                                    src="http://icons.wxug.com/i/c/j/partlycloudy.gif"
+                                    class="Icon" />
+                            </HBox>
+                            <HBox>
+                                <Label
+                                    text="Gefühlt:" />
+                                 <Label
+                                    text="41"
+                                    class="Number" />
+                                 <Label
+                                    text="°C"
+                                    class="Unit" />
+                            </HBox>
+                        </VBox>
                     </CustomTile>
                 </tiles>
             </TileContainer>
