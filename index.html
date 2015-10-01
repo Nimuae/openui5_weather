@@ -18,8 +18,6 @@
 		<link rel="stylesheet" href="./style/style.css" />
 		
 		<script>
-			//sap.ui.localResources("view");
-
 			jQuery.sap.require("sap.m.App");
 			
 			var oApp = new sap.m.App({
@@ -31,19 +29,9 @@
 				]
 			});
 			oApp.placeAt("content");
-
-			var oBtn = new sap.ui.core.Icon({
-				src: "sap-icon://action-settings",
-				press: function(){
-
-				}
-			});
-			oBtn.placeAt("customizeBtn");
 		</script>
 		
 	</head>
-	<body class="sapUiBody" role="application">
-		<div id="content"></div>
-		<div id="customizeBtn"></div>
+	<body class="sapUiBody" role="application" id="content">
 	</body>
 </html>

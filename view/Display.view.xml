@@ -9,6 +9,9 @@
         backgroundDesign="Solid"
         showHeader="false">
         <content>
+            <core:Icon
+                src="sap-icon://action-settings"
+                class="CustomizeBtn" />
             <TileContainer>
                 <tiles>
                     <StandardTile
@@ -29,11 +32,11 @@
                         icon="sap-icon://wrench"
                         class="Test"
                         type="Create" />
-                    <!-- <StandardTile
+                    <StandardTile
                         title="Wetter"
                         info="Bla"
                         icon="dickbutt.png"
-                        class="Test" /> -->
+                        class="Test" />
                     <CustomTile
                         class="sapMTile CustomTile">
                         <VBox
@@ -47,21 +50,21 @@
                                 <HBox
                                     class="Temp">
                                     <Label
-                                        text="30"
+                                        text="{conditions>/current_observation/temp_c}"
                                         class="Number" />
                                     <Label
                                         text="°C"
                                         class="Unit" />
                                 </HBox>
                                 <Image
-                                    src="http://icons.wxug.com/i/c/j/partlycloudy.gif"
+                                    src="{conditions>/current_observation/icon_url}"
                                     class="Icon" />
                             </HBox>
                             <HBox>
                                 <Label
                                     text="Gefühlt:" />
                                  <Label
-                                    text="41"
+                                    text="{conditions>/current_observation/feelslike_c}"
                                     class="Number" />
                                  <Label
                                     text="°C"
