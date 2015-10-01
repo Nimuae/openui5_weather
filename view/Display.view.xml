@@ -22,18 +22,23 @@
                         numberUnit="°C"
                         title="Heiter"
                         info="20°3'2''N / 10°12'59''W"
-                        icon="http://icons.wxug.com/i/c/v4/partlycloudy.svg"
-                        class="Test" />
+                        icon="http://icons.wxug.com/i/c/v4/partlycloudy.svg" />
                     <StandardTile
                         title="Wetter"
                         info="Bla"
                         icon="sap-icon://wrench"
-                        class="Test" />
+                        class="Test"
+                        type="Create" />
                     <StandardTile
                         title="Wetter"
                         info="Bla"
                         icon="dickbutt.png"
                         class="Test" />
+                    <CustomTile>
+                        <HBox>
+                            <Label text="Test" />
+                        </HBox>
+                    </CustomTile>
                 </tiles>
             </TileContainer>
         </content>
