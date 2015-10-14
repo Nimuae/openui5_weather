@@ -1,0 +1,25 @@
+Vorschlag zum Aufbau der Inhalte der jew. Tiles.
+Reihenfolge ist egal. Änderungen willkommen :)
+
+
+Tile 1
+Ort, aktuelle Temperatur, gefühlte Temperatur, Höchst-/Niedrigsttemperatur, Icon + Text
+
+Tile 2
+Windgeschwindigkeit, Windrichtung
+
+Tile 3 
+Niederschlagswarscheinlichkeit, Regen-/Schneefall
+
+Tile 4
+Vorschau 
+
+-----------------------------------------------------------------------------------------
+
+Links zu den Icons:
+http://www.flaticon.com/categories/weather/
+
+Link zur Wetterseite:
+http://www.wunderground.com/cgi-bin/findweather/getForecast?query=Walldorf
+
+API-Key: 19420d53f811294e
