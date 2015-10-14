@@ -35,8 +35,8 @@
 .CustomTile{
 	padding: 10px;
 
-	width: 15rem !important;
-	height: 15rem !important;
+	width: 20rem !important;
+	height: 20rem !important;
 }
 .CustomTile .City{
 	text-align: right;
@@ -54,4 +54,5 @@
 .CustomTile .Icon{
 	margin-top: 10px;
 	opacity: 0.5;
+	width: 100px;
 }

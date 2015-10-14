@@ -14,29 +14,111 @@
                 class="CustomizeBtn" />
             <TileContainer>
                 <tiles>
-                    <StandardTile
-                        title="Wetter"
-                        info="Bla"
-                        icon="sap-icon://wrench"
-                        class="Test"
-                        type="Monitor" />
-                    <StandardTile
-                        number="13"
-                        numberUnit="°C"
-                        title="Heiter"
-                        info="20°3'2''N / 10°12'59''W"
-                        icon="http://icons.wxug.com/i/c/v4/partlycloudy.svg" />
-                    <StandardTile
-                        title="Wetter"
-                        info="Bla"
-                        icon="sap-icon://wrench"
-                        class="Test"
-                        type="Create" />
-                    <StandardTile
-                        title="Wetter"
-                        info="Bla"
-                        icon="dickbutt.png"
-                        class="Test" />
+                    <CustomTile
+                        class="sapMTile CustomTile">
+                        <VBox
+                            fitContainer="true"
+                            justifyContent="SpaceBetween">
+                            <Label
+                                text="Wiesloch"
+                                class="City" />
+                            <HBox
+                                justifyContent="SpaceBetween">
+                                <HBox
+                                    class="Temp">
+                                    <Label
+                                        text="{conditions>/current_observation/temp_c}"
+                                        class="Number" />
+                                    <Label
+                                        text="°C"
+                                        class="Unit" />
+                                </HBox>
+                                <Image
+                                    src="./icons/sunny35.svg"
+                                    class="Icon" />
+                            </HBox>
+                            <HBox>
+                                <Label
+                                    text="Gefühlt:" />
+                                 <Label
+                                    text="{conditions>/current_observation/feelslike_c}"
+                                    class="Number" />
+                                 <Label
+                                    text="°C"
+                                    class="Unit" />
+                            </HBox>
+                        </VBox>
+                    </CustomTile>
+                    <CustomTile
+                        class="sapMTile CustomTile">
+                        <VBox
+                            fitContainer="true"
+                            justifyContent="SpaceBetween">
+                            <Label
+                                text="Wiesloch"
+                                class="City" />
+                            <HBox
+                                justifyContent="SpaceBetween">
+                                <HBox
+                                    class="Temp">
+                                    <Label
+                                        text="{conditions>/current_observation/temp_c}"
+                                        class="Number" />
+                                    <Label
+                                        text="°C"
+                                        class="Unit" />
+                                </HBox>
+                                <Image
+                                    src="{conditions>/current_observation/icon_url}"
+                                    class="Icon" />
+                            </HBox>
+                            <HBox>
+                                <Label
+                                    text="Gefühlt:" />
+                                 <Label
+                                    text="{conditions>/current_observation/feelslike_c}"
+                                    class="Number" />
+                                 <Label
+                                    text="°C"
+                                    class="Unit" />
+                            </HBox>
+                        </VBox>
+                    </CustomTile>
+                    <CustomTile
+                        class="sapMTile CustomTile">
+                        <VBox
+                            fitContainer="true"
+                            justifyContent="SpaceBetween">
+                            <Label
+                                text="Wiesloch"
+                                class="City" />
+                            <HBox
+                                justifyContent="SpaceBetween">
+                                <HBox
+                                    class="Temp">
+                                    <Label
+                                        text="{conditions>/current_observation/temp_c}"
+                                        class="Number" />
+                                    <Label
+                                        text="°C"
+                                        class="Unit" />
+                                </HBox>
+                                <Image
+                                    src="{conditions>/current_observation/icon_url}"
+                                    class="Icon" />
+                            </HBox>
+                            <HBox>
+                                <Label
+                                    text="Gefühlt:" />
+                                 <Label
+                                    text="{conditions>/current_observation/feelslike_c}"
+                                    class="Number" />
+                                 <Label
+                                    text="°C"
+                                    class="Unit" />
+                            </HBox>
+                        </VBox>
+                    </CustomTile>
                     <CustomTile
                         class="sapMTile CustomTile">
                         <VBox
