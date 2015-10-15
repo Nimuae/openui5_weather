@@ -6,30 +6,32 @@ var path = require("path");
 //type: forecast,conditions|options: lang:DL
 //http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json
 //http://localhost:3000/conditions.json?api={API}&type={type}
-SERVICE_URL = "http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json";
+SERVICE_URL = "http://localhost:3000/app/{type}.json?api={API}";
 API = "19420d53f811294e";
 DATA = {
 	conditions: {},
 	forecast: {}
 };
-LOGS = "log";
-HISTORY = "history";
+LOGS = __dirname + "/log";
+HISTORY = __dirname + "/history";
+DATA_DIR = __dirname + "/data";
 
 var app = express();
 var router = express.Router();
 
+
 //create routes for retrieval of stored data
-router.get("/data/conditions", function(req, res, next){
+router.get("/service/conditions", function(req, res, next){
 	res.send(DATA.conditions);
 });
-router.get("/data/forecast", function(req, res, next){
+router.get("/service/forecast", function(req, res, next){
 	res.send(DATA.forecast);
 });
 
-//add static webapp-Folder to app as middleware
-app.use(express.static("webapp"));
-//add router to app as middleware
+//add router to app as middleware for data requests
 app.use(router);
+//add static webapp-Folder to app as middleware
+app.use("/", express.static(__dirname + "/webapp"));
 
 var server = app.listen(3000, function(){
 	var port = server.address().port;
@@ -39,8 +41,11 @@ var server = app.listen(3000, function(){
 	console.log('Server listening on port %s', port);
 });
 
+
 function getWeatherData(type, options){
 	var reqURI = buildRequestURI(type, options || {});
+	//log(reqURI);
+	//console.log(reqURI);
 	http.get(reqURI, function(res){
 
 		//set encoding and read data from body
@@ -80,14 +85,28 @@ function log(msg, file){
 	}
 	file = file || "server.log";
 
-	fs.appendFileSync(LOGS + path.sep + file, msg + "\n", function (err) {
-		if(err){
-			console.error(err);
-		}
-	});
+	fs.appendFileSync(LOGS + path.sep + file, msg + "\n");
 }
 
 //persist current data!
+function saveCurrentData(){
+	var file = "requests.json";
+
+	if(!fs.existsSync(DATA_DIR)){
+		fs.mkdirSync(DATA_DIR);
+	}
+
+	fs.writeFileSync(DATA_DIR + path.sep + file, JSON.stringify(DATA));
+}
+
+function loadData(){
+	var file = "requests.json";
+
+	var d = fs.readFileSync(DATA_DIR + path.sep + file, { encoding: "utf8" });
+	if(d){
+		DATA = JSON.parse(d);
+	}
+}
 
 //set an interval to update weather data from the web service and store it
 var intv = 1000 * 60 * 30; //update every 30 minutes

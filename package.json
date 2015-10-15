@@ -1,0 +1,28 @@
+{
+  "name": "openui5_weather",
+  "version": "1.0.0",
+  "description": "A school project for HSS Wiesloch",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d060270/openui5_weather.git"
+  },
+  "keywords": [
+    "weather",
+    "app",
+    "ui5"
+  ],
+  "author": "Dominic Holzwarth <dominic.holzwarth@sap.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/d060270/openui5_weather/issues"
+  },
+  "homepage": "https://github.com/d060270/openui5_weather#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
