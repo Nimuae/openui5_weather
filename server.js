@@ -87,6 +87,8 @@ function log(msg, file){
 	});
 }
 
+//persist current data!
+
 //set an interval to update weather data from the web service and store it
 var intv = 1000 * 60 * 30; //update every 30 minutes
 setInterval(function(){
