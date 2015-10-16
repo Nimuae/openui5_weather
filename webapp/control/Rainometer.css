@@ -1,0 +1,20 @@
+.Rainometer{
+	padding: 10px;
+}
+
+.Rainometer .RainometerInner{
+	position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 100px;
+    background-color: #FAFAFA;
+    overflow: hidden;
+}
+
+.Rainometer .RainometerInner .RainometerGauge{
+	position: absolute;
+    bottom: 0px;
+    height: 65%;
+    width: 100%;
+    background-color: #16161D;
+}
