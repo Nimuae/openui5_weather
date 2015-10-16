@@ -13,201 +13,53 @@
             <core:Icon
                 src="sap-icon://action-settings"
                 class="CustomizeBtn" />
-            <l:Grid>
-                <ObjectListItem
-                    title="Hello"
-                    intro="World!"
-                    icon="sap-icon://goal"
-                    class="CustomTile">
-                    <layoutData>
-                        <l:GridData spanL="4" spanM="4" spanS="12" />
-                    </layoutData>
-                </ObjectListItem>
-                <ObjectListItem
-                    title="Hello"
-                    intro="World!"
-                    icon="sap-icon://goal">
-                    <layoutData>
-                        <l:GridData spanL="4" spanM="4" spanS="12" />
-                    </layoutData>
-                </ObjectListItem>
-                <ObjectListItem
-                    title="Hello"
-                    intro="World!"
-                    icon="sap-icon://goal">
-                    <layoutData>
-                        <l:GridData spanL="4" spanM="4" spanS="12" />
-                    </layoutData>
-                </ObjectListItem>
-                <ObjectListItem
-                    title="Hello"
-                    intro="World!"
-                    icon="sap-icon://goal">
-                    <layoutData>
-                        <l:GridData spanL="4" spanM="4" spanS="12" />
-                    </layoutData>
-                </ObjectListItem>
-                <ObjectListItem
-                    title="Hello"
-                    intro="World!"
-                    icon="sap-icon://goal">
-                    <layoutData>
-                        <l:GridData spanL="4" spanM="4" spanS="12" />
-                    </layoutData>
-                </ObjectListItem>
-                <ObjectListItem
-                    title="Hello"
-                    intro="World!"
-                    icon="sap-icon://goal">
-                    <layoutData>
-                        <l:GridData spanL="4" spanM="4" spanS="12" />
-                    </layoutData>
-                </ObjectListItem>
-            </l:Grid>
-            <!-- <TileContainer>
-                <tiles>
-                    <CustomTile
-                        class="sapMTile CustomTile">
-                        <VBox
-                            fitContainer="true"
-                            justifyContent="SpaceBetween">
-                            <Label
-                                text="Wiesloch"
-                                class="City" />
-                            <HBox
-                                justifyContent="SpaceBetween">
-                                <HBox
-                                    class="Temp">
-                                    <Label
-                                        text="{conditions>/current_observation/temp_c}"
-                                        class="Number" />
-                                    <Label
-                                        text="°C"
-                                        class="Unit" />
-                                </HBox>
-                                <Image
-                                    src="./icons/sunny35.svg"
-                                    class="Icon" />
-                            </HBox>
-                            <HBox>
-                                <Label
-                                    text="Gefühlt:" />
-                                 <Label
-                                    text="{conditions>/current_observation/feelslike_c}"
-                                    class="Number" />
-                                 <Label
-                                    text="°C"
-                                    class="Unit" />
-                            </HBox>
+                <HBox class="mainHBox">
+
+                    <HBox>
+                        <FlexBox justifyContent="End" class="TileTemp">
+                            <Image src="./icons/svg/sw-25.svg" class="image"/>
+                            <layoutData>
+                                <l:GridData spanL="6" spanM="6" spanS="12" />
+                            </layoutData>
+                        </FlexBox>
+                        <VBox>
+                            <FlexBox justifyContent="End" class="TileGust">
+                                <Text text="Gust" />
+                                <layoutData>
+                                    <l:GridData spanL="6" spanM="6" spanS="12" />
+                                </layoutData>
+                            </FlexBox>
+                            <FlexBox justifyContent="End" class="TileGust">
+                                <Text text="Rain" />
+                                <layoutData>
+                                    <l:GridData spanL="6" spanM="6" spanS="12" />
+                                </layoutData>
+                            </FlexBox>
                         </VBox>
-                    </CustomTile>
-                    <CustomTile
-                        class="sapMTile CustomTile">
-                        <VBox
-                            fitContainer="true"
-                            justifyContent="SpaceBetween">
-                            <Label
-                                text="Wiesloch"
-                                class="City" />
-                            <HBox
-                                justifyContent="SpaceBetween">
-                                <HBox
-                                    class="Temp">
-                                    <Label
-                                        text="{conditions>/current_observation/temp_c}"
-                                        class="Number" />
-                                    <Label
-                                        text="°C"
-                                        class="Unit" />
-                                </HBox>
-                                <Image
-                                    src="{conditions>/current_observation/icon_url}"
-                                    class="Icon" />
-                            </HBox>
-                            <HBox>
-                                <Label
-                                    text="Gefühlt:" />
-                                 <Label
-                                    text="{conditions>/current_observation/feelslike_c}"
-                                    class="Number" />
-                                 <Label
-                                    text="°C"
-                                    class="Unit" />
-                            </HBox>
-                        </VBox>
-                    </CustomTile>
-                    <CustomTile
-                        class="sapMTile CustomTile">
-                        <VBox
-                            fitContainer="true"
-                            justifyContent="SpaceBetween">
-                            <Label
-                                text="Wiesloch"
-                                class="City" />
-                            <HBox
-                                justifyContent="SpaceBetween">
-                                <HBox
-                                    class="Temp">
-                                    <Label
-                                        text="{conditions>/current_observation/temp_c}"
-                                        class="Number" />
-                                    <Label
-                                        text="°C"
-                                        class="Unit" />
-                                </HBox>
-                                <Image
-                                    src="{conditions>/current_observation/icon_url}"
-                                    class="Icon" />
-                            </HBox>
-                            <HBox>
-                                <Label
-                                    text="Gefühlt:" />
-                                 <Label
-                                    text="{conditions>/current_observation/feelslike_c}"
-                                    class="Number" />
-                                 <Label
-                                    text="°C"
-                                    class="Unit" />
-                            </HBox>
-                        </VBox>
-                    </CustomTile>
-                    <CustomTile
-                        class="sapMTile CustomTile">
-                        <VBox
-                            fitContainer="true"
-                            justifyContent="SpaceBetween">
-                            <Label
-                                text="Wiesloch"
-                                class="City" />
-                            <HBox
-                                justifyContent="SpaceBetween">
-                                <HBox
-                                    class="Temp">
-                                    <Label
-                                        text="{conditions>/current_observation/temp_c}"
-                                        class="Number" />
-                                    <Label
-                                        text="°C"
-                                        class="Unit" />
-                                </HBox>
-                                <Image
-                                    src="{conditions>/current_observation/icon_url}"
-                                    class="Icon" />
-                            </HBox>
-                            <HBox>
-                                <Label
-                                    text="Gefühlt:" />
-                                 <Label
-                                    text="{conditions>/current_observation/feelslike_c}"
-                                    class="Number" />
-                                 <Label
-                                    text="°C"
-                                    class="Unit" />
-                            </HBox>
-                        </VBox>
-                    </CustomTile>
-                </tiles>
-            </TileContainer> -->
+                    </HBox>
+
+                    <HBox>
+                        <FlexBox justifyContent="End" class="TileForecast">
+                            <Text text="Fortune" />
+                            <layoutData>
+                                <l:GridData spanL="4" spanM="4" spanS="12" />
+                            </layoutData>
+                        </FlexBox>
+                        <FlexBox justifyContent="End" class="TileForecast">
+                            <Text text="Fortune" />
+                            <layoutData>
+                                <l:GridData spanL="4" spanM="4" spanS="12" />
+                            </layoutData>
+                        </FlexBox>
+                        <FlexBox justifyContent="End" class="TileForecast">
+                            <Text text="Fortune" />
+                            <layoutData>
+                                <l:GridData spanL="4" spanM="4" spanS="12" />
+                            </layoutData>
+                        </FlexBox>
+                    </HBox>
+
+                </HBox>
         </content>
     </Page>
 </core:View>
