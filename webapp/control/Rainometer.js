@@ -23,16 +23,26 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
             oRm.writeClasses();
             oRm.write(">");
 
-            //inner
+            //outer > inner
             oRm.addClass("RainometerInner");
             oRm.write("<div");
             oRm.writeClasses();
             oRm.write(">");
 
-            //gauge
-            oRm.addClass("RainometerGauge");
+            //outer > inner > overlay
+            oRm.addClass("RainometerOverlay");
             oRm.write("<div");
             oRm.writeClasses();
+            oRm.write(">");
+
+            oRm.write("</div>"); //closing tag overlay
+
+            //outer > inner > gauge
+            oRm.addClass("RainometerGauge");
+            oRm.addStyle("height", oControl.getValue() + "%");
+            oRm.write("<div");
+            oRm.writeClasses();
+            oRm.writeStyles();
             oRm.write(">");
 
             oRm.write("</div>"); //closing tag gauge

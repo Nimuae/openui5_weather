@@ -6,15 +6,29 @@
 	position: relative;
     width: 50px;
     height: 50px;
-    border-radius: 100px;
-    background-color: #FAFAFA;
+    background-color: #666;
     overflow: hidden;
+}
+
+
+
+.Rainometer .RainometerInner .RainometerOverlay{
+	position: absolute;
+	z-index: 100;
+	width: 100%;
+	height: 100%;
+
+	background-image: url("../icons/raindrop.svg");
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
 }
 
 .Rainometer .RainometerInner .RainometerGauge{
 	position: absolute;
+	z-index: 1;
     bottom: 0px;
-    height: 65%;
+
     width: 100%;
-    background-color: #16161D;
+    /* height has to be computed with JS */
+    background-color: #009de0;
 }

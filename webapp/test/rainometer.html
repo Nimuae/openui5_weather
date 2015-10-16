@@ -26,10 +26,13 @@
 						title: "Rainometer Test",
 						backgroundDesign: "Solid",
 						content: [
-							new hss.weather.control.Rainometer(),
+							oRain = new hss.weather.control.Rainometer({
+								value: 50
+							}),
 							oBtn = new sap.m.Button({
 								text: "Test",
 								press: function(oEvent){
+									oRain.setValue(oRain.getValue() + 1);
 								}
 							})
 						]
