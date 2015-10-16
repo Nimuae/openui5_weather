@@ -4,19 +4,24 @@ jQuery.sap.declare("hss.weather.control.Rainometer");
 jQuery.sap.includeStyleSheet("../control/Rainometer.css");
 
 sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
-	metadata: {
-		properties: {
-			value: { type: "float", defaultValue: 0.0 }
-		}
-	},
+    metadata: {
+        properties: {
+            value: { type: "float", defaultValue: 0.0 },
+            unit: { type: "string", defaultValue: "%" }
+        }
+    },
 
-	init: function(){
-	},
+    init: function(){
+    },
 
-	renderer: {
-		render: function(oRm, oControl){
-			//outer
-			oRm.addClass("Rainometer");
+    setValue: function(val){
+        this.setProperty("value", Math.max(0, Math.min(100, val)));
+    },
+
+    renderer: {
+        render: function(oRm, oControl){
+            //outer
+            oRm.addClass("Rainometer");
             oRm.write("<div");
             oRm.writeControlData(oControl);
             oRm.writeStyles();
@@ -39,7 +44,7 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
 
             //outer > inner > gauge
             oRm.addClass("RainometerGauge");
-            oRm.addStyle("height", oControl.getValue() + "%");
+            oRm.addStyle("height", oControl.getProperty("value") + "%");
             oRm.write("<div");
             oRm.writeClasses();
             oRm.writeStyles();
@@ -49,7 +54,30 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
 
             oRm.write("</div>"); //closing tag inner
 
+            //outer > inner > number
+            oRm.addClass("RainometerNumber");
+            oRm.write("<div");
+            oRm.writeClasses();
+            oRm.writeStyles();
+            oRm.write(">");
+
+            oRm.write("<span");
+            oRm.addClass("RainometerNumberValue");
+            oRm.writeClasses();
+            oRm.write(">");
+            oRm.write(Number(oControl.getProperty("value")).toFixed(1));
+            oRm.write("</span>");
+
+            oRm.write("<span");
+            oRm.addClass("RainometerNumberUnit");
+            oRm.writeClasses();
+            oRm.write(">");
+            oRm.write(oControl.getProperty("unit"));
+            oRm.write("</span>");
+
+            oRm.write("</div>"); //closing tag number
+
             oRm.write("</div>"); //closing tag outer
-		}
-	}
+        }
+    }
 });

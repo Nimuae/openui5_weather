@@ -1,11 +1,15 @@
 .Rainometer{
+	display: inline-block;
 	padding: 10px;
+
+	width: 100px;
+    height: 100px;
 }
 
 .Rainometer .RainometerInner{
 	position: relative;
-    width: 50px;
-    height: 50px;
+	width: 100%;
+    height: 100%;
     background-color: #666;
     overflow: hidden;
 }
@@ -31,4 +35,15 @@
     width: 100%;
     /* height has to be computed with JS */
     background-color: #009de0;
+}
+
+.Rainometer .RainometerNumber{
+	text-align: center;
+	color: #666;
+	font-size: 1.0rem;
+}
+
+.Rainometer .RainometerNumber .RainometerNumberUnit{
+	font-size: 0.75rem;
+	vertical-align: top;
 }

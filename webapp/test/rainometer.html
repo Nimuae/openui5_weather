@@ -30,9 +30,15 @@
 								value: 50
 							}),
 							oBtn = new sap.m.Button({
-								text: "Test",
+								icon: "sap-icon://add",
 								press: function(oEvent){
-									oRain.setValue(oRain.getValue() + 1);
+									oRain.setValue(oRain.getValue() + 4.5);
+								}
+							}),
+							oBtn = new sap.m.Button({
+								icon: "sap-icon://less",
+								press: function(oEvent){
+									oRain.setValue(oRain.getValue() - 10);
 								}
 							})
 						]
