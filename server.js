@@ -6,7 +6,7 @@ var path = require("path");
 //type: forecast,conditions|options: lang:DL
 //http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json
 //http://localhost:3000/conditions.json?api={API}&type={type}
-SERVICE_URL = "http://localhost:3000/app/{type}.json?api={API}";
+SERVICE_URL = "http://localhost:3000/{type}.json?api={API}";
 API = "19420d53f811294e";
 DATA = {
 	conditions: {},
