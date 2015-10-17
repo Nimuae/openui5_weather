@@ -13,53 +13,56 @@
             <core:Icon
                 src="sap-icon://action-settings"
                 class="CustomizeBtn" />
-                <HBox class="mainHBox">
-
-                    <HBox>
-                        <FlexBox justifyContent="End" class="TileTemp">
-                            <Image src="./icons/svg/sw-25.svg" class="image"/>
+            <VBox
+                fitContainer="true"
+                justifyContent="Center">
+                <HBox
+                    justifyContent="Center">
+                    <FlexBox justifyContent="End" class="TileTemp">
+                        <Image src="./icons/svg/sw-25.svg" class="image"/>
+                        <layoutData>
+                            <l:GridData spanL="6" spanM="6" spanS="12" />
+                        </layoutData>
+                    </FlexBox>
+                    <VBox>
+                        <FlexBox justifyContent="End" class="TileGust">
+                            <Text text="Gust" />
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
                             </layoutData>
                         </FlexBox>
-                        <VBox>
-                            <FlexBox justifyContent="End" class="TileGust">
-                                <Text text="Gust" />
-                                <layoutData>
-                                    <l:GridData spanL="6" spanM="6" spanS="12" />
-                                </layoutData>
-                            </FlexBox>
-                            <FlexBox justifyContent="End" class="TileGust">
-                                <Text text="Rain" />
-                                <layoutData>
-                                    <l:GridData spanL="6" spanM="6" spanS="12" />
-                                </layoutData>
-                            </FlexBox>
-                        </VBox>
-                    </HBox>
-
-                    <HBox>
-                        <FlexBox justifyContent="End" class="TileForecast">
-                            <Text text="Fortune" />
+                        <FlexBox justifyContent="End" class="TileGust">
+                            <Text text="Rain" />
                             <layoutData>
-                                <l:GridData spanL="4" spanM="4" spanS="12" />
+                                <l:GridData spanL="6" spanM="6" spanS="12" />
                             </layoutData>
                         </FlexBox>
-                        <FlexBox justifyContent="End" class="TileForecast">
-                            <Text text="Fortune" />
-                            <layoutData>
-                                <l:GridData spanL="4" spanM="4" spanS="12" />
-                            </layoutData>
-                        </FlexBox>
-                        <FlexBox justifyContent="End" class="TileForecast">
-                            <Text text="Fortune" />
-                            <layoutData>
-                                <l:GridData spanL="4" spanM="4" spanS="12" />
-                            </layoutData>
-                        </FlexBox>
-                    </HBox>
-
+                    </VBox>
                 </HBox>
+
+                <HBox
+                    justifyContent="Center">
+                    <FlexBox justifyContent="End" class="TileForecast">
+                        <Text text="Fortune" />
+                        <layoutData>
+                            <l:GridData spanL="4" spanM="4" spanS="12" />
+                        </layoutData>
+                    </FlexBox>
+                    <FlexBox justifyContent="End" class="TileForecast">
+                        <Text text="Fortune" />
+                        <layoutData>
+                            <l:GridData spanL="4" spanM="4" spanS="12" />
+                        </layoutData>
+                    </FlexBox>
+                    <FlexBox justifyContent="End" class="TileForecast">
+                        <Text text="Fortune" />
+                        <layoutData>
+                            <l:GridData spanL="4" spanM="4" spanS="12" />
+                        </layoutData>
+                    </FlexBox>
+                </HBox>
+
+            </VBox>
         </content>
     </Page>
 </core:View>
