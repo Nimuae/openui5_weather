@@ -3,10 +3,9 @@ var http = require("http");
 var fs = require("fs");
 var path = require("path");
 
-//type: forecast,conditions|options: lang:DL
 //http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json
-//http://localhost:3000/conditions.json?api={API}&type={type}
-SERVICE_URL = "http://localhost:3000/{type}.json?api={API}";
+//http://localhost:3000/{type}.json?api={API}
+SERVICE_URL = "http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json";
 API = "19420d53f811294e";
 DATA = {
 	conditions: {},
@@ -19,6 +18,7 @@ DATA_DIR = __dirname + "/data";
 var app = express();
 var router = express.Router();
 
+console.log("Sending Requests to \"" + buildRequestURI("conditions") + "\"");
 
 //create routes for retrieval of stored data
 router.get("/service/conditions", function(req, res, next){
