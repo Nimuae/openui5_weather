@@ -1,83 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   id="Capa_1"
-   x="0px"
-   y="0px"
-   viewBox="0 0 296.773 296.773"
-   style="enable-background:new 0 0 296.773 296.773;"
-   xml:space="preserve"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="raindrop.svg"
-   inkscape:export-filename="C:\Users\D060270\git\openui5_weather\webapp\icons\water117.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90"><metadata
-     id="metadata3440"><rdf:RDF><cc:Work
-         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-     id="defs3438" /><sodipodi:namedview
-     pagecolor="#4e4e4e"
-     bordercolor="#666666"
-     borderopacity="0"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="1"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     id="namedview3436"
-     showgrid="false"
-     inkscape:zoom="2.2492234"
-     inkscape:cx="83.20975"
-     inkscape:cy="143.13823"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" /><g
-     id="g3406"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3408"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3410"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3412"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3414"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3416"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3418"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3420"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3422"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3424"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3426"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3428"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3430"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3432"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     id="g3434"
-     style="fill:#ffffff;fill-opacity:0.50196081" /><g
-     inkscape:groupmode="layer"
-     id="layer1"
-     inkscape:label="Layer 1"
-     style="opacity:1"><path
-       style="fill:#ffffff;fill-opacity:1"
-       d="M -6.6699219 -4.6640625 L -6.6699219 300.33008 L 301.4375 300.33008 L 301.4375 -4.6640625 L -6.6699219 -4.6640625 z M 100.86133 0 L 110.39648 11.253906 C 112.57448 13.823906 143.45358 50.573906 168.64258 96.003906 C 163.30158 105.31991 158.63072 114.29316 154.63672 122.91016 C 142.92372 148.18016 137.01172 170.40578 137.01172 189.30078 C 137.01172 210.81878 144.84945 230.53672 157.81445 245.76172 C 163.23545 252.12872 169.55231 257.70673 176.57031 262.30273 C 158.12931 283.41473 131.02833 296.77344 100.86133 296.77344 C 45.436328 296.77344 0.34570312 251.68186 0.34570312 196.25586 C 0.34570313 119.50386 87.609219 15.638906 91.324219 11.253906 L 100.86133 0 z M 224.2207 41.001953 C 242.2167 63.776953 296.42773 136.76178 296.42773 189.30078 C 296.42773 229.11678 264.03475 261.50781 224.21875 261.50781 C 184.40375 261.50781 152.01172 229.11678 152.01172 189.30078 C 152.01172 136.80878 206.2247 63.790953 224.2207 41.001953 z "
-       id="rect4268" /></g></svg>
+    <!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+    <svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" id="Capa_1"
+    x="0px" y="0px" viewBox="0 0 296.773 296.773" style="enable-background:new 0 0 296.773 296.773;"
+    xml:space="preserve" inkscape:version="0.91 r13725" sodipodi:docname="raindrop.svg"
+    inkscape:export-filename="C:\Users\D060270\git\openui5_weather\webapp\icons\water117.png"
+    inkscape:export-xdpi="90" inkscape:export-ydpi="90">
+        <metadata id="metadata3440">
+            <rdf:RDF>
+                <cc:Work rdf:about="">
+                    <dc:format>image/svg+xml</dc:format>
+                    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"
+                    />
+                    <dc:title></dc:title>
+                </cc:Work>
+            </rdf:RDF>
+        </metadata>
+        <defs id="defs3438" />
+        <sodipodi:namedview pagecolor="#4e4e4e" bordercolor="#666666" borderopacity="0"
+        objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="1"
+        inkscape:pageshadow="2" inkscape:window-width="1920" inkscape:window-height="1017"
+        id="namedview3436" showgrid="false" inkscape:zoom="2.2492234" inkscape:cx="83.20975"
+        inkscape:cy="143.13823" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1"
+        inkscape:current-layer="layer1" />
+        <g id="g3406" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3408" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3410" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3412" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3414" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3416" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3418" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3420" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3422" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3424" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3426" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3428" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3430" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3432" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g id="g3434" style="fill:#fafafa;fill-opacity:0.50196081" />
+        <g inkscape:groupmode="layer" id="layer1" inkscape:label="Layer 1" style="opacity:1">
+            <path style="fill:#fafafa;fill-opacity:1" d="M -6.6699219 -4.6640625 L -6.6699219 300.33008 L 301.4375 300.33008 L 301.4375 -4.6640625 L -6.6699219 -4.6640625 z M 100.86133 0 L 110.39648 11.253906 C 112.57448 13.823906 143.45358 50.573906 168.64258 96.003906 C 163.30158 105.31991 158.63072 114.29316 154.63672 122.91016 C 142.92372 148.18016 137.01172 170.40578 137.01172 189.30078 C 137.01172 210.81878 144.84945 230.53672 157.81445 245.76172 C 163.23545 252.12872 169.55231 257.70673 176.57031 262.30273 C 158.12931 283.41473 131.02833 296.77344 100.86133 296.77344 C 45.436328 296.77344 0.34570312 251.68186 0.34570312 196.25586 C 0.34570313 119.50386 87.609219 15.638906 91.324219 11.253906 L 100.86133 0 z M 224.2207 41.001953 C 242.2167 63.776953 296.42773 136.76178 296.42773 189.30078 C 296.42773 229.11678 264.03475 261.50781 224.21875 261.50781 C 184.40375 261.50781 152.01172 229.11678 152.01172 189.30078 C 152.01172 136.80878 206.2247 63.790953 224.2207 41.001953 z "
+            id="rect4268" />
+        </g>
+    </svg>

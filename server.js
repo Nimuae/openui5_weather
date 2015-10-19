@@ -4,8 +4,8 @@ var fs = require("fs");
 var path = require("path");
 
 //http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json
-//http://localhost:3000/{type}.json?api={API}
-SERVICE_URL = "http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json";
+SERVICE_URL = "http://localhost:3000/{type}.json?api={API}";
+//SERVICE_URL = "http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json";
 API = "19420d53f811294e";
 DATA = {
 	conditions: {},
@@ -55,20 +55,24 @@ function getWeatherData(type, options){
 			data += chunk;
 		});
 		res.on('end', function (chunk) {
-			DATA[type] = JSON.parse(data);
-			log(
-				(new Date().toUTCString()) + "\n" +
-				data +
-				"\n---------------------------------------\n\n",
-				"history.log"
-			);
+			try{
+				DATA[type] = JSON.parse(data);
+				log("\n" +
+					data +
+					"\n---------------------------------------\n\n",
+					"history.log"
+				);
+			}catch(e){
+				console.error(e);
+				log(e);
+			}
 		});
 
 	}).on("error", function(e){
 		var d = new Date().toUTCString();
 		
 		console.error("[" + d + "] " + e.code + ": " + e.hostname);
-		log("[" + d + "] " + e.code + ": " + e.hostname);
+		log(e.code + ": " + e.hostname);
 	});
 }
 
@@ -85,7 +89,8 @@ function log(msg, file){
 	}
 	file = file || "server.log";
 
-	fs.appendFileSync(LOGS + path.sep + file, msg + "\n");
+	var d = new Date().toUTCString();
+	fs.appendFileSync(LOGS + path.sep + file, "[" + d + "] " + msg + "\n");
 }
 
 //persist current data!
@@ -111,9 +116,7 @@ function loadData(){
 //set an interval to update weather data from the web service and store it
 var intv = 1000 * 60 * 30; //update every 30 minutes
 setInterval(function(){
-	var d = new Date().toUTCString();
-
-	var msg = "[" + d + "] Fetching weather data from Service...";
+	var msg = "Fetching weather data from Service...";
 	console.log(msg);
 	log(msg);
 	getWeatherData("conditions");

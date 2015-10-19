@@ -37,6 +37,10 @@
     background-color: #009de0;
 }
 
+.Rainometer .RainometerInner .RainometerGaugeTopBorder{
+	border-top: 2px solid #FFF;
+}
+
 .Rainometer .RainometerNumber{
 	text-align: center;
 	color: #666;

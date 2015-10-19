@@ -4,10 +4,10 @@
     xmlns:l="sap.ui.layout"
     xmlns="sap.m"
     controllerName="hss.weather.controller.Main"
-    xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+    xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    xmlns:hss="hss.weather.control">
 <!--backgroundDesign="Solid"-->
     <Page
-        
         showHeader="false">
         <content>
             <core:Icon
@@ -18,7 +18,7 @@
                 justifyContent="Center">
                 <HBox
                     justifyContent="Center" >
-                    <FlexBox justifyContent="End" class="TileTemp">
+                    <FlexBox justifyContent="End" class="Tile TileTemp">
                         <VBox width="100%" class="alignCenterVertically">
                             <Text text="Wiesloch" />
                             <HBox>
@@ -36,36 +36,47 @@
                         </layoutData>
                     </FlexBox>
                     <VBox>
-                        <FlexBox justifyContent="End" class="TileGust">
-                            <Text text="Gust" />
+                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="Tile TileGust">
+                            <Image src="./icons/weather/south-east.svg" class="image"/>
+                            <VBox>
+                                <Label text="4,3 km/h" />
+                                <Label text="Nord-West" />
+                            </VBox>
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
                             </layoutData>
-                        </FlexBox>
-                        <FlexBox justifyContent="End" class="TileGust">
-                            <Text text="Rain" />
+                        </HBox>
+                        <HBox justifyContent="SpaceBetween" class="Tile TileGust" alignItems="Center">
+                            <HBox alignItems="Center">
+                                <hss:Rainometer value="35" />
+                                <Label text="Niederschlag" />
+                            </HBox>
+                            <VBox>
+                                <Label text="10% Chance" />
+                                <Label text="10 mm" />
+                            </VBox>
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
                             </layoutData>
-                        </FlexBox>
+                        </HBox>
                     </VBox>
                 </HBox>
 
                 <HBox
                     justifyContent="Center">
-                    <FlexBox justifyContent="End" class="TileForecast">
+                    <FlexBox justifyContent="End" class="Tile TileForecast">
                         <Text text="Fortune" />
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
                     </FlexBox>
-                    <FlexBox justifyContent="End" class="TileForecast">
+                    <FlexBox justifyContent="End" class="Tile TileForecast">
                         <Text text="Fortune" />
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
                     </FlexBox>
-                    <FlexBox justifyContent="End" class="TileForecast">
+                    <FlexBox justifyContent="End" class="Tile TileForecast">
                         <Text text="Fortune" />
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
