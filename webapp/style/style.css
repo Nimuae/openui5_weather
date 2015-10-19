@@ -67,6 +67,12 @@
 	height: 8rem;
 }
 
+.alignCenterVertically{
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
 /*.CustomTile{
 	padding: 10px;
 	
