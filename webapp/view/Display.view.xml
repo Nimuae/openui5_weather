@@ -19,7 +19,7 @@
                 <HBox
                     justifyContent="Center" >
 
-                    <FlexBox justifyContent="End" class="TileTemp">
+                    <FlexBox justifyContent="End" class="TileTemp Tile">
                         <VBox width="100%" class="alignCenterVertically" justifyContent= "SpaceBetween">
 
                             <Text text="Wiesloch" class="town"/>
@@ -70,28 +70,45 @@
                     </VBox>
                 </HBox>
 
-                <HBox
+				<HBox
                     justifyContent="Center">
-                    <FlexBox justifyContent="End" class="Tile TileForecast">
+                    <VBox justifyContent="End" class="TileForecast Tile">
+                        <layoutData>
+                            <l:GridData spanL="4" spanM="4" spanS="12" />
+                        </layoutData>
+                        <HBox height="20%">
+                        	<Text text="Freitag 16.10.2015"/>
+                        </HBox> 
+                        <HBox height="80%" justifyContent="Center">
+	                        <VBox height="80%" width="100%" class="alignCenterVertically">
+		                        <HBox height="25%">
+		                        	<Text text="Regen"/>
+		                        </HBox>
+		                        <HBox height="25%">
+		                        	<Text text="10%"/>
+		                        </HBox>
+		                        <HBox height="25%">
+		                        	<Text text="10 mm"/>
+		                        </HBox>
+	                        </VBox>
+	                        <VBox  width="100%" class="alignCenterVertically">
+	                        	<Image src="./icons/svg/sw-25.svg" class="image"/>
+	                        </VBox>
+                        </HBox>
+                    </VBox>
+                    <FlexBox justifyContent="End" class="TileForecast Tile">
                         <Text text="Fortune" />
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
                     </FlexBox>
-                    <FlexBox justifyContent="End" class="Tile TileForecast">
-                        <Text text="Fortune" />
-                        <layoutData>
-                            <l:GridData spanL="4" spanM="4" spanS="12" />
-                        </layoutData>
-                    </FlexBox>
-                    <FlexBox justifyContent="End" class="Tile TileForecast">
+                    <FlexBox justifyContent="End" class="TileForecast Tile">
                         <Text text="Fortune" />
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
                     </FlexBox>
                 </HBox>
-
             </VBox>
         </content>
     </Page>
