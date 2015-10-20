@@ -18,18 +18,26 @@
                 justifyContent="Center">
                 <HBox
                     justifyContent="Center" >
-                    <FlexBox justifyContent="End" class="Tile TileTemp">
-                        <VBox width="100%" class="alignCenterVertically">
-                            <Text text="Wiesloch" />
-                            <HBox>
-                                <Text text="Schnee" />
+
+                    <FlexBox justifyContent="End" class="TileTemp">
+                        <VBox width="100%" class="alignCenterVertically" justifyContent= "SpaceBetween">
+
+                            <Text text="Wiesloch" class="town"/>
+                            <HBox justifyContent="SpaceBetween">
+                                <VBox justifyContent="SpaceBetween">
+                                    <Text text="3°C" class="curTemp"/>
+                                    <Text text="Schnee" class="marginBottom curWeather"/>
+                                </VBox>
                                 <Image src="./icons/svg/sw-25.svg" class="image"/>
+                            </HBox> 
+
+
+                            <HBox justifyContent= "SpaceBetween">
+                                <Text text="Gefühlt: 2°C" class="feltTemp"/>
+                                <Text text="3°C|5°C" class="highLow"/>
                             </HBox>
-                            <Text text="3°C" />
-                            <HBox>
-                                <Text text="Gefühlt: 2°C" />
-                                <Text text="3°C|5°C" />
-                            </HBox>
+                            
+
                         </VBox>
                         <layoutData>
                             <l:GridData spanL="6" spanM="6" spanS="12" />

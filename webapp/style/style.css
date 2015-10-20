@@ -58,15 +58,34 @@
 	width: 13.3rem;
 }
 
-.image{
-	height: 8rem;
-}
 
-.alignCenterVertically{
-	position: relative;
-	top: 50%;
-	transform: translateY(-50%);
+
+/*Begin Changes Tanja */
+.image{
+	height: 9.5rem;
 }
+.marginBottom{
+	margin-bottom: 3.5rem;
+}
+.marginTop{
+	margin-top: 1rem;
+}
+.town{
+	font-size: 1rem !important;
+}
+.curTemp{
+	font-size: 4rem !important;
+}
+.curWeather{
+	font-size: 1rem !important;
+}
+.feltTemp{
+	font-size: 1rem !important;
+}
+.highLow{
+	font-size: 1rem !important; 
+}
+/*End Changes Tanja */
 
 /*.CustomTile{
 	padding: 10px;
