@@ -46,13 +46,14 @@
     background-repeat: no-repeat;
     background-size: 11rem;
 }
+
 .TileGust{
-	height: 10rem;
+	height: 8rem;
 	width: 21rem;
 }
 
 .TilePrecip{
-	height: 10rem;
+	height: 8rem;
 	width: 21rem;
 }
 
@@ -77,8 +78,8 @@
 }
 
 
-
 /*****Begin Temp Tile*****/
+
 
 .town{
 	font-size: 2rem !important;
@@ -95,12 +96,7 @@
 	/* margin-top: 2rem;
 	margin-bottom: -3rem; */
 }
-/* .curWeatherMarginBottom{
-	margin-bottom: 0.5rem;
-} */
-/* .curWeatherMarginTop{
-	margin-top: 2rem;
-} */
+
 .highLow{
 	font-size: 1rem !important; 
 }
@@ -112,3 +108,11 @@
 }
 
 /*****End Temp Tile*****/
+
+.LabelGustStrength{
+	font-size: 2.0rem !important;
+}
+.LabelGustDir{
+	font-size: 1.7rem !important;
+}
+

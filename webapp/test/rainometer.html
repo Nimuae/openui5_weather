@@ -19,6 +19,7 @@
 			jQuery.sap.require("sap.m.App");
 			jQuery.sap.require("sap.m.Page");
 			jQuery.sap.require("hss.weather.control.Rainometer");
+			jQuery.sap.require("hss.weather.control.CircleProgress");
 			
 			var oApp = new sap.m.App({
 				pages: [
@@ -27,26 +28,29 @@
 						backgroundDesign: "Solid",
 						content: [
 							oRain = new hss.weather.control.Rainometer({
-								value: 50
+								value: "{/value}"
 							}),
 							oBtn = new sap.m.Button({
 								icon: "sap-icon://add",
 								press: function(oEvent){
-									oRain.setValue(oRain.getValue() + 4.5);
+									this.getModel().setProperty("/value", this.getModel().getProperty("/value") + 10);
 								}
 							}),
 							oBtn = new sap.m.Button({
 								icon: "sap-icon://less",
 								press: function(oEvent){
-									oRain.setValue(oRain.getValue() - 10);
+									this.getModel().setProperty("/value", this.getModel().getProperty("/value") - 10);
 								}
+							}),
+							oProgress = new hss.weather.control.CircleProgress({
+								value: "{/value}"
 							})
 						]
 					})
 				]
 			});
 			oApp.setModel(new sap.ui.model.json.JSONModel({
-				test: true
+				value: 25
 			}));
 			oApp.placeAt("content");
 		</script>

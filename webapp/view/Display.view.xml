@@ -48,10 +48,13 @@
                     </FlexBox>
                     <VBox>
                         <HBox justifyContent="SpaceBetween" alignItems="Center" class="Tile TileGust">
-                            <Image src="./icons/weather/south-east.svg"  class="image"/>
+                            <Image src="{
+                                    path: 'conditions>/current_observation/wind_dir',
+                                    formatter: 'hss.weather.view.Formatter.windDir'
+                                }" height="9.5rem" />
                             <VBox>
-                                <Label text="4,3 km/h" />
-                                <Label text="Nord-West" />
+                                <Label text="{conditions>/current_observation/wind_kph} km/h" class="LabelGustStrength" />
+                                <Label text="Nord-West" class="LabelGustDir" />
                             </VBox>
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
@@ -59,9 +62,10 @@
                         </HBox>
                         <HBox justifyContent="SpaceBetween" class="Tile TileGust" alignItems="Center">
                             <HBox alignItems="Center">
-                                <hss:Rainometer value="35" />
+                                <hss:Rainometer value="{conditions>/current_observation/precip_today_metric}" />
                                 <Label text="Niederschlag" />
                             </HBox>
+                            <hss:CircleProgress value="35" />
                             <VBox>
                                 <Label text="10% Chance" />
                                 <Label text="10 mm" />
