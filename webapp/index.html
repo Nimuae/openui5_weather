@@ -18,11 +18,15 @@
 		<script>
 			jQuery.sap.require("sap.m.App");
 			
-			var oApp = new sap.m.App({
+			var oApp = new sap.m.App("MainApp", {
 				pages: [
 					sap.ui.view("viewDisplay", {
 						type: "XML",
 						viewName: "hss.weather.view.Display"
+					}),
+					sap.ui.view("viewCustom", {
+						type: "XML",
+						viewName: "hss.weather.view.Custom"
 					})
 				]
 			});

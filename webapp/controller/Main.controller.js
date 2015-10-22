@@ -19,6 +19,9 @@ sap.ui.define([
 		refreshData: function(){
 			var oConditionsModel = new sap.ui.model.json.JSONModel(this.SERVICE_URL);
 			this.getView().setModel(oConditionsModel, "conditions");
-		}
+		},
+
+		navigateToCustomizing: function(){
+			sap.ui.getCore().byId("MainApp").to("viewCustom");		}
 	});
 });

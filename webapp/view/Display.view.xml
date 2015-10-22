@@ -12,7 +12,8 @@
         <content>
             <core:Icon
                 src="sap-icon://action-settings"
-                class="CustomizeBtn" />
+                class="CustomizeBtn"
+                press="navigateToCustomizing" />
             <VBox
                 fitContainer="true"
                 justifyContent="Center">
