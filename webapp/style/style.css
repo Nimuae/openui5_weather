@@ -1,5 +1,5 @@
 html{
-	zoom: 1.7;
+	//zoom: 1.7;
 }
 
 .sapMTile{
@@ -90,7 +90,7 @@ html{
 }
 .curTemp{
 	font-size: 3.5rem !important;
-	margin-top: -5rem;
+	margin-top: -2rem;
 }
 .feltTemp{
 	font-size: 1rem !important;
@@ -107,8 +107,9 @@ html{
 .ImgTempTileMarginBottom{
 	margin-bottom: 1rem;
 }
-.VBNegativeMarginTop{
-	margin-top: -1rem;
+.WeatherIcon{
+	margin-right: -6rem;
+	margin-top: -4rem;
 }
 
 /*****End Temp Tile*****/
