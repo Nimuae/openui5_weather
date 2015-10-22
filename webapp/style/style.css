@@ -39,10 +39,13 @@
 	margin: 0.5rem;
 }
 .TileTemp{
-	height: 22.2rem;
+	height: 18rem;
 	width: 21rem;
+	/* background-image: url(../icons/svg/sw-06.svg); */ 
+    background-position: right;
+    background-repeat: no-repeat;
+    background-size: 11rem;
 }
-
 .TileGust{
 	height: 10rem;
 	width: 21rem;
@@ -61,9 +64,6 @@
 
 
 /*Begin Changes Tanja */
-.image{
-	height: 9.5rem;
-}
 .marginBottom{
 	margin-bottom: 3.5rem;
 }
@@ -71,13 +71,16 @@
 	margin-top: 1rem;
 }
 .town{
-	font-size: 1rem !important;
+	font-size: 2rem !important;
+	margin-left: 0.5rem;
 }
 .curTemp{
-	font-size: 4rem !important;
+	font-size: 3.5rem !important;
+	margin-left: 0.5rem;
 }
 .curWeather{
-	font-size: 1rem !important;
+	font-size: 1.2rem !important;
+	margin-top: 2rem;
 }
 .feltTemp{
 	font-size: 1rem !important;

@@ -22,19 +22,19 @@
                     <FlexBox justifyContent="End" class="TileTemp Tile">
                         <VBox width="100%" class="alignCenterVertically" justifyContent= "SpaceBetween">
 
-                            <Text text="Wiesloch" class="town"/>
-                            <HBox justifyContent="SpaceBetween">
-                                <VBox justifyContent="SpaceBetween">
-                                    <Text text="3°C" class="curTemp"/>
-                                    <Text text="Schnee" class="marginBottom curWeather"/>
+                            <Label text="Wiesloch" class="town"/>
+                            <HBox justifyContent="SpaceBetween" alignItems="Center">
+                                <VBox justifyContent="SpaceBetween" alignItems="Center">
+                                    <Label text="30°C" class="curTemp"/>
+                                    <Label text="Teilweise Bewölkt" class="marginBottom curWeather" textAlign="Center"/>
                                 </VBox>
-                                <Image src="./icons/svg/sw-25.svg" class="image"/>
+                                <Image src="./icons/svg/sw-06.svg" width="6rem"/>
                             </HBox> 
 
 
                             <HBox justifyContent= "SpaceBetween">
-                                <Text text="Gefühlt: 2°C" class="feltTemp"/>
-                                <Text text="3°C|5°C" class="highLow"/>
+                                <Label text="Gefühlt: 2°C" class="feltTemp"/>
+                                <Label text="3°C|5°C" class="highLow"/>
                             </HBox>
                             
 
@@ -45,7 +45,7 @@
                     </FlexBox>
                     <VBox>
                         <HBox justifyContent="SpaceBetween" alignItems="Center" class="Tile TileGust">
-                            <Image src="./icons/weather/south-east.svg" class="image"/>
+                            <Image src="./icons/weather/south-east.svg" />
                             <VBox>
                                 <Label text="4,3 km/h" />
                                 <Label text="Nord-West" />
@@ -92,7 +92,7 @@
 		                        </HBox>
 	                        </VBox>
 	                        <VBox  width="100%" class="alignCenterVertically">
-	                        	<Image src="./icons/svg/sw-25.svg" class="image"/>
+	                        	<Image src="./icons/svg/sw-25.svg" />
 	                        </VBox>
                         </HBox>
                     </VBox>
