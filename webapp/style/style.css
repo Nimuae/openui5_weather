@@ -78,53 +78,37 @@
 
 
 
-/*Begin Changes Tanja */
-.marginBottom{
-	margin-bottom: 3.5rem;
-}
-.marginTop{
-	margin-top: 1rem;
-}
+/*****Begin Temp Tile*****/
+
 .town{
 	font-size: 2rem !important;
-	margin-left: 0.5rem;
 }
 .curTemp{
 	font-size: 3.5rem !important;
-	margin-left: 0.5rem;
-}
-.curWeather{
-	font-size: 1.2rem !important;
-	margin-top: 2rem;
+	margin-top: -5rem;
 }
 .feltTemp{
 	font-size: 1rem !important;
 }
+.curWeather{
+	font-size: 1.2rem !important;
+	/* margin-top: 2rem;
+	margin-bottom: -3rem; */
+}
+/* .curWeatherMarginBottom{
+	margin-bottom: 0.5rem;
+} */
+/* .curWeatherMarginTop{
+	margin-top: 2rem;
+} */
 .highLow{
 	font-size: 1rem !important; 
 }
-/*End Changes Tanja */
+.ImgTempTileMarginBottom{
+	margin-bottom: 1rem;
+}
+.VBNegativeMarginTop{
+	margin-top: -1rem;
+}
 
-/*.CustomTile{
-	padding: 10px;
-	
-	height: 20rem !important;
-}
-.CustomTile .City{
-	text-align: right;
-	font-size: 1.7rem;
-}
-.CustomTile .Temp{
-	font-size: 2rem;
-}
-.CustomTile .Temp .Number{
-	font-size: 4.3rem;
-}
-.CustomTile .Temp .Unit{
-	font-size: 1.4rem;
-}
-.CustomTile .Icon{
-	margin-top: 10px;
-	opacity: 0.5;
-	width: 100px;
-}*/
+/*****End Temp Tile*****/

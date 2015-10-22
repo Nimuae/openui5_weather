@@ -23,12 +23,15 @@
                         <VBox width="100%" class="alignCenterVertically" justifyContent= "SpaceBetween">
 
                             <Label text="Wiesloch" class="town"/>
-                            <HBox justifyContent="SpaceBetween" alignItems="Center">
-                                <VBox justifyContent="SpaceBetween" alignItems="Center">
+                            <HBox justifyContent="SpaceBetween">
+                                <VBox justifyContent="SpaceBetween" alignItems="Begin">
                                     <Label text="30°C" class="curTemp"/>
-                                    <Label text="Teilweise Bewölkt" class="marginBottom curWeather" textAlign="Center"/>
+                                    <!-- <Label text="Teilweise Bewölkt" class="curWeather curWeatherMarginTop" textAlign="Center" /> -->
                                 </VBox>
-                                <Image src="./icons/svg/sw-06.svg" width="6rem"/>
+                                <VBox class="VBNegativeMarginTop">
+	                                <Image src="./icons/svg/sw-06.svg" width="12rem" class="ImgTempTileMarginBottom"/>
+	                                <Label text="Teilweise Bewölkt" class="curWeather" textAlign="Center" />
+                            	</VBox>
                             </HBox> 
 
 
