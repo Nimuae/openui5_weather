@@ -60,6 +60,21 @@
 	height: 10rem;
 	width: 13.3rem;
 }
+.TileForecastBorderBottom{
+	border-bottom: thick solid rgba(131,165,179,1)
+}
+.TileForecastPaddingTop{
+	padding-top: 2.5%;
+}
+.TileForecastPadding2{
+	padding-top: 65%;
+}
+.TileForecastImagePaddingTop{
+	padding-top: 10%;
+}
+.TileForecastPaddingLeft{
+	padding-left: 7%
+}
 
 
 
