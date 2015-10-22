@@ -46,13 +46,14 @@
     background-repeat: no-repeat;
     background-size: 11rem;
 }
+
 .TileGust{
-	height: 10rem;
+	height: 8rem;
 	width: 21rem;
 }
 
 .TilePrecip{
-	height: 10rem;
+	height: 8rem;
 	width: 21rem;
 }
 
@@ -77,8 +78,10 @@
 }
 
 
-
 /*Begin Changes Tanja */
+.image{
+	height: 9.5rem;
+}
 .marginBottom{
 	margin-bottom: 3.5rem;
 }
@@ -128,3 +131,10 @@
 	opacity: 0.5;
 	width: 100px;
 }*/
+
+.LabelGustStrength{
+	font-size: 2.0rem !important;
+}
+.LabelGustDir{
+	font-size: 1.7rem !important;
+}
