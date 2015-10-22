@@ -13,7 +13,7 @@ sap.ui.define([
 			var oConditionsModel = new sap.ui.model.json.JSONModel(this.SERVICE_URL);
 			this.getView().setModel(oConditionsModel, "conditions");
 
-			setInterval(jQuery.proxy(this.refreshData, this), 1000); //1000 * 60 * 30
+			setInterval(jQuery.proxy(this.refreshData, this), 1000 * 60 * 30); //1000 * 60 * 30
 		},
 
 		refreshData: function(){
