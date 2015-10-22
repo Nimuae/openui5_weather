@@ -76,23 +76,33 @@
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
-                        <HBox height="20%">
+                        <HBox height="12%" class="TileForecastBorderBottom">
                         	<Text text="Freitag 16.10.2015"/>
                         </HBox> 
-                        <HBox height="80%" justifyContent="Center">
-	                        <VBox height="80%" width="100%" class="alignCenterVertically">
-		                        <HBox height="25%">
-		                        	<Text text="Regen"/>
+                        <HBox height="83%" justifyContent="Center" class="TileForecastPaddingTop">
+	                        <VBox height="100%" width="100%" class="alignCenterVertically">
+	                        	<HBox height="25%">
+		                        	<Text text="5°C | 10°C"/>
 		                        </HBox>
-		                        <HBox height="25%">
-		                        	<Text text="10%"/>
+		                        <HBox height="35%">
+		                        	<Text text="Teilweise Bewölkt"/>
 		                        </HBox>
-		                        <HBox height="25%">
-		                        	<Text text="10 mm"/>
-		                        </HBox>
+		                        <HBox>
+			                        <VBox>
+			                        	<Image src="./icons/water117.svg" class="image TileForecastPadding2" height="1.2rem"/>
+			                        </VBox>
+			                        <VBox class="TileForecastPaddingLeft">
+				                        <HBox height="50%">
+				                        	<Text text="10%"/>
+				                        </HBox>
+				                        <HBox height="50%">
+				                        	<Text text="10 mm"/>
+				                        </HBox>
+				                    </VBox>
+			                    </HBox>
 	                        </VBox>
 	                        <VBox  width="100%" class="alignCenterVertically">
-	                        	<Image src="./icons/svg/sw-25.svg" class="image"/>
+	                        	<Image src="./icons/svg/sw-25.svg" class="image TileForecastImagePaddingTop" height="6.5rem"/>
 	                        </VBox>
                         </HBox>
                     </VBox>
