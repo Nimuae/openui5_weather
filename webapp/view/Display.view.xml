@@ -51,10 +51,13 @@
                             <Image src="{
                                     path: 'conditions>/current_observation/wind_dir',
                                     formatter: 'hss.weather.view.Formatter.windDir'
-                                }" height="9.5rem" />
+                                }" height="8rem" />
                             <VBox>
                                 <Label text="{conditions>/current_observation/wind_kph} km/h" class="LabelGustStrength" />
-                                <Label text="Nord-West" class="LabelGustDir" />
+                                <Label text="{
+                                    path: 'conditions>/current_observation/wind_dir',
+                                    formatter: 'hss.weather.view.Formatter.windDirString'
+                                }" class="LabelGustDir" />
                             </VBox>
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
@@ -62,14 +65,17 @@
                         </HBox>
                         <HBox justifyContent="SpaceBetween" class="Tile TileGust" alignItems="Center">
                             <HBox alignItems="Center">
-                                <hss:Rainometer value="{conditions>/current_observation/precip_today_metric}" />
-                                <Label text="Niederschlag" />
+                                <hss:Rainometer
+                                    value="{conditions>/current_observation/precip_today_metric}"
+                                    showValue="true"
+                                    unit="mm" />
+                                <Label text="Niederschlag" class="LabelGustStrength" />
                             </HBox>
-                            <hss:CircleProgress value="35" />
-                            <VBox>
+                            <!-- <hss:CircleProgress value="35" /> -->
+                            <!-- <VBox>
                                 <Label text="10% Chance" />
-                                <Label text="10 mm" />
-                            </VBox>
+                                <Label text="{conditions>/current_observation/precip_today_metric} mm" />
+                            </VBox> -->
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
                             </layoutData>

@@ -115,10 +115,12 @@ function loadData(){
 
 //set an interval to update weather data from the web service and store it
 var intv = 1000 * 60 * 30; //update every 30 minutes
+//check for debug switch:
+var dbg = process.argv.indexOf("debug") >= 0;
 setInterval(function(){
 	var msg = "Fetching weather data from Service...";
 	console.log(msg);
 	log(msg);
 	getWeatherData("conditions");
 	getWeatherData("forecast");
-}, intv);
+}, dbg ? 500 : intv);
