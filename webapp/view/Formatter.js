@@ -2,16 +2,22 @@ jQuery.sap.declare("hss.weather.view.Formatter");
 
 hss.weather.view.Formatter = {
 	dirMap: {
-		"N": "north",
-		"E": "east",
-		"S": "south",
-		"W": "west"
-	},
-	dirMapGerman: {
-		"N": "Nord",
-		"E": "Ost",
-		"S": "Süd",
-		"W": "West"
+		"nord": "north",
+		"ost": "east",
+		"süd": "south",
+		"west": "west",
+		"südost": "south-east",
+		"südwest": "south-west",
+		"nordost": "north-east",
+		"nordwest": "north-west",
+		"nord-nordost": "north",
+		"süd-südwest": "south",
+		"nord-nordwest": "north",
+		"süd-südost": "south",
+		"nordost-ost": "east",
+		"südost-ost": "east",
+		"nordwest-west": "west",
+		"südwest-west": "west"
 	},
 	iconMap: {
 		"chanceflurries": "24",
@@ -61,13 +67,7 @@ hss.weather.view.Formatter = {
 		}
 		
 		var imagePath = "./icons/weather/";
-
-		var parts = dir.split("");
-		var primary = parts[0];
-		var secondary = parts[1] || "";
-
-		var image = hss.weather.view.Formatter.dirMap[primary] + (secondary ? "-" + hss.weather.view.Formatter.dirMap[secondary] : "");
-		return imagePath + image + ".svg";
+		return imagePath + hss.weather.view.Formatter.dirMap[dir.toLowerCase()] + ".svg";
 	},
 
 	windDirString: function(dir){
