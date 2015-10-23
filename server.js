@@ -3,14 +3,10 @@ var http = require("http");
 var fs = require("fs");
 var path = require("path");
 
-//http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json
-SERVICE_URL = "http://localhost:3000/{type}.json?api={API}";
-//SERVICE_URL = "http://api.wunderground.com/api/{API}/{type}/{options}/q/Germany/Wiesloch.json";
+SERVICE_URL = "http://localhost:3000/request.json?api={API}";
+//SERVICE_URL = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/Germany/Wiesloch.json";
 API = "19420d53f811294e";
-DATA = {
-	conditions: {},
-	forecast: {}
-};
+DATA = {};
 LOGS = __dirname + "/log";
 HISTORY = __dirname + "/history";
 DATA_DIR = __dirname + "/data";
@@ -21,11 +17,8 @@ var router = express.Router();
 console.log("Sending Requests to \"" + buildRequestURI("conditions") + "\"");
 
 //create routes for retrieval of stored data
-router.get("/service/conditions", function(req, res, next){
-	res.send(DATA.conditions);
-});
-router.get("/service/forecast", function(req, res, next){
-	res.send(DATA.forecast);
+router.get("/service", function(req, res, next){
+	res.send(DATA);
 });
 
 //add router to app as middleware for data requests
@@ -36,14 +29,13 @@ app.use("/", express.static(__dirname + "/webapp"));
 var server = app.listen(3000, function(){
 	var port = server.address().port;
 
-	getWeatherData("conditions");
-	getWeatherData("forecast");
+	getWeatherData();
 	console.log('Server listening on port %s', port);
 });
 
 
-function getWeatherData(type, options){
-	var reqURI = buildRequestURI(type, options || {});
+function getWeatherData(options){
+	var reqURI = buildRequestURI(options || {});
 	//log(reqURI);
 	//console.log(reqURI);
 	http.get(reqURI, function(res){
@@ -56,7 +48,7 @@ function getWeatherData(type, options){
 		});
 		res.on('end', function (chunk) {
 			try{
-				DATA[type] = JSON.parse(data);
+				DATA = JSON.parse(data);
 				log("\n" +
 					data +
 					"\n---------------------------------------\n\n",
@@ -76,9 +68,9 @@ function getWeatherData(type, options){
 	});
 }
 
-function buildRequestURI(type, options){
+function buildRequestURI(options){
 	var sOptions = "lang:DL";
-	var uri = SERVICE_URL.replace("{type}", type).replace("{API}", API).replace("{options}", sOptions);
+	var uri = SERVICE_URL.replace("{API}", API).replace("{options}", sOptions);
 
 	return uri;
 }

@@ -1,0 +1,473 @@
+{
+    "response": {
+        "version": "0.1",
+        "termsofService": "http://www.wunderground.com/weather/api/d/terms.html",
+        "features": {
+            "conditions": 1,
+            "forecast": 1
+        }
+    },
+    "current_observation": {
+        "image": {
+            "url": "http://icons.wxug.com/graphics/wu2/logo_130x80.png",
+            "title": "Weather Underground",
+            "link": "http://www.wunderground.com"
+        },
+        "display_location": {
+            "full": "Wiesloch, Germany",
+            "city": "Wiesloch",
+            "state": "",
+            "state_name": "Germany",
+            "country": "DL",
+            "country_iso3166": "DE",
+            "zip": "00000",
+            "magic": "35",
+            "wmo": "WETIE",
+            "latitude": "49.29777908",
+            "longitude": "8.70138931",
+            "elevation": "149.00000000"
+        },
+        "observation_location": {
+            "full": "Eckertsberg, Dielheim, BADEN-WURTTEMBERG",
+            "city": "Eckertsberg, Dielheim",
+            "state": "BADEN-WURTTEMBERG",
+            "country": "GERMANY",
+            "country_iso3166": "DE",
+            "latitude": "49.285679",
+            "longitude": "8.725050",
+            "elevation": "505 ft"
+        },
+        "estimated": {},
+        "station_id": "IBADENWU24",
+        "observation_time": "Last Updated on Oktober 23, 08:39 CEST",
+        "observation_time_rfc822": "Fri, 23 Oct 2015 08:39:44 +0200",
+        "observation_epoch": "1445582384",
+        "local_time_rfc822": "Fri, 23 Oct 2015 08:40:08 +0200",
+        "local_epoch": "1445582408",
+        "local_tz_short": "CEST",
+        "local_tz_long": "Europe/Berlin",
+        "local_tz_offset": "+0200",
+        "weather": "Bedeckt",
+        "temperature_string": "50.7 F (10.4 C)",
+        "temp_f": 50.7,
+        "temp_c": 10.4,
+        "relative_humidity": "99%",
+        "wind_string": "Calm",
+        "wind_dir": "West",
+        "wind_degrees": 270,
+        "wind_mph": 0,
+        "wind_gust_mph": 0,
+        "wind_kph": 0,
+        "wind_gust_kph": 0,
+        "pressure_mb": "1024",
+        "pressure_in": "30.24",
+        "pressure_trend": "0",
+        "dewpoint_string": "50 F (10 C)",
+        "dewpoint_f": 50,
+        "dewpoint_c": 10,
+        "heat_index_string": "NA",
+        "heat_index_f": "NA",
+        "heat_index_c": "NA",
+        "windchill_string": "NA",
+        "windchill_f": "NA",
+        "windchill_c": "NA",
+        "feelslike_string": "50.7 F (10.4 C)",
+        "feelslike_f": "50.7",
+        "feelslike_c": "10.4",
+        "visibility_mi": "2.5",
+        "visibility_km": "4.0",
+        "solarradiation": "--",
+        "UV": "0",
+        "precip_1hr_string": "0.00 in ( 0 mm)",
+        "precip_1hr_in": "0.00",
+        "precip_1hr_metric": " 0",
+        "precip_today_string": "0.01 in (0 mm)",
+        "precip_today_in": "0.01",
+        "precip_today_metric": "0",
+        "icon": "cloudy",
+        "icon_url": "http://icons.wxug.com/i/c/k/cloudy.gif",
+        "forecast_url": "http://www.wunderground.com/global/stations/WETIE.html",
+        "history_url": "http://www.wunderground.com/weatherstation/WXDailyHistory.asp?ID=IBADENWU24",
+        "ob_url": "http://www.wunderground.com/cgi-bin/findweather/getForecast?query=49.285679,8.725050",
+        "nowcast": ""
+    },
+    "forecast": {
+        "txt_forecast": {
+            "date": "07:38 CEST",
+            "forecastday": [
+                {
+                    "period": 0,
+                    "icon": "partlycloudy",
+                    "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+                    "title": "Freitag",
+                    "fcttext": "Morgens bedeckt, nachmittags sonnig. Höchsttemperatur 59F. Wind aus SO und wechselhaft.",
+                    "fcttext_metric": "Morgens bedeckt, nachmittags sonnig. Höchsttemperatur 15C. Wind aus SSO und wechselhaft.",
+                    "pop": "0"
+                },
+                {
+                    "period": 1,
+                    "icon": "nt_clear",
+                    "icon_url": "http://icons.wxug.com/i/c/k/nt_clear.gif",
+                    "title": "Freitag Nacht",
+                    "fcttext": "Meistens klar. Tiefsttemperatur 41F. Wind aus O mit 5 bis 10 mph.",
+                    "fcttext_metric": "Meistens klar. Tiefsttemperatur 5C. Wind aus O mit 10 bis 15 km/h.",
+                    "pop": "0"
+                },
+                {
+                    "period": 2,
+                    "icon": "partlycloudy",
+                    "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+                    "title": "Samstag",
+                    "fcttext": "Teilweise bedeckt. Höchsttemperatur 64F. Wind aus SO und wechselhaft.",
+                    "fcttext_metric": "Teilweise bedeckt. Höchsttemperatur 18C. Wind aus SO und wechselhaft.",
+                    "pop": "10"
+                },
+                {
+                    "period": 3,
+                    "icon": "nt_mostlycloudy",
+                    "icon_url": "http://icons.wxug.com/i/c/k/nt_mostlycloudy.gif",
+                    "title": "Samstag Nacht",
+                    "fcttext": "Meistens bewölkt. Tiefsttemperatur 48F. Wind aus SW mit 5 bis 10 mph.",
+                    "fcttext_metric": "Meistens bewölkt. Tiefsttemperatur 9C. Wind aus SW mit 10 bis 15 km/h.",
+                    "pop": "20"
+                },
+                {
+                    "period": 4,
+                    "icon": "chancerain",
+                    "icon_url": "http://icons.wxug.com/i/c/k/chancerain.gif",
+                    "title": "Sonntag",
+                    "fcttext": "Einige Schauer. Höchsttemperatur 57F. Wind aus WNW mit 5 bis 10 mph. Regenrisiko 30 %.",
+                    "fcttext_metric": "Morgens bedeckt, nachmittags sonnig. Höchsttemperatur 14C. Wind aus WNW mit 10 bis 15 km/h.",
+                    "pop": "30"
+                },
+                {
+                    "period": 5,
+                    "icon": "nt_partlycloudy",
+                    "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+                    "title": "Sonntag Nacht",
+                    "fcttext": "Teilweise bedeckt. Tiefsttemperatur 41F. Wind aus NO mit 5 bis 10 mph.",
+                    "fcttext_metric": "Teilweise bedeckt. Tiefsttemperatur 5C. Wind aus NO und wechselhaft.",
+                    "pop": "10"
+                },
+                {
+                    "period": 6,
+                    "icon": "partlycloudy",
+                    "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+                    "title": "Montag",
+                    "fcttext": "Teilweise bedeckt. Höchsttemperatur 63F. Wind aus OSO mit 5 bis 10 mph.",
+                    "fcttext_metric": "Teilweise bedeckt. Höchsttemperatur 17C. Wind aus OSO mit 10 bis 15 km/h.",
+                    "pop": "10"
+                },
+                {
+                    "period": 7,
+                    "icon": "nt_clear",
+                    "icon_url": "http://icons.wxug.com/i/c/k/nt_clear.gif",
+                    "title": "Montag Nacht",
+                    "fcttext": "Meistens klar. Tiefsttemperatur 41F. Wind aus OSO und wechselhaft.",
+                    "fcttext_metric": "Meistens klar. Tiefsttemperatur 5C. Wind aus OSO und wechselhaft.",
+                    "pop": "10"
+                }
+            ]
+        },
+        "simpleforecast": {
+            "forecastday": [
+                {
+                    "date": {
+                        "epoch": "1445619600",
+                        "pretty": "07:00 PM CEST am 23. Oktober 2015",
+                        "day": 23,
+                        "month": 10,
+                        "year": 2015,
+                        "yday": 295,
+                        "hour": 19,
+                        "min": "00",
+                        "sec": 0,
+                        "isdst": "1",
+                        "monthname": "Oktober",
+                        "monthname_short": "Okt",
+                        "weekday_short": "Fr",
+                        "weekday": "Freitag",
+                        "ampm": "PM",
+                        "tz_short": "CEST",
+                        "tz_long": "Europe/Berlin"
+                    },
+                    "period": 1,
+                    "high": {
+                        "fahrenheit": "59",
+                        "celsius": "15"
+                    },
+                    "low": {
+                        "fahrenheit": "41",
+                        "celsius": "5"
+                    },
+                    "conditions": "Teils Wolkig",
+                    "icon": "partlycloudy",
+                    "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+                    "skyicon": "",
+                    "pop": 0,
+                    "qpf_allday": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "qpf_day": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "qpf_night": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "snow_allday": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "snow_day": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "snow_night": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "maxwind": {
+                        "mph": 5,
+                        "kph": 8,
+                        "dir": "SO",
+                        "degrees": 141
+                    },
+                    "avewind": {
+                        "mph": 3,
+                        "kph": 5,
+                        "dir": "SO",
+                        "degrees": 141
+                    },
+                    "avehumidity": 77,
+                    "maxhumidity": 0,
+                    "minhumidity": 0
+                },
+                {
+                    "date": {
+                        "epoch": "1445706000",
+                        "pretty": "07:00 PM CEST am 24. Oktober 2015",
+                        "day": 24,
+                        "month": 10,
+                        "year": 2015,
+                        "yday": 296,
+                        "hour": 19,
+                        "min": "00",
+                        "sec": 0,
+                        "isdst": "1",
+                        "monthname": "Oktober",
+                        "monthname_short": "Okt",
+                        "weekday_short": "Sa",
+                        "weekday": "Samstag",
+                        "ampm": "PM",
+                        "tz_short": "CEST",
+                        "tz_long": "Europe/Berlin"
+                    },
+                    "period": 2,
+                    "high": {
+                        "fahrenheit": "64",
+                        "celsius": "18"
+                    },
+                    "low": {
+                        "fahrenheit": "48",
+                        "celsius": "9"
+                    },
+                    "conditions": "Teils Wolkig",
+                    "icon": "partlycloudy",
+                    "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+                    "skyicon": "",
+                    "pop": 10,
+                    "qpf_allday": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "qpf_day": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "qpf_night": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "snow_allday": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "snow_day": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "snow_night": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "maxwind": {
+                        "mph": 10,
+                        "kph": 16,
+                        "dir": "SO",
+                        "degrees": 137
+                    },
+                    "avewind": {
+                        "mph": 5,
+                        "kph": 8,
+                        "dir": "SO",
+                        "degrees": 137
+                    },
+                    "avehumidity": 74,
+                    "maxhumidity": 0,
+                    "minhumidity": 0
+                },
+                {
+                    "date": {
+                        "epoch": "1445796000",
+                        "pretty": "07:00 PM CET am 25. Oktober 2015",
+                        "day": 25,
+                        "month": 10,
+                        "year": 2015,
+                        "yday": 297,
+                        "hour": 19,
+                        "min": "00",
+                        "sec": 0,
+                        "isdst": "0",
+                        "monthname": "Oktober",
+                        "monthname_short": "Okt",
+                        "weekday_short": "So",
+                        "weekday": "Sonntag",
+                        "ampm": "PM",
+                        "tz_short": "CET",
+                        "tz_long": "Europe/Berlin"
+                    },
+                    "period": 3,
+                    "high": {
+                        "fahrenheit": "57",
+                        "celsius": "14"
+                    },
+                    "low": {
+                        "fahrenheit": "41",
+                        "celsius": "5"
+                    },
+                    "conditions": "Regen möglich",
+                    "icon": "chancerain",
+                    "icon_url": "http://icons.wxug.com/i/c/k/chancerain.gif",
+                    "skyicon": "",
+                    "pop": 30,
+                    "qpf_allday": {
+                        "in": 0.01,
+                        "mm": 0
+                    },
+                    "qpf_day": {
+                        "in": 0.01,
+                        "mm": 0
+                    },
+                    "qpf_night": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "snow_allday": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "snow_day": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "snow_night": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "maxwind": {
+                        "mph": 10,
+                        "kph": 16,
+                        "dir": "WNW",
+                        "degrees": 289
+                    },
+                    "avewind": {
+                        "mph": 6,
+                        "kph": 10,
+                        "dir": "WNW",
+                        "degrees": 289
+                    },
+                    "avehumidity": 80,
+                    "maxhumidity": 0,
+                    "minhumidity": 0
+                },
+                {
+                    "date": {
+                        "epoch": "1445882400",
+                        "pretty": "07:00 PM CET am 26. Oktober 2015",
+                        "day": 26,
+                        "month": 10,
+                        "year": 2015,
+                        "yday": 298,
+                        "hour": 19,
+                        "min": "00",
+                        "sec": 0,
+                        "isdst": "0",
+                        "monthname": "Oktober",
+                        "monthname_short": "Okt",
+                        "weekday_short": "Mo",
+                        "weekday": "Montag",
+                        "ampm": "PM",
+                        "tz_short": "CET",
+                        "tz_long": "Europe/Berlin"
+                    },
+                    "period": 4,
+                    "high": {
+                        "fahrenheit": "63",
+                        "celsius": "17"
+                    },
+                    "low": {
+                        "fahrenheit": "41",
+                        "celsius": "5"
+                    },
+                    "conditions": "Teils Wolkig",
+                    "icon": "partlycloudy",
+                    "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+                    "skyicon": "",
+                    "pop": 10,
+                    "qpf_allday": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "qpf_day": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "qpf_night": {
+                        "in": 0,
+                        "mm": 0
+                    },
+                    "snow_allday": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "snow_day": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "snow_night": {
+                        "in": 0,
+                        "cm": 0
+                    },
+                    "maxwind": {
+                        "mph": 10,
+                        "kph": 16,
+                        "dir": "OSO",
+                        "degrees": 105
+                    },
+                    "avewind": {
+                        "mph": 7,
+                        "kph": 11,
+                        "dir": "OSO",
+                        "degrees": 105
+                    },
+                    "avehumidity": 77,
+                    "maxhumidity": 0,
+                    "minhumidity": 0
+                }
+            ]
+        }
+    }
+}
