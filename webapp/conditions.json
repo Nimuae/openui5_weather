@@ -83,7 +83,7 @@
         "precip_today_string": "0.00 in (0 mm)",
         "precip_today_in": "0.00",
         "precip_today_metric": "20",
-        "icon": "clear",
+        "icon": "sunny",
         "icon_url": "http://icons.wxug.com/i/c/k/clear.gif",
         "forecast_url": "http://www.wunderground.com/global/stations/WETIE.html",
         "history_url": "http://www.wunderground.com/weatherstation/WXDailyHistory.asp?ID=IBADENWU24",

@@ -23,19 +23,25 @@
                     <FlexBox justifyContent="End" class="TileTemp Tile">
                         <VBox width="100%" class="alignCenterVertically" justifyContent= "SpaceBetween">
 
-                            <Label text="Wiesloch" class="town"/>
+                            <Label text="{conditions>/current_observation/display_location/city}" class="town"/>
                             <VBox justifyContent="SpaceBetween" alignItems="Begin">
-                                <Label text="30°C" class="curTemp"/>
+                                <Label text="{path: 'conditions>/current_observation/temp_c', 
+                                			  formatter: 'hss.weather.view.Formatter.roundTemp'}°C" 
+                                	   class="curTemp"/>
                                 <!-- <Label text="Teilweise Bewölkt" class="curWeather curWeatherMarginTop" textAlign="Center" /> -->
                             </VBox>
 
                             <VBox class="WeatherIcon" alignItems="Center">
-                                <Image src="./icons/svg/sw-07.svg" height="8rem" class="ImgTempTileMarginBottom"/>
-                                <Label text="Teilweise Bewölkt" class="curWeather" textAlign="Center" />
+                                <Image src="{path: 'conditions>/current_observation/icon',
+                                			formatter: 'hss.weather.view.Formatter.image'}" 
+                                		height="8rem" class="ImgTempTileMarginBottom"/>
+                                <Label text="{conditions>/current_observation/weather}" class="curWeather" textAlign="Center" />
                             </VBox>
 
                             <HBox justifyContent= "SpaceBetween">
-                                <Label text="Gefühlt: 2°C" class="feltTemp"/>
+                                <Label text="Gefühlt: {path: 'conditions>/current_observation/feelslike_c',
+                                					   formatter: 'hss.weather.view.Formatter.roundTemp'}°C" 
+                                	   class="feltTemp"/>
                                 <Label text="3°C | 5°C" class="highLow"/>
                             </HBox>
                         </VBox>
