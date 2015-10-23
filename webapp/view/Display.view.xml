@@ -52,13 +52,13 @@
                     <VBox>
                         <HBox justifyContent="SpaceBetween" alignItems="Center" class="Tile TileGust">
                             <Image src="{
-                                    path: 'conditions>/current_observation/wind_dir',
+                                    path: 'data>/current_observation/wind_dir',
                                     formatter: 'hss.weather.view.Formatter.windDir'
                                 }" height="8rem" />
                             <VBox>
-                                <Label text="{conditions>/current_observation/wind_kph} km/h" class="LabelGustStrength" />
+                                <Label text="{data>/current_observation/wind_kph} km/h" class="LabelGustStrength" />
                                 <Label text="{
-                                    path: 'conditions>/current_observation/wind_dir',
+                                    path: 'data>/current_observation/wind_dir',
                                     formatter: 'hss.weather.view.Formatter.windDirString'
                                 }" class="LabelGustDir" />
                             </VBox>
