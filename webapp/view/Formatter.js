@@ -69,18 +69,6 @@ hss.weather.view.Formatter = {
 		var imagePath = "./icons/weather/";
 		return imagePath + hss.weather.view.Formatter.dirMap[dir.toLowerCase()] + ".svg";
 	},
-
-	windDirString: function(dir){
-		if(!dir){
-			return "";
-		}
-
-		var parts = dir.split("");
-		var primary = parts[0];
-		var secondary = parts[1] || "";
-
-		return hss.weather.view.Formatter.dirMapGerman[primary] + (secondary ? "-" + hss.weather.view.Formatter.dirMapGerman[secondary] : "");
-	},
 	
 	image: function(weather){
 		if(!weather){
