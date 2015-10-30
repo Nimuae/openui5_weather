@@ -15,6 +15,9 @@ Tile 4
 Vorschau 
 
 -----------------------------------------------------------------------------------------
+Konfiguration eventuell mittels Expression Binding und eines Control Models
+
+-----------------------------------------------------------------------------------------
 
 Links zu den Icons:
 http://www.danvierich.de/weather/
