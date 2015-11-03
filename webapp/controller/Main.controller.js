@@ -15,14 +15,13 @@ sap.ui.define([
 
 			var delay = 1000 * 60 * 30;
 			if(jQuery.sap.getUriParameters().get("debug")){
-				delay = 2000;
+				delay = 5000;
 			}
 			setInterval(jQuery.proxy(this.refreshData, this), delay);
 		},
 
 		refreshData: function(){
-			var oConditionsModel = new sap.ui.model.json.JSONModel(this.SERVICE_URL);
-			this.getView().setModel(oConditionsModel, "data");
+			this.getView().getModel("data").loadData(this.SERVICE_URL);
 		},
 
 		navigateToCustomizing: function(){

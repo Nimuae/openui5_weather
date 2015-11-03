@@ -1,3 +1,5 @@
+jQuery.sap.includeScript("./resources/jquery-ui/jquery-ui.js");
+
 jQuery.sap.declare("hss.weather.view.Formatter");
 
 hss.weather.view.Formatter = {
@@ -84,5 +86,17 @@ hss.weather.view.Formatter = {
 			return "";
 		}
 		return Math.round(Number(temp));
+	},
+
+	animateLabel: function(){
+		var $elements = this.$().find("span label").andSelf();
+		var color = this.$().css("color");
+		$elements.animate({
+			color: "#007cc0"
+		}, 100, "swing").animate({
+			color: color
+		}, 400, "swing");
+
+		return true;
 	}
 };
