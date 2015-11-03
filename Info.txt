@@ -19,6 +19,10 @@ Konfiguration eventuell mittels Expression Binding und eines Control Models
 
 -----------------------------------------------------------------------------------------
 
+EIGENES CONTROL FÜR KOMPASS?
+
+-----------------------------------------------------------------------------------------
+
 Links zu den Icons:
 http://www.danvierich.de/weather/
 

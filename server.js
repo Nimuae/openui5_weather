@@ -2,6 +2,7 @@ var express = require("express");
 var http = require("http");
 var fs = require("fs");
 var path = require("path");
+var randomizer = require("./randomizer.js");
 
 SERVICE_URL = "http://localhost:3000/request.json?api={API}";
 //SERVICE_URL = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/Germany/Wiesloch.json";
@@ -48,9 +49,9 @@ function getWeatherData(options){
 		});
 		res.on('end', function (chunk) {
 			try{
-				DATA = JSON.parse(data);
+				DATA = JSON.parse(data, DEBUG ? randomizer : function(k, v) { return v; });
 				log("\n" +
-					data +
+					JSON.stringify(DATA) +
 					"\n---------------------------------------\n\n",
 					"history.log"
 				);
@@ -108,11 +109,11 @@ function loadData(){
 //set an interval to update weather data from the web service and store it
 var intv = 1000 * 60 * 30; //update every 30 minutes
 //check for debug switch:
-var dbg = process.argv.indexOf("debug") >= 0;
+DEBUG = process.argv.indexOf("debug") >= 0;
 setInterval(function(){
 	var msg = "Fetching weather data from Service...";
 	console.log(msg);
 	log(msg);
 	getWeatherData("conditions");
 	getWeatherData("forecast");
-}, dbg ? 500 : intv);
+}, DEBUG ? 2000 : intv);

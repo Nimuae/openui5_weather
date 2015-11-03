@@ -13,7 +13,11 @@ sap.ui.define([
 			var oConditionsModel = new sap.ui.model.json.JSONModel(this.SERVICE_URL);
 			this.getView().setModel(oConditionsModel, "data");
 
-			setInterval(jQuery.proxy(this.refreshData, this), 1000 * 60 * 30); //1000 * 60 * 30
+			var delay = 1000 * 60 * 30;
+			if(jQuery.sap.getUriParameters().get("debug")){
+				delay = 2000;
+			}
+			setInterval(jQuery.proxy(this.refreshData, this), delay);
 		},
 
 		refreshData: function(){
@@ -23,6 +27,10 @@ sap.ui.define([
 
 		navigateToCustomizing: function(){
 			sap.ui.getCore().byId("MainApp").to("viewCustom");
+		},
+
+		navigateBackToMain: function(){
+			sap.ui.getCore().byId("MainApp").back("viewDisplay");
 		}
 	});
 });

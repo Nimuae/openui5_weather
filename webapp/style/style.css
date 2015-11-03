@@ -2,6 +2,10 @@ html{
 	//zoom: 1.7;
 }
 
+.MainPage{
+	background-color: #FAFAFA !important;
+}
+
 .sapMTile{
 
 }
@@ -66,7 +70,7 @@ html{
 	width: 13.3rem;
 }
 .TileForecastBorderBottom{
-	border-bottom: 2px solid #009de0;
+	//border-bottom: 2px solid #009de0;
 }
 .TileForecastPaddingTop{
 	padding-top: 2.5%;

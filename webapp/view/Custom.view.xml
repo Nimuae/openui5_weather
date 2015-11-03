@@ -9,7 +9,8 @@
     <Page
         backgroundDesign="Solid"
         title="Einstellungen"
-        showNavButton="true">
+        showNavButton="true"
+        navButtonPress="navigateBackToMain">
         <content>
         </content>
     </Page>

@@ -14,10 +14,10 @@ hss.weather.view.Formatter = {
 		"süd-südwest": "south",
 		"nord-nordwest": "north",
 		"süd-südost": "south",
-		"nordost-ost": "east",
-		"südost-ost": "east",
-		"nordwest-west": "west",
-		"südwest-west": "west"
+		"ost-nordost": "east",
+		"ost-südost": "east",
+		"west-nordwest": "west",
+		"west-südwest": "west"
 	},
 	iconMap: {
 		"chanceflurries": "24",

@@ -6,8 +6,8 @@
     controllerName="hss.weather.controller.Main"
     xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
     xmlns:hss="hss.weather.control">
-<!--backgroundDesign="Solid"-->
     <Page
+        class="MainPage"
         showHeader="false">
         <content>
             <core:Icon
@@ -26,23 +26,23 @@
                             <Label text="{data>/current_observation/display_location/city}" class="town"/>
                             <VBox justifyContent="SpaceBetween" alignItems="Begin">
                                 <Label text="{path: 'data>/current_observation/temp_c', 
-                                			  formatter: 'hss.weather.view.Formatter.roundTemp'}°C" 
-                                	   class="curTemp"/>
+                                              formatter: 'hss.weather.view.Formatter.roundTemp'}°C" 
+                                       class="curTemp"/>
                                 <!-- <Label text="Teilweise Bewölkt" class="curWeather curWeatherMarginTop" textAlign="Center" /> -->
                             </VBox>
 
                             <VBox class="WeatherIcon" alignItems="Center">
                                 <Image src="{path: 'data>/current_observation/icon',
-                                			formatter: 'hss.weather.view.Formatter.image'}" 
-                                		height="8rem" class="ImgTempTileMarginBottom"/>
-                                <Label text="{data>/curhrent_observation/weather}" class="curWeather" textAlign="Center" />
+                                            formatter: 'hss.weather.view.Formatter.image'}" 
+                                        height="8rem" class="ImgTempTileMarginBottom"/>
+                                <Label text="{data>/current_observation/weather}" class="curWeather" textAlign="Center" />
                             </VBox>
 
                             <HBox justifyContent= "SpaceBetween">
                                 <Label text="Gefühlt: {path: 'data>/current_observation/feelslike_c',
-                                					   formatter: 'hss.weather.view.Formatter.roundTemp'}°C" 
-                                	   class="feltTemp"/>
-                                <Label text="3°C | 5°C" class="highLow"/>
+                                                       formatter: 'hss.weather.view.Formatter.roundTemp'}°C" 
+                                       class="feltTemp"/>
+                                <Label text="{data>/forecast/simpleforecast/forecastday/0/low/celsius}°C | {data>/forecast/simpleforecast/forecastday/0/high/celsius}°C" class="highLow"/>
                             </HBox>
                         </VBox>
                         <layoutData>
@@ -85,42 +85,42 @@
                     </VBox>
                 </HBox>
 
-				<HBox
+                <HBox
                     justifyContent="Center">
                     <VBox justifyContent="End" class="TileForecast Tile">
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
                         <HBox height="12%" class="TileForecastBorderBottom">
-                        	<Text text="Freitag 16.10.2015"/>
+                            <Text text="Freitag 16.10.2015"/>
                         </HBox> 
                         <HBox height="83%" justifyContent="Center" class="TileForecastPaddingTop">
-	                        <VBox height="100%" width="100%" class="alignCenterVertically">
-	                        	<HBox height="25%">
-		                        	<Text text="5°C | 10°C"/>
-		                        </HBox>
-		                        <HBox height="35%">
-		                        	<Text text="Teilweise Bewölkt"/>
-		                        </HBox>
-		                        <HBox>
-			                        <VBox>
-			                        	<Image src="./icons/water117.svg" class="image TileForecastPadding2" height="1.2rem"/>
-			                        </VBox>
-			                        <VBox class="TileForecastPaddingLeft">
-				                        <HBox height="50%">
-				                        	<Text text="10%"/>
-				                        </HBox>
-				                        <HBox height="50%">
-				                        	<Text text="10 mm"/>
-				                        </HBox>
-				                    </VBox>
-			                    </HBox>
-	                        </VBox>
-	                        <VBox  width="100%" class="alignCenterVertically">
+                            <VBox height="100%" width="100%" class="alignCenterVertically">
+                                <HBox height="25%">
+                                    <Text text="5°C | 10°C"/>
+                                </HBox>
+                                <HBox height="35%">
+                                    <Text text="Teilweise Bewölkt"/>
+                                </HBox>
+                                <HBox>
+                                    <VBox>
+                                        <Image src="./icons/water117.svg" class="image TileForecastPadding2" height="1.2rem"/>
+                                    </VBox>
+                                    <VBox class="TileForecastPaddingLeft">
+                                        <HBox height="50%">
+                                            <Text text="10%"/>
+                                        </HBox>
+                                        <HBox height="50%">
+                                            <Text text="10 mm"/>
+                                        </HBox>
+                                    </VBox>
+                                </HBox>
+                            </VBox>
+                            <VBox  width="100%" class="alignCenterVertically">
 
-	                        	<Image src="./icons/svg/sw-25.svg" class="image TileForecastImagePaddingTop" height="6.5rem"/>
+                                <Image src="./icons/svg/sw-25.svg" class="image TileForecastImagePaddingTop" height="6.5rem"/>
 
-	                        </VBox>
+                            </VBox>
                         </HBox>
                     </VBox>
                     <VBox justifyContent="End" class="TileForecast Tile">
