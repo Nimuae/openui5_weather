@@ -12,6 +12,7 @@ var fields = {
 			"West-Nordwest", "Nordwest", "Nord-Nordwest"
 		]
 	},
+	"wind_degrees": [0, 360],
 	"icon": {
 		select: [
 			"chanceflurries", "chancerain",

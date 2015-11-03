@@ -20,6 +20,7 @@
 			jQuery.sap.require("sap.m.Page");
 			jQuery.sap.require("hss.weather.control.Rainometer");
 			jQuery.sap.require("hss.weather.control.CircleProgress");
+			jQuery.sap.require("hss.weather.control.Compass");
 			
 			var oApp = new sap.m.App({
 				pages: [
@@ -30,13 +31,13 @@
 							oRain = new hss.weather.control.Rainometer({
 								value: "{/value}"
 							}),
-							oBtn = new sap.m.Button({
+							oBtnMore = new sap.m.Button({
 								icon: "sap-icon://add",
 								press: function(oEvent){
 									this.getModel().setProperty("/value", this.getModel().getProperty("/value") + 10);
 								}
 							}),
-							oBtn = new sap.m.Button({
+							oBtnLess = new sap.m.Button({
 								icon: "sap-icon://less",
 								press: function(oEvent){
 									this.getModel().setProperty("/value", this.getModel().getProperty("/value") - 10);
@@ -44,6 +45,9 @@
 							}),
 							oProgress = new hss.weather.control.CircleProgress({
 								value: "{/value}"
+							}),
+							oCompass = new hss.weather.control.Compass({
+								direction: 270
 							})
 						]
 					})

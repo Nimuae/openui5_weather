@@ -51,10 +51,12 @@
                     </FlexBox>
                     <VBox>
                         <HBox justifyContent="SpaceBetween" alignItems="Center" class="Tile TileGust">
-                            <Image src="{
+                            <!-- <Image src="{
                                     path: 'data>/current_observation/wind_dir',
                                     formatter: 'hss.weather.view.Formatter.windDir'
-                                }" height="8rem" />
+                                }" height="8rem" /> -->
+                            <hss:Compass
+                                direction="{data>/current_observation/wind_degrees}" />
                             <VBox>
                                 <Label text="{data>/current_observation/wind_kph} km/h" class="LabelGustStrength" />
                                 <Label text="{
