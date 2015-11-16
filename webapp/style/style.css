@@ -70,7 +70,7 @@ html{
 	width: 13.3rem;
 }
 .TileForecastBorderBottom{
-	//border-bottom: 2px solid #009de0;
+	border-bottom: 2px solid rgba(102,102,102,1);
 }
 .TileForecastPaddingTop{
 	padding-top: 2.5%;
@@ -84,7 +84,9 @@ html{
 .TileForecastPaddingLeft{
 	padding-left: 7%
 }
-
+.TileForcastBigText{
+	font-size: 1.0rem !important; 
+}
 
 /*****Begin Temp Tile*****/
 
