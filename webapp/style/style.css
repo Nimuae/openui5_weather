@@ -90,9 +90,33 @@ html{
 .town{
 	font-size: 2rem !important;
 }
+
+
 .curTemp{
-	font-size: 3.5rem !important;
-	margin-top: -2rem;
+	font-size: 3.0rem !important;
+
+	background-color: rgba(250, 250, 250, 0.9);
+	border-radius: 100px;
+	/*border: 4px solid #666;*/
+	margin-left: -4px;
+
+	position: absolute;
+	z-index: 100;
+
+	right: 0;
+	top: -2rem;
+
+	/*width: 4rem;
+	line-height: 4rem;*/
+	text-align: center !important;
+}
+.curTemp:after{
+}
+.WeatherIcon{
+}
+.WeatherIcon img{
+	height: 8rem;
+	max-width: 8rem;
 }
 .feltTemp{
 	font-size: 1rem !important;
@@ -103,15 +127,13 @@ html{
 	margin-bottom: -3rem; */
 }
 
+
+
 .highLow{
 	font-size: 1rem !important; 
 }
 .ImgTempTileMarginBottom{
 	margin-bottom: 1rem;
-}
-.WeatherIcon{
-	margin-right: -6rem;
-	margin-top: -2rem;
 }
 
 /*****End Temp Tile*****/

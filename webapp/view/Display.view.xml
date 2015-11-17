@@ -42,9 +42,7 @@
                                     src="{
                                         path: 'data>/current_observation/icon',
                                         formatter: 'hss.weather.view.Formatter.image'
-                                    }" 
-                                    height="8rem"
-                                    class="ImgTempTileMarginBottom"/>
+                                    }" />
                                 <Label
                                     text="{data>/current_observation/weather}"
                                     class="curWeather"
