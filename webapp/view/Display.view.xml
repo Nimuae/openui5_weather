@@ -122,7 +122,17 @@
                         <HBox height="83%" justifyContent="Center" class="TileForecastPaddingTop">
                             <VBox height="100%" width="100%" class="alignCenterVertically">
                                 <HBox height="25%">
-                                    <Text text="5°C | 10°C"/>
+                                	<HBox>
+                                		<HBox width="2.5rem" justifyContent="Center">
+                                			<Text text="-11°C"/>
+                                		</HBox>
+                                		<HBox  width="1.0rem" justifyContent="Center">
+                                			<Text text="|"/>
+                                		</HBox>
+                                		<HBox width="2.5rem" justifyContent="Center">
+                                			<Text text="49°C"/>
+                                		</HBox>
+                                	</HBox>
                                 </HBox>
                                 <HBox height="35%">
                                     <Text text="Teilweise Bewölkt"/>
@@ -158,7 +168,17 @@
                         <HBox height="83%" justifyContent="Center" class="TileForecastPaddingTop">
                             <VBox height="100%" width="100%" class="alignCenterVertically">
                                 <HBox height="25%">
-                                    <Text text="5°C | 10°C"/>
+                                    <HBox>
+                                		<HBox width="2.5rem" justifyContent="Center">
+                                			<Text text="1°C"/>
+                                		</HBox>
+                                		<HBox  width="1.0rem" justifyContent="Center">
+                                			<Text text="|"/>
+                                		</HBox>
+                                		<HBox width="2.5rem" justifyContent="Center">
+                                			<Text text="9°C"/>
+                                		</HBox>
+                                	</HBox>
                                 </HBox>
                                 <HBox height="35%">
                                     <Text text="Teilweise Bewölkt"/>
@@ -194,7 +214,17 @@
                         <HBox height="83%" justifyContent="Center" class="TileForecastPaddingTop">
                             <VBox height="100%" width="100%" class="alignCenterVertically">
                                 <HBox height="25%">
-                                    <Text text="5°C | 10°C"/>
+                                    <HBox>
+                                		<HBox width="2.5rem" justifyContent="Center">
+                                			<Text text="-11°C"/>
+                                		</HBox>
+                                		<HBox  width="1.0rem" justifyContent="Center">
+                                			<Text text="|"/>
+                                		</HBox>
+                                		<HBox width="2.5rem" justifyContent="Center">
+                                			<Text text="2°C"/>
+                                		</HBox>
+                                	</HBox>
                                 </HBox>
                                 <HBox height="35%">
                                     <Text text="Teilweise Bewölkt"/>
