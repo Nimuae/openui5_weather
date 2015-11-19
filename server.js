@@ -2,7 +2,9 @@ var express = require("express");
 var http = require("http");
 var fs = require("fs");
 var path = require("path");
-var randomizer = require("./randomizer.js");
+
+var Randomizer = require("./randomizer.js");
+var randomizer = new Randomizer();
 
 SERVICE_URL = "http://localhost:3000/request.json?api={API}";
 //SERVICE_URL = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/Germany/Wiesloch.json";
@@ -49,7 +51,8 @@ function getWeatherData(options){
 		});
 		res.on('end', function (chunk) {
 			try{
-				DATA = JSON.parse(data, DEBUG ? randomizer : function(k, v) { return v; });
+				randomizer = new Randomizer();
+				DATA = JSON.parse(data, DEBUG ? randomizer.randomize : function(k, v) { return v; });
 				log("\n" +
 					JSON.stringify(DATA) +
 					"\n---------------------------------------\n\n",
