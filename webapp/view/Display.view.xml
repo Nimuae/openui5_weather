@@ -114,6 +114,22 @@
                         <Label
                             text="{data>/forecast/simpleforecast/forecastday/1/date/weekday} {data>/forecast/simpleforecast/forecastday/1/date/day}.{data>/forecast/simpleforecast/forecastday/1/date/month}.{data>/forecast/simpleforecast/forecastday/1/date/year}"
                             class="TileForecastTitle"/>
+                        <VBox alignItems="Center">
+                            <Image
+                                src="{
+                                    path: 'data>/forecast/simpleforecast/forecastday/0/icon',
+                                    formatter: 'hss.weather.view.Formatter.image'
+                                }" 
+                                class="WeatherIconSmall" />
+                            <HBox>
+                                <Label
+                                    class="ForecastTempLow"
+                                    text="{data>/forecast/simpleforecast/forecastday/0/low/celsius}°C"/>
+                                <Label
+                                    class="ForecastTempHigh"
+                                    text="{data>/forecast/simpleforecast/forecastday/0/high/celsius}°C"/>
+                            </HBox>
+                        </VBox>
                         <!-- <HBox height="12%" class="TileForecastBorderBottom">
                             <Label text="{data>/forecast/simpleforecast/forecastday/0/date/weekday} {data>/forecast/simpleforecast/forecastday/0/date/day}.{data>/forecast/simpleforecast/forecastday/0/date/month}.{data>/forecast/simpleforecast/forecastday/0/date/year}" class="TileForcastBigText"/>
                         </HBox> 
@@ -158,14 +174,54 @@
                         </HBox> -->
                     </VBox>
                     <VBox class="TileForecast Tile">
-                         <Label
+                         <layoutData>
+                            <l:GridData spanL="4" spanM="4" spanS="12" />
+                        </layoutData>
+
+                        <Label
                             text="{data>/forecast/simpleforecast/forecastday/1/date/weekday} {data>/forecast/simpleforecast/forecastday/1/date/day}.{data>/forecast/simpleforecast/forecastday/1/date/month}.{data>/forecast/simpleforecast/forecastday/1/date/year}"
                             class="TileForecastTitle"/>
+                        <VBox alignItems="Center">
+                            <Image
+                                src="{
+                                    path: 'data>/forecast/simpleforecast/forecastday/0/icon',
+                                    formatter: 'hss.weather.view.Formatter.image'
+                                }" 
+                                class="WeatherIconSmall" />
+                            <HBox>
+                                <Label
+                                    class="ForecastTempLow"
+                                    text="{data>/forecast/simpleforecast/forecastday/0/low/celsius}°C"/>
+                                <Label
+                                    class="ForecastTempHigh"
+                                    text="{data>/forecast/simpleforecast/forecastday/0/high/celsius}°C"/>
+                            </HBox>
+                        </VBox>
                     </VBox>
                     <VBox class="TileForecast Tile">
-                         <Label
+                         <layoutData>
+                            <l:GridData spanL="4" spanM="4" spanS="12" />
+                        </layoutData>
+
+                        <Label
                             text="{data>/forecast/simpleforecast/forecastday/1/date/weekday} {data>/forecast/simpleforecast/forecastday/1/date/day}.{data>/forecast/simpleforecast/forecastday/1/date/month}.{data>/forecast/simpleforecast/forecastday/1/date/year}"
                             class="TileForecastTitle"/>
+                        <VBox alignItems="Center">
+                            <Image
+                                src="{
+                                    path: 'data>/forecast/simpleforecast/forecastday/0/icon',
+                                    formatter: 'hss.weather.view.Formatter.image'
+                                }" 
+                                class="WeatherIconSmall" />
+                            <HBox>
+                                <Label
+                                    class="ForecastTempLow"
+                                    text="{data>/forecast/simpleforecast/forecastday/0/low/celsius}°C"/>
+                                <Label
+                                    class="ForecastTempHigh"
+                                    text="{data>/forecast/simpleforecast/forecastday/0/high/celsius}°C"/>
+                            </HBox>
+                        </VBox>
                     </VBox>
                 </HBox>
             </VBox>
