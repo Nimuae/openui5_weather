@@ -106,30 +106,31 @@
 
                 <HBox
                     justifyContent="Center">
-                    <VBox justifyContent="End" class="TileForecast Tile">
+                    <VBox class="TileForecast Tile">
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
-                        <HBox height="12%" class="TileForecastBorderBottom">
-                            <Text text="{data>/forecast/simpleforecast/forecastday/0/date/weekday} {data>/forecast/simpleforecast/forecastday/0/date/day}.{data>/forecast/simpleforecast/forecastday/0/date/month}.{data>/forecast/simpleforecast/forecastday/0/date/year}" class="TileForcastBigText"/>
+
+                        <Label
+                            text="{data>/forecast/simpleforecast/forecastday/1/date/weekday} {data>/forecast/simpleforecast/forecastday/1/date/day}.{data>/forecast/simpleforecast/forecastday/1/date/month}.{data>/forecast/simpleforecast/forecastday/1/date/year}"
+                            class="TileForecastTitle"/>
+                        <!-- <HBox height="12%" class="TileForecastBorderBottom">
+                            <Label text="{data>/forecast/simpleforecast/forecastday/0/date/weekday} {data>/forecast/simpleforecast/forecastday/0/date/day}.{data>/forecast/simpleforecast/forecastday/0/date/month}.{data>/forecast/simpleforecast/forecastday/0/date/year}" class="TileForcastBigText"/>
                         </HBox> 
                         <HBox height="83%" justifyContent="Center" class="TileForecastPaddingTop">
                             <VBox height="100%" width="100%" class="alignCenterVertically">
                                 <HBox height="25%">
                                 	<HBox>
                                 		<HBox width="2.5rem" justifyContent="Center">
-                                			<Text text="{data>/forecast/simpleforecast/forecastday/0/low/celsius}°C"/>
+                                			<Label text="{data>/forecast/simpleforecast/forecastday/0/low/celsius}°C"/>
                                 		</HBox>
                                 		<HBox  width="1.0rem" justifyContent="Center">
-                                			<Text text="|"/>
+                                			<Label text="|"/>
                                 		</HBox>
                                 		<HBox width="2.5rem" justifyContent="Center">
-                                			<Text text="{data>/forecast/simpleforecast/forecastday/0/high/celsius}°C"/>
+                                			<Label text="{data>/forecast/simpleforecast/forecastday/0/high/celsius}°C"/>
                                 		</HBox>
                                 	</HBox>
-                                </HBox>
-                                <HBox height="35%">
-                                    <Text text="{data>/forecast/simpleforecast/forecastday/0/conditions}"/>
                                 </HBox>
                                 <HBox>
                                     <VBox>
@@ -137,10 +138,10 @@
                                     </VBox>
                                     <VBox class="TileForecastPaddingLeft">
                                         <HBox height="50%">
-                                            <Text text="10%"/>
+                                            <Label text="10%"/>
                                         </HBox>
                                         <HBox height="50%">
-                                            <Text text="10 mm"/>
+                                            <Label text="10 mm"/>
                                         </HBox>
                                     </VBox>
                                 </HBox>
@@ -154,99 +155,17 @@
                                     class="image TileForecastImagePaddingTop" height="5.0rem"/>
 
                             </VBox>
-                        </HBox>
+                        </HBox> -->
                     </VBox>
-                    <VBox justifyContent="End" class="TileForecast Tile">
-                        <layoutData>
-                            <l:GridData spanL="4" spanM="4" spanS="12" />
-                        </layoutData>
-                        <HBox height="12%" class="TileForecastBorderBottom">
-                            <Text text="Freitag 16.10.2015" class="TileForcastBigText"/>
-                        </HBox> 
-                        <HBox height="83%" justifyContent="Center" class="TileForecastPaddingTop">
-                            <VBox height="100%" width="100%" class="alignCenterVertically">
-                                <HBox height="25%">
-                                    <HBox>
-                                		<HBox width="2.5rem" justifyContent="Center">
-                                			<Text text="1°C"/>
-                                		</HBox>
-                                		<HBox  width="1.0rem" justifyContent="Center">
-                                			<Text text="|"/>
-                                		</HBox>
-                                		<HBox width="2.5rem" justifyContent="Center">
-                                			<Text text="9°C"/>
-                                		</HBox>
-                                	</HBox>
-                                </HBox>
-                                <HBox height="35%">
-                                    <Text text="Teilweise Bewölkt"/>
-                                </HBox>
-                                <HBox>
-                                    <VBox>
-                                        <Image src="./icons/water117.svg" class="image TileForecastPadding2" height="1.2rem"/>
-                                    </VBox>
-                                    <VBox class="TileForecastPaddingLeft">
-                                        <HBox height="50%">
-                                            <Text text="10%"/>
-                                        </HBox>
-                                        <HBox height="50%">
-                                            <Text text="10 mm"/>
-                                        </HBox>
-                                    </VBox>
-                                </HBox>
-                            </VBox>
-                            <VBox  width="100%" class="alignCenterVertically">
-
-                                <Image src="./icons/svg/sw-25.svg" class="image TileForecastImagePaddingTop" height="5.0rem"/>
-
-                            </VBox>
-                        </HBox>
+                    <VBox class="TileForecast Tile">
+                         <Label
+                            text="{data>/forecast/simpleforecast/forecastday/1/date/weekday} {data>/forecast/simpleforecast/forecastday/1/date/day}.{data>/forecast/simpleforecast/forecastday/1/date/month}.{data>/forecast/simpleforecast/forecastday/1/date/year}"
+                            class="TileForecastTitle"/>
                     </VBox>
-                    <VBox justifyContent="End" class="TileForecast Tile">
-                        <layoutData>
-                            <l:GridData spanL="4" spanM="4" spanS="12" />
-                        </layoutData>
-                        <HBox height="12%" class="TileForecastBorderBottom">
-                            <Text text="Freitag 16.10.2015" class="TileForcastBigText"/>
-                        </HBox> 
-                        <HBox height="83%" justifyContent="Center" class="TileForecastPaddingTop">
-                            <VBox height="100%" width="100%" class="alignCenterVertically">
-                                <HBox height="25%">
-                                    <HBox>
-                                		<HBox width="2.5rem" justifyContent="Center">
-                                			<Text text="-11°C"/>
-                                		</HBox>
-                                		<HBox  width="1.0rem" justifyContent="Center">
-                                			<Text text="|"/>
-                                		</HBox>
-                                		<HBox width="2.5rem" justifyContent="Center">
-                                			<Text text="2°C"/>
-                                		</HBox>
-                                	</HBox>
-                                </HBox>
-                                <HBox height="35%">
-                                    <Text text="Teilweise Bewölkt"/>
-                                </HBox>
-                                <HBox>
-                                    <VBox>
-                                        <Image src="./icons/water117.svg" class="image TileForecastPadding2" height="1.2rem"/>
-                                    </VBox>
-                                    <VBox class="TileForecastPaddingLeft">
-                                        <HBox height="50%">
-                                            <Text text="10%"/>
-                                        </HBox>
-                                        <HBox height="50%">
-                                            <Text text="10 mm"/>
-                                        </HBox>
-                                    </VBox>
-                                </HBox>
-                            </VBox>
-                            <VBox  width="100%" class="alignCenterVertically">
-
-                                <Image src="./icons/svg/sw-25.svg" class="image TileForecastImagePaddingTop" height="5.0rem"/>
-
-                            </VBox>
-                        </HBox>
+                    <VBox class="TileForecast Tile">
+                         <Label
+                            text="{data>/forecast/simpleforecast/forecastday/1/date/weekday} {data>/forecast/simpleforecast/forecastday/1/date/day}.{data>/forecast/simpleforecast/forecastday/1/date/month}.{data>/forecast/simpleforecast/forecastday/1/date/year}"
+                            class="TileForecastTitle"/>
                     </VBox>
                 </HBox>
             </VBox>
