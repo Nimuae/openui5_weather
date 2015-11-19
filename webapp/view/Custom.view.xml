@@ -3,7 +3,8 @@
     xmlns:mvc="sap.ui.core.mvc" 
     xmlns:l="sap.ui.layout"
     xmlns="sap.m"
-    controllerName="hss.weather.controller.Main"
+    xmlns:f="sap.ui.layout.form"
+    controllerName="hss.weather.controller.Custom"
     xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
     xmlns:hss="hss.weather.control">
     <Page
@@ -12,6 +13,46 @@
         showNavButton="true"
         navButtonPress="navigateBackToMain">
         <content>
+	        <l:Grid
+			defaultSpan="L12 M12 S12"
+			width="auto">
+			<l:content>
+	        	<f:SimpleForm
+	        		minWidth="1024"
+					maxContainerCols="1"
+					editable="true"
+					layout="ResponsiveGridLayout"
+					labelSpanL="3"
+					labelSpanM="3"
+					emptySpanL="4"
+					emptySpanM="4"
+					columnsL="1"
+					columnsM="1"
+	        		>
+	        		<f:content>
+	        		<core:Title text="Einstellungen für Wetterdaten" />
+	        			<Label text="Stadt" />
+	        			<Input value="Wiesloch" editable="{=${control>/visible} &amp;&amp; ${control>/editable}}"/>
+	        			<Label text ="Temperatur" />
+	        			<RadioButtonGroup columns="2" editable="{=${control>/visible} &amp;&amp; ${control>/editable}}">
+		        			<RadioButton id="RB_C" text="°C" />
+		        			<RadioButton id="RB_F" text="°F" />
+	        			</RadioButtonGroup>
+	        			<Label text="Wettervorhersage" />
+	        			<Switch state ="true" customTextOn="An" customTextOff="Aus" enabled="{=${control>/visible} &amp;&amp; ${control>/editable}}"/>
+	        		</f:content>
+	        	</f:SimpleForm>
+        	</l:content>
+        	</l:Grid>
         </content>
+        <footer>
+        	<Toolbar>
+        		<ToolbarSpacer />
+        		<Button icon="sap-icon://edit" type="Emphasized" visible="{=${control>/visible} &amp;&amp; !${control>/editable}}" press="onEdit"/> 
+        		<!-- <core:Icon src="sap-icon://edit" /> -->
+        		<Button text="Speichern" type="Accept" visible="{=${control>/visible} &amp;&amp; ${control>/editable}}" press="onSave"/>
+        		<Button text="Abbrechen" type="Reject" visible="{=${control>/visible} &amp;&amp; ${control>/editable}}" press="onCancel"/>
+        	</Toolbar>
+        </footer>
     </Page>
 </core:View>
