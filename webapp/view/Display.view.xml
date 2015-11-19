@@ -20,11 +20,17 @@
                 <HBox
                     justifyContent="Center" >
 
-                    <FlexBox justifyContent="End" class="TileTemp Tile">
-                        <VBox width="100%" class="alignCenterVertically" justifyContent= "SpaceBetween">
+                    <VBox justifyContent="SpaceBetween" class="TileTemp Tile">
+                        <Label text="{data>/current_observation/display_location/city}" class="town"/>
 
-                            <Label text="{data>/current_observation/display_location/city}" class="town"/>
-                            <VBox justifyContent="SpaceBetween" alignItems="Begin">
+                        <VBox alignItems="Center">
+                            <Image
+                                src="{
+                                    path: 'data>/current_observation/icon',
+                                    formatter: 'hss.weather.view.Formatter.image'
+                                }"
+                                class="WeatherIcon" />
+
                                 <Label
                                     text="{
                                         path: 'data>/current_observation/temp_c', 
@@ -35,45 +41,35 @@
                                         formatter: 'hss.weather.view.Formatter.animateLabel'
                                     }"
                                     class="curTemp"/>
-                            </VBox>
-
-                            <VBox class="WeatherIcon" alignItems="Center">
-                                <Image
-                                    src="{
-                                        path: 'data>/current_observation/icon',
-                                        formatter: 'hss.weather.view.Formatter.image'
-                                    }" />
-                                <Label
-                                    text="{data>/current_observation/weather}"
-                                    class="curWeather"
-                                    textAlign="Center" />
-                            </VBox>
-
-                            <HBox justifyContent= "SpaceBetween">
-                                <Label
-                                    text="Gefühlt: {
-                                        path: 'data>/current_observation/feelslike_c',
-                                        formatter: 'hss.weather.view.Formatter.roundTemp'
-                                    }°C"
-                                    visible="{
-                                        path: 'data>/current_observation/feelslike_c',
-                                        formatter: 'hss.weather.view.Formatter.animateLabel'
-                                    }"
-                                    class="feltTemp"/>
-                                <Label
-                                    text="{data>/forecast/simpleforecast/forecastday/0/low/celsius}°C | {data>/forecast/simpleforecast/forecastday/0/high/celsius}°C" class="highLow"
-                                    visible="{ path: 'data>/forecast/simpleforecast/forecastday/0/low/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
-                            </HBox>
                         </VBox>
+
+                        <HBox justifyContent= "SpaceBetween">
+                            <Label
+                                text="Gefühlt: {
+                                    path: 'data>/current_observation/feelslike_c',
+                                    formatter: 'hss.weather.view.Formatter.roundTemp'
+                                }°C"
+                                visible="{
+                                    path: 'data>/current_observation/feelslike_c',
+                                    formatter: 'hss.weather.view.Formatter.animateLabel'
+                                }"
+                                class="feltTemp"/>
+                            <Label
+                                text="{data>/forecast/simpleforecast/forecastday/0/low/celsius}°C | {data>/forecast/simpleforecast/forecastday/0/high/celsius}°C" class="highLow"
+                                visible="{ path: 'data>/forecast/simpleforecast/forecastday/0/low/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
+                        </HBox>
                         <layoutData>
                             <l:GridData spanL="6" spanM="6" spanS="12" />
                         </layoutData>
-                    </FlexBox>
+                    </VBox>
                     <VBox>
-                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="Tile TileGust">
+                        <HBox alignItems="Center" class="Tile TileGust">
                             <hss:Compass
-                                direction="{data>/current_observation/wind_degrees}" />
-                            <VBox>
+                                direction="{
+                                    path: 'data>/current_observation/wind_degrees',
+                                    formatter: 'hss.weather.view.Formatter.invertWindDir'
+                                }" />
+                            <VBox class="WindBox">
                                 <Label
                                     text="{data>/current_observation/wind_kph} km/h"
                                     visible="{ path: 'data>/current_observation/wind_kph', formatter: 'hss.weather.view.Formatter.animateLabel' }"
@@ -94,7 +90,7 @@
                                     showValue="true"
                                     unit="mm"
                                     visible="{ path: 'data>/current_observation/precip_today_metric', formatter: 'hss.weather.view.Formatter.animateLabel' }" />
-                                <Label text="Niederschlag" class="LabelGustStrength" />
+                                <Label text="Niederschlag" class="LabelGustDir PrecipText" />
                             </HBox>
                             <!-- <hss:CircleProgress value="35" /> -->
                             <!-- <VBox>
