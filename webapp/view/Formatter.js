@@ -106,6 +106,6 @@ hss.weather.view.Formatter = {
 		}
 
 		var a = (deg + 180);
-		return (a >= 360) ? a - 360 : a;
+		return parseInt((a >= 360) ? a - 360 : a, 10);
 	}
 };
