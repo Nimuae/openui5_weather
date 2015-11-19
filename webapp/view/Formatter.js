@@ -98,5 +98,14 @@ hss.weather.view.Formatter = {
 		}, 400, "swing");
 
 		return true;
+	},
+	
+	invertWindDir: function(deg){
+		if(typeof deg === "undefined" || Number.isNaN(deg)){
+			return 0;
+		}
+
+		var a = (deg + 180);
+		return (a >= 360) ? a - 360 : a;
 	}
 };
