@@ -23,7 +23,7 @@ module.exports = function(){
 						"West-Nordwest", "Nordwest", "Nord-Nordwest"
 					];
 					if(typeof v !== "undefined"){
-						return dirs[Math.min(dirs.length - 1, Math.round(v / Math.floor((360 / dirs.length))))];
+						return dirs[Math.min(dirs.length - 1, Math.round(v / (360 / dirs.length)))];
 					}else{
 						return dirs[0];
 					}
