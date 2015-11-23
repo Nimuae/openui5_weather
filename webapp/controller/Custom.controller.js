@@ -54,6 +54,9 @@ sap.ui.define([
 			});
 
 			dialog.open();
+		},
+		navigateBackToMain: function(){
+			sap.ui.getCore().byId("MainApp").back("viewDisplay");
 		}
 
 		

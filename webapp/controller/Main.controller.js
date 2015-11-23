@@ -26,10 +26,6 @@ sap.ui.define([
 
 		navigateToCustomizing: function(){
 			sap.ui.getCore().byId("MainApp").to("viewCustom");
-		},
-
-		navigateBackToMain: function(){
-			sap.ui.getCore().byId("MainApp").back("viewDisplay");
-		}
+		}		
 	});
 });
