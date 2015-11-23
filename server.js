@@ -6,8 +6,14 @@ var path = require("path");
 var Randomizer = require("./randomizer.js");
 var randomizer = new Randomizer();
 
-SERVICE_URL = "http://localhost:3000/request.json?api={API}";
-//SERVICE_URL = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/Germany/Wiesloch.json";
+//check for debug switch:
+DEBUG = process.argv.indexOf("debug") >= 0;
+if(DEBUG){
+	SERVICE_URL = "http://localhost:3000/request.json?api={API}";
+}else{
+	SERVICE_URL = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/Germany/Wiesloch.json";
+}
+
 API = "19420d53f811294e";
 DATA = {};
 LOGS = __dirname + "/log";
@@ -17,7 +23,7 @@ DATA_DIR = __dirname + "/data";
 var app = express();
 var router = express.Router();
 
-console.log("Sending Requests to \"" + buildRequestURI("conditions") + "\"");
+console.log("Sending Requests to \"" + buildRequestURI() + "\"");
 
 //create routes for retrieval of stored data
 router.get("/service", function(req, res, next){
@@ -32,6 +38,9 @@ app.use("/", express.static(__dirname + "/webapp"));
 var server = app.listen(3000, function(){
 	var port = server.address().port;
 
+	var msg = "[" + (new Date().toUTCString()) + "] Fetching weather data from Service...";
+	console.log(msg);
+	log(msg);
 	getWeatherData();
 	console.log('Server listening on port %s', port);
 });
@@ -39,8 +48,6 @@ var server = app.listen(3000, function(){
 
 function getWeatherData(options){
 	var reqURI = buildRequestURI(options || {});
-	//log(reqURI);
-	//console.log(reqURI);
 	http.get(reqURI, function(res){
 
 		//set encoding and read data from body
@@ -49,7 +56,8 @@ function getWeatherData(options){
 		res.on('data', function (chunk) {
 			data += chunk;
 		});
-		res.on('end', function (chunk) {
+		res.on('end', function () {
+			console.log("Received all data.");
 			try{
 				randomizer = new Randomizer();
 				DATA = JSON.parse(data, DEBUG ? randomizer.randomize : function(k, v) { return v; });
@@ -59,7 +67,7 @@ function getWeatherData(options){
 					"history.log"
 				);*/
 			}catch(e){
-				console.error(e);
+				console.error("Error", e);
 				log(e);
 			}
 		});
@@ -67,7 +75,7 @@ function getWeatherData(options){
 	}).on("error", function(e){
 		var d = new Date().toUTCString();
 		
-		console.error("[" + d + "] " + e.code + ": " + e.hostname);
+		console.error("[" + d + "] " + e.code + ": ", e);
 		log(e.code + ": " + e.hostname);
 	});
 }
@@ -100,23 +108,11 @@ function saveCurrentData(){
 	fs.writeFileSync(DATA_DIR + path.sep + file, JSON.stringify(DATA));
 }
 
-function loadData(){
-	var file = "requests.json";
-
-	var d = fs.readFileSync(DATA_DIR + path.sep + file, { encoding: "utf8" });
-	if(d){
-		DATA = JSON.parse(d);
-	}
-}
-
 //set an interval to update weather data from the web service and store it
 var intv = 1000 * 60 * 30; //update every 30 minutes
-//check for debug switch:
-DEBUG = process.argv.indexOf("debug") >= 0;
 setInterval(function(){
 	var msg = "[" + (new Date().toUTCString()) + "] Fetching weather data from Service...";
 	console.log(msg);
 	log(msg);
-	getWeatherData("conditions");
-	getWeatherData("forecast");
+	getWeatherData();
 }, DEBUG ? 2000 : intv);

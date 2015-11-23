@@ -115,6 +115,4 @@ module.exports = function(){
 		}
 		return val || v;
 	};
-
-	return this;
 };
