@@ -47,9 +47,9 @@
 	text-align: center;
 	color: #666;
 	font-size: 1.0rem;
+	font-weight: 600;
+	padding-top: 5px;
 }
 
 .Rainometer .RainometerNumber .RainometerNumberUnit{
-	font-size: 0.75rem;
-	vertical-align: top;
 }

@@ -53,11 +53,11 @@ function getWeatherData(options){
 			try{
 				randomizer = new Randomizer();
 				DATA = JSON.parse(data, DEBUG ? randomizer.randomize : function(k, v) { return v; });
-				log("\n" +
+				/*log("\n" +
 					JSON.stringify(DATA) +
 					"\n---------------------------------------\n\n",
 					"history.log"
-				);
+				);*/
 			}catch(e){
 				console.error(e);
 				log(e);
@@ -114,7 +114,7 @@ var intv = 1000 * 60 * 30; //update every 30 minutes
 //check for debug switch:
 DEBUG = process.argv.indexOf("debug") >= 0;
 setInterval(function(){
-	var msg = "Fetching weather data from Service...";
+	var msg = "[" + (new Date().toUTCString()) + "] Fetching weather data from Service...";
 	console.log(msg);
 	log(msg);
 	getWeatherData("conditions");
