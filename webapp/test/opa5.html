@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>OPA5 Tests for Weather Dashboard</title>
+		<script
+			id="sap-ui-bootstrap"
+			src="/resources/sap-ui-core.js"
+			>
+		</script>
+		<link rel="stylesheet" href="../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+
+		<!--<script type="javascript" src="modules/display.js"> -->
+		<script>
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.test.Opa5");
+			jQuery.sap.require("sap.ui.test.opaQunit");
+
+			/*var opa = sap.ui.test.Opa;*/
+			var opa5 = sap.ui.test.Opa5;
+
+			module("Matchers");
+
+			opaTest("Should find Lable with matching property", function(Given, When, Then){
+				Given.iStartMyAppInAFrame("/index.html");
+
+				When.waitFor({
+					viewName: "hss.weather.view.Display",
+					controlType: "sap.m.Label",
+					matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+						name: "text",
+						value: "Wiesloch"
+					}),
+					success: function(oLabel){
+						opa5.assert.ok(true, "Found the Lable" + oLabel)
+					},
+					errorMessage: "Did not find the label with the property Wiesloch"
+				});
+
+				Then.waitFor({
+					id: new RegExp("town"),
+					success: function(oLabel){
+						opa5.assert.ok(true, "Found Label " + oLabel);
+					},
+					errorMessage: "Did not find the Label with the corresponding ID"
+				});
+
+				Then.iTeardownMyAppFrame();
+			});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">OPA5 Tests for Weather Dashboard</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

@@ -21,7 +21,7 @@
                     justifyContent="Center" >
 
                     <VBox justifyContent="SpaceBetween" class="TileTemp Tile">
-                        <Label text="{data>/current_observation/display_location/city}" class="town"/>
+                        <Label text="{data>/current_observation/display_location/city}" class="town" id="town"/>
 
                         <VBox alignItems="Center">
                             <Image
