@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -98,6 +98,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+	// create an ARIA announcement and remember its ID for later use in the renderer:
+	Token.prototype._sAriaTokenLabelId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("TOKEN_ARIA_LABEL")
+	}).toStatic().getId();
+
+	Token.prototype._sAriaTokenDeletableId = new sap.ui.core.InvisibleText({
+		text: oRb.getText("TOKEN_ARIA_DELETABLE")
+	}).toStatic().getId();
+	
 	///**
 	// * This file defines behavior for the control,
 	// */
@@ -108,6 +119,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		this._deleteIcon.addStyleClass("sapMTokenIcon");
 		this.setAggregation("deleteIcon", this._deleteIcon);
+		this._deleteIcon.setUseIconTooltip(false);
 	};
 
 	Token.prototype.setEditable = function(bEditable){

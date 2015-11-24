@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * @author SAP SE
 	 * @version
-	 * 1.30.8
+	 * 1.32.7
 	 * @namespace
 	 */
 	var GridRenderer = {};
@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global'],
 						oRm.addClass("sapUiRespGridBreakXL");
 					}
 					if (oLay.getLinebreakL() === true) {
-						if (!bBreakXLChanged){
+						if (!bBreakXLChanged && !oLay._getLinebreakXLChanged()){
 							oRm.addClass("sapUiRespGridBreakXL");
 						}
 						oRm.addClass("sapUiRespGridBreakL");

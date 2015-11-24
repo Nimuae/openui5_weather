@@ -1,0 +1,60 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns:l="sap.ui.layout"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    xmlns:hss="hss.weather.control">
+    <Popover
+        id="SettingsPane"
+        class="SettingsPane"
+        placement="Left"
+        showHeader="false"
+        contentWidth="300px"
+        contentHeight="480px"
+        showArrow="false"
+        modal="true">
+        <Page
+            title="Einstellungen">
+            <content>
+                <l:Grid
+                    defaultSpan="L12 M12 S12"
+                    width="auto">
+                    <l:content>
+                        <f:SimpleForm
+                            minWidth="400"
+                            maxContainerCols="1"
+                            editable="true"
+                            layout="ResponsiveGridLayout"
+                            labelSpanL="3"
+                            labelSpanM="3"
+                            emptySpanL="4"
+                            emptySpanM="4"
+                            columnsL="1"
+                            columnsM="1">
+                            <f:content>
+                                <Label text="Stadt" />
+                                <Input value="Wiesloch" />
+                                <Label text="Temperatur" />
+                                <RadioButtonGroup columns="2" editable="true">
+                                    <RadioButton id="RB_C" text="Celsius" />
+                                    <RadioButton id="RB_F" text="Fahrenheit" />
+                                </RadioButtonGroup>
+                                <Label text="Wettervorhersage" />
+                                <Switch state="true" customTextOn="An" customTextOff="Aus" />
+                            </f:content>
+                        </f:SimpleForm>
+                    </l:content>
+                </l:Grid>
+            </content>
+            <footer>
+                <Toolbar>
+                    <ToolbarSpacer />
+                    <Button text="Speichern" type="Accept" press="onSave"/>
+                    <Button text="Abbrechen" type="Reject" press="onCancel"/>
+                </Toolbar>
+            </footer>
+        </Page>
+    </Popover>
+</core:FragmentDefinition>

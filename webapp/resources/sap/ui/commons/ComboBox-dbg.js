@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -271,7 +271,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			this._iClosedUpDownIdx = this.indexOfItem(oItem);
 			var oListBox = this._getListBox();
 			oListBox.setSelectedIndex(this._iClosedUpDownIdx);
-			this._updatePosInSet( null, this._iClosedUpDownIdx + 1, oItem.getAdditionalText());
+			this._updatePosInSet( null, this._iClosedUpDownIdx + 1, (oItem.getAdditionalText ? oItem.getAdditionalText() : ""));
 		} else {
 			this._updatePosInSet( null, -1, null);
 			this._iClosedUpDownIdx = -1;
@@ -603,7 +603,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			oItem = aItems[i];
 			oText = "" + oItem.getText();
 			if (startsWith(oText, oValue) && oItem.getEnabled()) {
-				this._updatePosInSet( $Ref, i + 1, oItem.getAdditionalText());
+				this._updatePosInSet( $Ref, i + 1, (oItem.getAdditionalText ? oItem.getAdditionalText() : ""));
 				$Ref.val(oText);
 				this._doSelect(oValue.length, oText.length);
 
@@ -693,7 +693,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			if (this._determinePosinset) {
 				iPos = this._determinePosinset(aItems, iNewIdx); //in DropdownBox separators must be removed from Posinset
 			}
-			this._updatePosInSet( $Ref, iPos, oItem.getAdditionalText());
+			this._updatePosInSet( $Ref, iPos, (oItem.getAdditionalText ? oItem.getAdditionalText() : ""));
 			$Ref.val(oText);
 			this._doSelect();
 			this._fireLiveChange(oEvent);
@@ -783,7 +783,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		var sListBox = this.getListBox(),
 			oListBox;
 		if (sListBox) {
-			oListBox = sap.ui.getCore().getControl(sListBox);
+			oListBox = sap.ui.getCore().byId(sListBox);
 		} else if (this._oListBox) {
 			oListBox = this._getPrivateListBox();
 		}
@@ -951,7 +951,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		if (iIndex >= 0) {
 			// ensure to mark pending only when set new
 			this._iClosedUpDownIdx = iIndex;
-			this._updatePosInSet( $Ref, iIndex + 1, oItem.getAdditionalText());
+			this._updatePosInSet( $Ref, iIndex + 1, (oItem.getAdditionalText ? oItem.getAdditionalText() : ""));
 			$Ref.val(oNewValue);
 			this._doSelect();
 			var oEvent = new jQuery.Event("sapshow"); // use sapshow event for live change (AutoComplete needs an event here)
@@ -1049,7 +1049,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			var sNewValue = oItem.getText();
 			this._iClosedUpDownIdx = iSelected;
 			this._close(); // to allow DropdownBox to set this._iClosedUpDownIdx in _cleanupClose
-			this._updatePosInSet( null, this._getListBox().getSelectedIndex() + 1, oItem.getAdditionalText());
+			this._updatePosInSet( null, this._getListBox().getSelectedIndex() + 1, (oItem.getAdditionalText ? oItem.getAdditionalText() : ""));
 			var sOldValue = this.getValue();
 			var sOldKey = this.getSelectedKey();
 			var sNewKey = oItem.getKey();
@@ -1225,7 +1225,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				sNewKey = oItem.getKey();
 				sNewId = oItem.getId();
 				sNewValue = oItem.getText();
-				sNewAdditionalText = oItem.getAdditionalText();
+				sNewAdditionalText = (oItem.getAdditionalText ? oItem.getAdditionalText() : "");
 				iIndex = i;
 				this._sWantedSelectedKey = undefined;
 				this._sWantedSelectedItemId = undefined;
@@ -1236,7 +1236,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				sNewKey = sSelectedKey;
 				sNewId = oItem.getId();
 				sNewValue = oItem.getText();
-				sNewAdditionalText = oItem.getAdditionalText();
+				sNewAdditionalText = (oItem.getAdditionalText ? oItem.getAdditionalText() : "");
 				iIndex = i;
 
 				if (sNewValue == sValue && sNewId == sSelectedItemId
@@ -1254,7 +1254,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				sNewKey = oItem.getKey();
 				sNewId = sSelectedItemId;
 				sNewValue = oItem.getText();
-				sNewAdditionalText = oItem.getAdditionalText();
+				sNewAdditionalText = (oItem.getAdditionalText ? oItem.getAdditionalText() : "");
 				iIndex = i;
 			} else if (oItem.getText() == sValue && oItem.getEnabled() && !(bFoundByKey && !bBoundValue) && !(bFoundById && !bBoundValue) && !bFoundByValue) {
 				// if not a WantedKey or Id is used and not found by key or ID, search for Value (use only first hit)
@@ -1262,7 +1262,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				sNewKey = oItem.getKey();
 				sNewId = oItem.getId();
 				sNewValue = sValue;
-				sNewAdditionalText = oItem.getAdditionalText();
+				sNewAdditionalText = (oItem.getAdditionalText ? oItem.getAdditionalText() : "");
 				iIndex = i;
 				if (bBoundValue && !this._sWantedSelectedKey  && !this._sWantedSelectedItemId) {
 					// bound on value and no items searched for existence
@@ -1359,7 +1359,14 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	ComboBox.prototype.applyFocusInfo = function(oFocusInfo){
 
 		var $Inp = jQuery(this.getInputDomRef());
-		$Inp.val(oFocusInfo.sTypedChars);
+
+		// only apply the stored value if the FocusInfo wasn't processed by
+		// the Popup. It might be possible that an application changed the value
+		// within the ComboBox in the meantime and the stored value in the FocusInfo
+		// is outdated.
+		if (!oFocusInfo.popup) {
+			$Inp.val(oFocusInfo.sTypedChars);
+		}
 		if (!this.getSelectedItemId() || sap.ui.getCore().byId(this.getSelectedItemId()).getText() != oFocusInfo.sTypedChars) {
 			// text entred before and is not the currently selected item -> just restore type-ahead
 			this._doTypeAhead();
@@ -1380,7 +1387,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		// static UI Area. Not needed for private ListBox
 		var sListBox = this.getListBox();
 		if (sListBox) {
-			var oListBox = sap.ui.getCore().getControl(sListBox);
+			var oListBox = sap.ui.getCore().byId(sListBox);
 			if (oListBox.getDomRef()) {
 				oListBox.$().appendTo(sap.ui.getCore().getStaticAreaRef());
 			}
@@ -1514,7 +1521,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				var oSelectedItem = aItems[i];
 				sSelectedItemId = oSelectedItem.getId();
 				var sValue = oSelectedItem.getText();
-				sAdditionalText = oSelectedItem.getAdditionalText();
+				sAdditionalText = (oSelectedItem.getAdditionalText ? oSelectedItem.getAdditionalText() : "");
 				this.setValue(sValue, true);
 				this._sTypedChars = sValue;
 				iIndex = i;
@@ -1586,7 +1593,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				var oSelectedItem = aItems[i];
 				sKey = oSelectedItem.getKey();
 				var sValue = oSelectedItem.getText();
-				sAdditionalText = oSelectedItem.getAdditionalText();
+				sAdditionalText = (oSelectedItem.getAdditionalText ? oSelectedItem.getAdditionalText() : "");
 				this.setValue(sValue, true);
 				this._sTypedChars = sValue;
 				iIndex = i;
@@ -1639,7 +1646,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 					var oSelectedItem = aItems[i];
 					sSelectedItemId = oSelectedItem.getId();
 					sKey = oSelectedItem.getKey();
-					sAdditionalText = oSelectedItem.getAdditionalText();
+					sAdditionalText = (oSelectedItem.getAdditionalText ? oSelectedItem.getAdditionalText() : "");
 					iIndex = i;
 					this._iClosedUpDownIdx = iIndex;
 					break;

@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/Target'],
-	function($, EventProvider, Target) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/Target', 'sap/ui/core/Component'],
+	function($, EventProvider, Target, Component) {
 	"use strict";
 
 		/**
@@ -32,7 +32,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 		 * <li>
 		 * rest as string parameters: "pattern" : ":all*:" - this pattern will define an optional variable that will pass the whole hash as string to the routing events. It may be used to define a catchall route, e. g. the following hashes would match: foo, product/5/3, product/5/detail/3/foo. You can also combine it with the other variables but make sure a variable with a * is the last one.</br>
 		 * </ul>
-		  * @param {boolean} [oConfig.greedy] @since 1.27: default: false - By default only the first route matching the hash, will fire events. If greedy is turned on for a route its events will be fired even if another route has already matched.
+		 * @param {boolean} [oConfig.greedy] @since 1.27: default: false - By default only the first route matching the hash, will fire events. If greedy is turned on for a route its events will be fired even if another route has already matched.
+		 * @param {String} [oConfig.parent] @since 1.32 This property contains the information about the route which nests this route in the form: "[componentName:]routeName". The nesting routes pattern will be prefixed to this routes pattern and hence the nesting route also matches if this one matches.
 		 * @param {string|string[]} [oConfig.target] one or multiple name of targets {@link sap.ui.core.routing.Targets}. As soon as the route matches, the target will be displayed. All the deprecated parameters are ignored, if a target is used.
 		 * @param {string} [oConfig.view] @deprecated since 1.28 - use target.viewName. The name of a view that will be created, the first time this route will be matched. To place the view into a Control use the targetAggregation and targetControl. Views will only be created once per Router.</li>
 		 * @param {string} [oConfig.viewType] @deprecated since 1.28 - use target.viewType. The type of the view that is going to be created. eg: "XML", "JS"</li>
@@ -58,13 +59,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				if (!oConfig.name) {
 					$.sap.log.error("A name has to be specified for every route", this);
 				}
-				
+
 				var that = this,
 					vRoute = oConfig.pattern,
 					aSubRoutes;
-				
+
+				this._aPattern = [];
+				this._aRoutes = [];
+				this._oParent = oParent;
+				this._oConfig = oConfig;
+				this._oRouter = oRouter;
+
 				if (!$.isArray(vRoute)) {
 					vRoute = [vRoute];
+				}
+
+				if (oConfig.parent) {
+					var oRoute = this._getParentRoute(oConfig.parent);
+					if (!oRoute) {
+						$.sap.log.error("No parent route with '" + oConfig.parent + "' could be found", this);
+					} else if (oRoute._aPattern.length > 1) {
+						$.sap.log.error("Routes with multiple patterns cannot be used as parent for nested routes", this);
+						return;
+					} else {
+						this._oNestingParent = oRoute;
+						vRoute.forEach(function(sRoute, i) {
+							var sNestingRoute = oRoute._aPattern[0];
+							sNestingRoute = sNestingRoute.charAt(sNestingRoute.length) === "/" ? sNestingRoute : sNestingRoute + "/";
+							vRoute[i] = sNestingRoute + sRoute;
+						});
+					}
 				}
 
 				if ($.isArray(oConfig.subroutes)) {
@@ -75,11 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 						oConfig.subroutes[oSubRoute.name] = oSubRoute;
 					});
 				}
-				this._aPattern = [];
-				this._aRoutes = [];
-				this._oParent = oParent;
-				this._oConfig = oConfig;
-				this._oRouter = oRouter;
+
 
 				if (!oConfig.target) {
 					// create a new target for this route
@@ -96,16 +116,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 						oRouter.addRoute(oSubRouteConfig, that);
 					});
 				}
-				
+
 				if (oConfig.pattern === undefined) {
 					//this route has no pattern - it will not get a matched handler. Or a crossroads route
 					return;
 				}
-				
+
 				$.each(vRoute, function(iIndex, sRoute) {
-	
+
 					that._aPattern[iIndex] = sRoute;
-	
+
 					that._aRoutes[iIndex] = oRouter._oRouter.addRoute(sRoute);
 					that._aRoutes[iIndex].greedy = oConfig.greedy;
 
@@ -230,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @private
 			 * @function
 			 */
-			_routeMatched : function(oArguments, bInital) {
+			_routeMatched : function(oArguments, bInital, oNestingChild) {
 				var oRouter = this._oRouter,
 					oParentPlaceInfo,
 					oPlaceInfo,
@@ -243,6 +263,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				// Recursively fire matched event and display views of this routes parents
 				if (this._oParent) {
 					oParentPlaceInfo = this._oParent._routeMatched(oArguments);
+				} else if (this._oNestingParent) {
+					// pass child for setting the flag in event parameter of parent
+					this._oNestingParent._routeMatched(oArguments, false, this);
 				}
 
 				oConfig =  $.extend({}, oRouter._oConfig, this._oConfig);
@@ -252,6 +275,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 					arguments: oArguments,
 					config : oConfig
 				};
+
+				if (oNestingChild) {
+					// setting the event parameter of nesting child
+					oEventData.nestedRoute = oNestingChild;
+				}
 
 				// Route is defined without target in the config - use the internally created target to place the view
 				if (this._oTarget) {
@@ -282,21 +310,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 					oConfig.callback(this, oArguments, oConfig, oTargetControl, oView);
 				}
 
-				this.fireEvent("matched", oEventData);
-				oRouter.fireRouteMatched(oEventData);
+				setTimeout(function(){
+					this.fireEvent("matched", oEventData);
+					oRouter.fireRouteMatched(oEventData);
+				}.bind(this), 0);
 
 				// skip this event in the recursion
 				if (bInital) {
-					$.sap.log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
-					this.fireEvent("patternMatched", oEventData);
-					oRouter.fireRoutePatternMatched(oEventData);
+					setTimeout(function(){
+						$.sap.log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
+						this.fireEvent("patternMatched", oEventData);
+						oRouter.fireRoutePatternMatched(oEventData);
+					}.bind(this), 0);
 				}
 
 				return oPlaceInfo;
 			},
 
 			_convertToTargetOptions: function (oOptions) {
-				return jQuery.extend(true,
+				return $.extend(true,
 					{},
 					oOptions,
 					{
@@ -309,6 +341,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 						viewType: oOptions.viewType,
 						viewId: oOptions.viewId
 					});
+			},
+
+			_getParentRoute: function (sParent) {
+				var aParts = sParent.split(":");
+				if (aParts.length === 1 || (aParts.length === 2 && !aParts[0]))  {
+					return this._oRouter.getRoute(aParts[aParts.length - 1]);
+				} else {
+					$.sap.assert(this._oRouter._oOwner, "No owner component for " + this._oRouter._oOwner.getId());
+					var oOwnerComponent = Component.getOwnerComponentFor(this._oRouter._oOwner);
+					while (oOwnerComponent) {
+						if (oOwnerComponent.getMetadata().getName() === aParts[0]) {
+							var oRouter = oOwnerComponent.getRouter();
+							return oRouter.getRoute(aParts[1]);
+						}
+						oOwnerComponent = Component.getOwnerComponentFor(oOwnerComponent);
+					}
+					return null;
+				}
 			}
 		});
 

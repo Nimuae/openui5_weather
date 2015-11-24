@@ -5,14 +5,14 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 
-		'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object', 
-		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', 
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
+		'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object',
+		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager',
 		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
-	function(jQuery, Device, Global, 
-		DataType, EventProvider, BaseObject, 
-		Component, Configuration, Control, Element, ElementMetadata, FocusHandler, 
+	function(jQuery, Device, Global,
+		DataType, EventProvider, BaseObject,
+		Component, Configuration, Control, Element, ElementMetadata, FocusHandler,
 		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
 		/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
 
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -185,6 +185,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			log.info("Creating Core",null,METHOD);
 
+			jQuery.sap.measure.start("coreComplete", "Core.js - complete");
+			jQuery.sap.measure.start("coreBoot", "Core.js - boot");
+			jQuery.sap.measure.start("coreInit", "Core.js - init");
+
 			/**
 			 * Object holding the interpreted configuration
 			 * Initialized from the global "sap-ui-config" object and from Url parameters
@@ -192,10 +196,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			 */
 			this.oConfiguration = new Configuration(this);
 
-			// initialize frameOptions script (anti-clickjacking, ect.)
+			// initialize frameOptions script (anti-clickjacking, etc.)
 			var oFrameOptionsConfig = this.oConfiguration["frameOptionsConfig"] || {};
-			oFrameOptionsConfig.mode = this.oConfiguration["frameOptions"];
-			oFrameOptionsConfig.whitelistService = this.oConfiguration["whitelistService"];
+			oFrameOptionsConfig.mode = this.oConfiguration.getFrameOptions();
+			oFrameOptionsConfig.whitelistService = this.oConfiguration.getWhitelistService();
 			this.oFrameOptions = new jQuery.sap.FrameOptions(oFrameOptionsConfig);
 
 			// enable complex bindings if configured
@@ -230,6 +234,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				log.info("Including LessSupport into declared modules");
 				aModules.push("sap.ui.core.plugin.LessSupport");
 			}
+
+			// determine preload mode (e.g. resolve default or auto)
+			var sPreloadMode = this.oConfiguration.preload;
+			// if debug sources are requested, then the preload feature must be deactivated
+			if ( window["sap-ui-debug"] ) {
+				sPreloadMode = "";
+			}
+			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
+			if ( sPreloadMode === "auto" ) {
+				sPreloadMode = (window["sap-ui-optimized"] && !this.oConfiguration['xx-loadAllMode']) ? "sync" : "";
+			}
+			// write back the determined mode for later evaluation (e.g. loadLibrary)
+			this.oConfiguration.preload = sPreloadMode;
 
 			log.info("Declared modules: " + aModules, METHOD);
 
@@ -277,11 +294,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot();
 				oSyncPoint1.finishTask(iCoreBootTask);
+				jQuery.sap.measure.end("coreBoot");
 			});
 
 			// a helper task to prevent the premature completion of oSyncPoint2
 			var iCreateTasksTask = oSyncPoint2.startTask("create sp2 tasks task");
-			
+
+			// load the version info file in case of a custom theme to determine
+			// the distribution version which should be provided in library.css requests.
+			if (this.oConfiguration["versionedLibCss"]) {
+				var iVersionInfoTask = oSyncPoint2.startTask("load version info");
+
+				var fnCallback = function(oVersionInfo) {
+					if (oVersionInfo) {
+						log.trace("Loaded \"sap-ui-version.json\".");
+					} else {
+						log.error("Could not load \"sap-ui-version.json\".");
+					}
+					oSyncPoint2.finishTask(iVersionInfoTask);
+				};
+
+				// only use async mode if library prelaod is async
+				var bAsync = sPreloadMode === "async";
+				var vReturn = sap.ui.getVersionInfo({ async: bAsync, failOnError: false });
+				if (vReturn instanceof Promise) {
+					vReturn.then(fnCallback, function(oError) {
+						// this should only happen when there is a script error as "failOnError=false"
+						// prevents throwing a loading error (e.g. HTTP 404)
+						log.error("Unexpected error when loading \"sap-ui-version.json\": " + oError);
+						oSyncPoint2.finishTask(iVersionInfoTask);
+					});
+				} else {
+					fnCallback(vReturn);
+				}
+			}
+
 			// when a boot task is configured, add it to syncpoint2
 			var fnCustomBootTask = this.oConfiguration["xx-bootTask"];
 			if ( fnCustomBootTask ) {
@@ -302,19 +349,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				this.bBooted = true;
 				oSyncPoint2.finishTask(iBootstrapScriptTask);
 			};
-
-			// determine preload mode (e.g. resolve default or auto)
-			var sPreloadMode = this.oConfiguration.preload;
-			// if debug sources are requested, then the preload feature must be deactivated
-			if ( window["sap-ui-debug"] ) {
-				sPreloadMode = "";
-			}
-			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
-			if ( sPreloadMode === "auto" ) {
-				sPreloadMode = (window["sap-ui-optimized"] && !this.oConfiguration['xx-loadAllMode']) ? "sync" : "";
-			}
-			// write back the determined mode for later evaluation (e.g. loadLibrary)
-			this.oConfiguration.preload = sPreloadMode;
 
 			if ( sPreloadMode === "sync" || sPreloadMode === "async" ) {
 				var bAsyncPreload = sPreloadMode !== "sync";
@@ -355,7 +389,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 							 "attachLocalizationChanged", "detachLocalizationChanged",
 							 "attachLibraryChanged", "detachLibraryChanged",
 							 "isStaticAreaRef", "createComponent", "getRootComponent", "getApplication",
-							 "setMessageManager", "getMessageManager"]
+							 "setMessageManager", "getMessageManager","byFieldGroupId"]
 		}
 
 	});
@@ -502,7 +536,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			jQuery.browser.fVersion = b.version;
 			jQuery.browser.mobile = b.mobile;
 
-			id = id + Math.floor(b.version);
+			id = id + (b.version === -1 ? "" : Math.floor(b.version));
 			$html.attr("data-sap-ui-browser", id);
 			log.debug("Browser-Id: " + id, null, METHOD);
 		}
@@ -621,26 +655,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)
 		var aCSSLibs = this.oConfiguration['preloadLibCss'];
-		if ( aCSSLibs.length > 0 ) {
-			// a leading "!" denotes that the application has loaded the file already
-			var bAppManaged = aCSSLibs[0].slice(0,1) === "!";
-			if ( bAppManaged ) {
-				aCSSLibs[0] = aCSSLibs[0].slice(1); // also affect same array in this.oConfiguration!
-			}
-			if ( aCSSLibs[0] === "*" ) {
-				// replace with configured libs
-				aCSSLibs.splice(0,1); // remove *
-				var pos = 0;
-				jQuery.each(this.oConfiguration.modules, function(i,mod) {
-					var m = mod.match(/^(.*)\.library$/);
-					if ( m ) {
-						aCSSLibs.splice(pos,0,m[1]);
-					}
-				});
-			}
-			if ( !bAppManaged ) {
-				this.includeLibraryTheme("sap-ui-merged", undefined, "?l=" + aCSSLibs.join(","));
-			}
+		if (aCSSLibs && aCSSLibs.length > 0 && !aCSSLibs.appManaged) {
+			this.includeLibraryTheme("sap-ui-merged", undefined, "?l=" + aCSSLibs.join(","));
 		}
 
 		// load all modules now
@@ -857,6 +873,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this.oThemeCheck = new ThemeCheck(this);
 
 		log.info("Initialized",null,METHOD);
+		jQuery.sap.measure.end("coreInit");
 
 		this.bInitialized = true;
 
@@ -867,9 +884,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		this._createUIAreas();
 
-		this._executeOnInit();
-
 		this.oThemeCheck.fireThemeChangedEvent(true);
+
+		this._executeOnInit();
 
 		this._setupRootComponent();
 
@@ -878,6 +895,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this._executeInitListeners();
 
 		this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+
+		jQuery.sap.measure.end("coreComplete");
 	};
 
 	Core.prototype._createUIAreas = function() {
@@ -1474,7 +1493,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// include the library theme, but only if it has not been suppressed in library metadata or by configuration
 		if ( !oLibInfo.noLibraryCSS && jQuery.inArray(sLibName, this.oConfiguration['preloadLibCss']) < 0 ) {
-			this.includeLibraryTheme(sLibName);
+			var sQuery;
+
+			// append library and distribution version (if available) to allow on demand custom theme compilation
+			if (this.oConfiguration["versionedLibCss"]) {
+				sQuery = "?version=" + oLibInfo.version;
+
+				// distribution version may not be available (will be loaded in Core constructor syncpoint2)
+				if (sap.ui.versioninfo) {
+					sQuery += "&sap-ui-dist-version=" + sap.ui.versioninfo.version;
+				}
+			}
+			this.includeLibraryTheme(sLibName, undefined, sQuery);
 		}
 
 		// expose some legacy names
@@ -2216,7 +2246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the template for the given id
 	 * @public
-	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead. 
+	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead.
 	 */
 	Core.prototype.getTemplate = function(sId) {
 		jQuery.sap.require("sap.ui.core.tmpl.Template");
@@ -2531,11 +2561,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this.oMessageManager = oMessageManager;
 	};
 
+	/**
+	 * Returns the active <code>MessageManager</code> instance.
+	 *
+	 * @return {sap.ui.core.message.MessageManager}
+	 * @public
+	 * @since 1.33.0
+	 */
 	Core.prototype.getMessageManager = function() {
 		if (!this.oMessageManager) {
 			this.oMessageManager = new MessageManager();
 		}
 		return this.oMessageManager;
+	};
+
+	/**
+	 * Returns a list of all controls with a field group ID.
+	 * See {@link sap.ui.core.Control#checkFieldGroupIds Control.prototype.checkFieldGroupIds} for a description of the
+	 * <code>vFieldGroupIds</code> parameter.
+	 *
+	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
+	 * @return {sap.ui.core.Control[]} The list of controls with matching field group IDs
+	 * @public
+	 */
+	Core.prototype.byFieldGroupId = function(vFieldGroupIds) {
+		var aResult = [];
+		for (var n in this.mElements) {
+			var oElement = this.mElements[n];
+			if (oElement instanceof Control && oElement.checkFieldGroupIds(vFieldGroupIds)) {
+				aResult.push(oElement);
+			}
+		}
+		return aResult;
 	};
 
 	/**
@@ -2923,6 +2980,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	Core.prototype.destroy = function() {
+		this._oFocusHandler.destroy();
 		_oEventProvider.destroy();
 		BaseObject.prototype.destroy.call(this);
 	};

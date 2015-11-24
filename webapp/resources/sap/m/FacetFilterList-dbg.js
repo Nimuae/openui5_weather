@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 * @class
 	 * FacetFilterList represents a list of values for the FacetFilter control.
 	 * @extends sap.m.List
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public

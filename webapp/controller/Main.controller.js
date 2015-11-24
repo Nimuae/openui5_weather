@@ -24,8 +24,48 @@ sap.ui.define([
 			this.getView().getModel("data").loadData(this.SERVICE_URL);
 		},
 
-		navigateToCustomizing: function(){
-			sap.ui.getCore().byId("MainApp").to("viewCustom");
-		}		
+		openSettingsPane: function(oEvent){
+			if(!this._settingsPopover){
+				this._settingsPopover = sap.ui.xmlfragment("settingsPopover", "hss.weather.view.SettingsPopover", this);
+				this.getView().addDependent(this._settingsPopover);
+			}
+
+			var oSource = oEvent.getSource();
+
+			jQuery.sap.delayedCall(0, this, function(){
+				this._settingsPopover.openBy(oSource);
+			});
+		},
+		
+		onSave: function(){			
+			sap.m.MessageToast.show("Änderungen wurden erfolgreich gespeichert.");
+		},
+
+		onCancel: function(){
+			var that = this;
+			var dialog = new sap.m.Dialog({
+				title: 'Abbrechen',
+				type: 'Message',
+				content: new sap.m.Text({ text: 'Wollen Sie die Änderungen wirklich verwerfen?' }),
+				beginButton: new sap.m.Button({
+					text: 'Ja',
+					press: function () {
+						dialog.close();
+						that._settingsPopover.close();
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: 'Abbrechen',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function() {
+					dialog.destroy();
+				}
+			});
+
+			dialog.open();
+		}
 	});
 });

@@ -1485,12 +1485,13 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-ch
 }
 
 /* ResponsiveGridLayout */
-.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12) > .sapUiLbl,
-.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12) > .sapUiLbl,
-.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapUiLbl,
-.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanXL12) > .sapUiLbl {
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapUiLbl,
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapUiLbl,
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapUiLbl,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapUiLbl {
 	margin-top: 2px;
 }
+
 /* END "Label.less" */
 
 /* START "layout.less" */
@@ -1587,11 +1588,14 @@ html[data-sap-ui-browser="ie8"] .sapUiGrid td > .sapUiLnk{
 }
 
 .sapUiLbxI:hover:not(.sapUiLbxIDis),
-.sapUiLbxRo:not(.sapUiLbxIDis) > ul > .sapUiLbxI.sapUiLbxISel:hover,
-.sapUiLbxStd > ul > .sapUiLbxISel:hover > span,
-.sapUiLbxStd > ul > .sapUiLbxISel:hover,
 .sapUiLbx:not(.sapUiLbxDis) > ul > .sapUiLbxI:hover:not(.sapUiLbxISel):not(.sapUiLbxIDis) > span {  /* Fix for IE10 :hover bug - need to set the color on children as well */
 	background-color: @sapUiListHoverBackground;
+}
+
+.sapUiLbxRo:not(.sapUiLbxIDis) > ul > .sapUiLbxI.sapUiLbxISel:hover,
+.sapUiLbxStd > ul > .sapUiLbxISel:hover > span,
+.sapUiLbxStd > ul > .sapUiLbxISel:hover {
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
 /*
@@ -3869,7 +3873,7 @@ html[data-sap-ui-browser="ie10"] {
 }
 
 .sapUiTbDD {
-	background-color: @sapUiToolbarBackground;
+	background-color: @sapUiGroupContentBackground;
 	border: 3px solid @sapUiHighlight;
 }
 
@@ -3957,7 +3961,7 @@ html[data-sap-ui-browser="ie10"] {
 }
 
 .sapUiTreeNodeSelectedParent:Hover, .sapUiTreeNodeSelected:Hover {
-	background-color: @sapUiListHoverBackground;
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
 .sapUiTreeNodeSelectedParent, .sapUiTreeNodeSelected {
@@ -3972,6 +3976,11 @@ html[data-sap-ui-browser="ie10"] {
 
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent:Hover,
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelected:Hover,
+.sapUiTreeNodeExpanded.sapUiTreeNodeSelected.sapUiTreeNode:Hover {
+	background-color: @sapUiListSelectionHoverBackground;
+	background-image: url(img/tree/TreeNode_Exp.gif);
+}
+
 .sapUiTreeNodeExpanded.sapUiTreeNode:Hover{
 	background-color: @sapUiListHoverBackground;
 	background-image: url(img/tree/TreeNode_Exp.gif);
@@ -3984,7 +3993,12 @@ html[data-sap-ui-browser="ie10"] {
 
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelectedParent:Hover,
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelected:Hover,
-.sapUiTreeNodeCollapsed.sapUiTreeNode:Hover{
+.sapUiTreeNodeCollapsed.sapUiTreeNodeSelected.sapUiTreeNode:Hover {
+	background-color: @sapUiListSelectionHoverBackground;
+	background-image: url(img/tree/TreeNode_Coll.gif);
+}
+
+.sapUiTreeNodeCollapsed.sapUiTreeNode:Hover {
 	background-color: @sapUiListHoverBackground;
 	background-image: url(img/tree/TreeNode_Coll.gif);
 }

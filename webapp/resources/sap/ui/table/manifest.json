@@ -1,12 +1,12 @@
 {
-  "_version": "1.1.0",
+  "_version": "1.2.0",
   "sap.app": {
-    "_version": "1.1.0",
+    "_version": "1.2.0",
     "id": "sap.ui.table",
     "type": "library",
     "embeds": [],
     "applicationVersion": {
-      "version": "1.30.8"
+      "version": "1.32.7"
     },
     "title": "Table-like controls, mainly for desktop scenarios.",
     "description": "Table-like controls, mainly for desktop scenarios.",
@@ -25,13 +25,13 @@
   "sap.ui5": {
     "_version": "1.1.0",
     "dependencies": {
-      "minUI5Version": "1.30",
+      "minUI5Version": "1.32",
       "libs": {
         "sap.ui.core": {
-          "minVersion": "1.30.8"
+          "minVersion": "1.32.7"
         },
         "sap.ui.unified": {
-          "minVersion": "1.30.8"
+          "minVersion": "1.32.7"
         }
       }
     }

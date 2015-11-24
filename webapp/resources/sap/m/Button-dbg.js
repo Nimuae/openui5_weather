@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -63,7 +63,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconFirst : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * The source property when this icon is tapped. Graphical element is changed to the new source as long as the icon is tapped.
+			 * The source property of an alternative icon for the active (depressed) state of the button.
+			 * Both active and default icon properties should be defined and have the same type: image or icon font.
+			 * If the <code>icon</code> property is not set or has a different type, the active icon is not displayed.
 			 */
 			activeIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
@@ -279,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// handling active icon
 		if (this.getEnabled()) {
-			if (this.getIcon() && this.getActiveIcon() && this._image instanceof sap.m.Image) {
+			if (this.getIcon() && this.getActiveIcon() && this._image) {
 				this._image.setSrc(this.getActiveIcon());
 			}
 		}
@@ -297,7 +299,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// handling active icon
 		if (this.getEnabled()) {
-			if (this.getIcon() && this.getActiveIcon() && this._image instanceof sap.m.Image) {
+			if (this.getIcon() && this.getActiveIcon() && this._image) {
 				this._image.setSrc(this.getIcon());
 			}
 		}
@@ -459,7 +461,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (bShouldSupressRendering) {
 				// Get text to have the type conversation for non-string values done by the framework
 				sText = this.getText();
-				oDomRef.innerHTML = jQuery.sap.escapeHTML(sText);
+				oDomRef.innerHTML = jQuery.sap.encodeHTML(sText);
 
 				// Check if an icon is set
 				if (this.getIcon()) {

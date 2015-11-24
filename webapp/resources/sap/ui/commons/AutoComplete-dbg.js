@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	/**
 	 * Constructor for a new AutoComplete.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 *
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 		properties : {
 
 			/**
-			 * Whether scrolling should be enabled when the number of items is higher than maxPopupItems.
+			 * Determines whether scrolling should be enabled when the number of items is higher than maxPopupItems.
 			 * If set to false only the first n items (n=maxPopupItems) are shown.
 			 */
 			enableScrolling : {type : "boolean", group : "Misc", defaultValue : true}
@@ -142,7 +142,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 
 		return sDescBy;
 	}
-
 
 	function updateOnClose(oAuto){
 		var $input = jQuery(oAuto.getInputDomRef());

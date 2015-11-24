@@ -36,7 +36,7 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 		var rm = oRenderManager;
 
 		// render ActionBar
-		// result: <div id=​"<id>" data-sap-ui=​"<id>" class=​"sapUiUx3ActionBar" role=​"toolbar">​
+		// result: <div id="<id>" data-sap-ui="<id>" class="sapUiUx3ActionBar" role="toolbar">
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUx3ActionBar");
@@ -702,7 +702,7 @@ sap.ui.define("sap/ui/ux3/ExactAreaRenderer",['jquery.sap.global'],
 				if (oToolbarItem instanceof sap.ui.commons.ToolbarSeparator) {
 					sap.ui.commons.ToolbarRenderer.renderSeparator(rm, oToolbarItem);
 				} else if (oToolbarItem instanceof sap.ui.ux3.ExactAreaToolbarTitle) {
-					rm.write("<div class=\"sapUiUx3ExactAreaTbTitle\">" + jQuery.sap.escapeHTML(oToolbarItem.getText()) + "</div>");
+					rm.write("<div class=\"sapUiUx3ExactAreaTbTitle\">" + jQuery.sap.encodeHTML(oToolbarItem.getText()) + "</div>");
 				} else {
 					rm.renderControl(oToolbarItem);
 				}
@@ -774,7 +774,7 @@ sap.ui.define("sap/ui/ux3/ExactBrowserRenderer",['jquery.sap.global'],
 	
 		if (oControl.getShowHeader()) {
 			rm.write("<div class=\"sapUiUx3ExactBrwsrHd\"><h2 id=\"" + oControl.getId() + "-hdtitle\">");
-			rm.write(jQuery.sap.escapeHTML(oControl.getHeaderTitle()));
+			rm.write(jQuery.sap.encodeHTML(oControl.getHeaderTitle()));
 			rm.write("</h2><div class=\"sapUiUx3ExactBrwsrHdTool\" role=\"toolbar\">");
 			if (oControl.getEnableSave()) {
 				rm.renderControl(oControl._saveButton);
@@ -1625,8 +1625,8 @@ sap.ui.define("sap/ui/ux3/NavigationBarRenderer",['jquery.sap.global'],
 	 */
 	var NavigationBarRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -1637,17 +1637,21 @@ sap.ui.define("sap/ui/ux3/NavigationBarRenderer",['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 		var sId = oControl.getId();
-	
+
 		// write the HTML into the render manager
 		rm.addClass("sapUiUx3NavBar");
 		if (oControl.getToplevelVariant()) {
 			rm.addClass("sapUiUx3NavBarToplevel");
 		}
-		
+
 		rm.write("<nav");
 		rm.writeControlData(oControl);
 		rm.writeClasses();
-		rm.write(" role='navigation'><ul id='" + sId + "-list' role='menubar' class='sapUiUx3NavBarList'>");
+		rm.write("role='navigation'>");
+		rm.write("<ul id='" + sId + "-list' role='menubar' class='sapUiUx3NavBarList'");
+		rm.addStyle("white-space", "nowrap");
+		rm.writeStyles();
+		rm.write(">");
 		NavigationBarRenderer.renderItems(rm, oControl);
 		rm.write("</ul>");
 		rm.write("<a id='" + sId + "-ofb' tabindex='-1' role='presentation' class='sapUiUx3NavBarBack' href='javascript:void(0)'>&lt;&lt;</a>");
@@ -1657,9 +1661,9 @@ sap.ui.define("sap/ui/ux3/NavigationBarRenderer",['jquery.sap.global'],
 		rm.write("</a>");
 		rm.write("</nav>");
 	};
-	
-	
-	
+
+
+
 	NavigationBarRenderer.renderItems = function(oRm, oControl) {
 		var aItems = oControl.getItems();
 		var bNeedToGetInstances = false;
@@ -1667,31 +1671,37 @@ sap.ui.define("sap/ui/ux3/NavigationBarRenderer",['jquery.sap.global'],
 			aItems = oControl.getAssociatedItems();
 			bNeedToGetInstances = true; // avoid type checks in the loop
 		}
-		
+
 		var iNoOfItems = aItems.length;
-	
+
 		// dummy item to avoid jumping while animating
-		oRm.write("<li><a id='" + oControl.getId() + "-dummyItem' class='sapUiUx3NavBarDummyItem sapUiUx3NavBarItem'>&nbsp;</a></li>");
+		oRm.write("<li");
+		oRm.addStyle("display", "inline-block");
+		oRm.writeStyles();
+		oRm.write(">");
+		oRm.write("<a id='" + oControl.getId() + "-dummyItem' class='sapUiUx3NavBarDummyItem sapUiUx3NavBarItem'>&nbsp;</a></li>");
 		var selId = oControl.getSelectedItem();
-		
+
 		for (var i = 0; i < iNoOfItems; i++) {
 			var item = bNeedToGetInstances ? sap.ui.getCore().byId(aItems[i]) : aItems[i];
 			if (item.getVisible()) {
 				var itemId = item.getId();
 				var bIsSelected = itemId == selId;
 				oRm.write("<li");
+				oRm.addStyle("display", "inline-block");
+				oRm.writeStyles();
 				if (bIsSelected) {
 					oRm.write(" class='sapUiUx3NavBarItemSel'");
 				}
-				
+
 				oRm.write("><a ");
-				
+
 				// Psssst. This is not right. Don't tell anyone, because it works like this.
 				// The element data should be written into the li-element so that it is removed
 				// automatically on destroy. Since when removing items an invalidate is called the list
 				// is built up from scratch anyway, so it does not cause any problems. If this leads
 				// to any problems, the onclick/userActivation code must be changed to reflect this
-				// change. 
+				// change.
 				// TL;DR: Not correct, won't fix - because it works and things might depend on the DOM
 				//        being this way.
 				oRm.writeElementData(item);
@@ -1703,18 +1713,18 @@ sap.ui.define("sap/ui/ux3/NavigationBarRenderer",['jquery.sap.global'],
 					oRm.write(" tabindex='0'");
 				}
 				oRm.write(" aria-checked='" + (bIsSelected ? "true" : "false") + "'");
-				
+
 				var tooltip = item.getTooltip_AsString();
 				if (tooltip) {
-					oRm.write(" title='" + jQuery.sap.escapeHTML(tooltip) + "'");
+					oRm.write(" title='" + jQuery.sap.encodeHTML(tooltip) + "'");
 				}
-			
+
 				oRm.write(">");
-				oRm.write(jQuery.sap.escapeHTML(item.getText()));
+				oRm.write(jQuery.sap.encodeHTML(item.getText()));
 				oRm.write("</a></li>");
 			}
 		}
-	
+
 		var arrowPos;
 		if (oControl._bRtl) {
 			arrowPos = "right:" + oControl._iLastArrowPos;
@@ -1727,7 +1737,7 @@ sap.ui.define("sap/ui/ux3/NavigationBarRenderer",['jquery.sap.global'],
 		}
 		oRm.write("' class='sapUiUx3NavBarArrow'></span>");
 	};
-	
+
 
 	return NavigationBarRenderer;
 
@@ -2348,8 +2358,9 @@ jQuery.sap.declare('sap.ui.ux3.QuickViewRenderer'); // unresolved dependency add
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.commons.CalloutBaseRenderer'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Renderer'); // unlisted dependency retained
-sap.ui.define("sap/ui/ux3/QuickViewRenderer",['jquery.sap.global', 'sap/ui/commons/CalloutBaseRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, CalloutBaseRenderer, Renderer) {
+jQuery.sap.require('sap.ui.core.IconPool'); // unlisted dependency retained
+sap.ui.define("sap/ui/ux3/QuickViewRenderer",['jquery.sap.global', 'sap/ui/commons/CalloutBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
+	function(jQuery, CalloutBaseRenderer, Renderer, IconPool) {
 	"use strict";
 
 
@@ -2423,7 +2434,7 @@ sap.ui.define("sap/ui/ux3/QuickViewRenderer",['jquery.sap.global', 'sap/ui/commo
 	
 			//icon
 			if (sIcon) {
-				if (sIcon.indexOf("sap-icon://") !== 0) {
+				if (IconPool.isIconURI(sIcon)) {
 					//setting title & tabindex here
 					//alt, src and role=presentation are set by writeIcon
 					oIconAttr = {
@@ -3717,7 +3728,7 @@ sap.ui.define("sap/ui/ux3/ShellRenderer",['jquery.sap.global', 'sap/ui/core/Icon
 		// logout button
 		if (oControl.getShowLogoutButton()) {
 			rm.write("<a id='" + oControl.getId() + "-logout' title='");
-			rm.write(oControl.getLogoutButtonTooltip() ? jQuery.sap.escapeHTML(oControl.getLogoutButtonTooltip()) : rb.getText("SHELL_LOGOUT"));
+			rm.write(oControl.getLogoutButtonTooltip() ? jQuery.sap.encodeHTML(oControl.getLogoutButtonTooltip()) : rb.getText("SHELL_LOGOUT"));
 			rm.write("' tabindex='0' role='button' class='sapUiUx3ShellHeaderButton sapUiUx3ShellHeader-logout'></a>");
 		}
 		rm.write("</span>");
@@ -3801,7 +3812,12 @@ sap.ui.define("sap/ui/ux3/ShellRenderer",['jquery.sap.global', 'sap/ui/core/Icon
 					rm.write(" tabindex='0' role='button' aria-pressed='false'>");
 					var sIconUrl = oToolItem.getIcon();
 					if (IconPool.isIconURI(sIconUrl)) {
-						rm.writeIcon(sIconUrl, ["sapUiUx3ShellToolFontIcon"], {});
+						rm.writeIcon(sIconUrl, ["sapUiUx3ShellToolFontIcon"], {
+							// prevent default icon tooltip / ARIA attribute
+							// the outer <a> tag has the information required
+							"title": null,
+							"aria-label": null
+						});
 					} else {
 						rm.write("<img src='");
 						rm.writeEscaped(sIconUrl);
@@ -4111,7 +4127,11 @@ sap.ui.define("sap/ui/ux3/ThingViewerRenderer",['jquery.sap.global'],
 		var rm = oRenderManager;
 	
 		rm.write("<div class='sapUiUx3TVIconBar'>");
-		rm.writeIcon(oControl.getIcon(),["sapUiUx3TVIcon"],{role:'presentation', id: oControl.getId() + '-swatch'});
+		rm.writeIcon(oControl.getIcon(),["sapUiUx3TVIcon"],{
+			role: 'presentation',
+			id: oControl.getId() + '-swatch',
+			title: null // prevent default icon tooltip
+		});
 		rm.write("<div class='sapUiUx3TVTitle'>");
 		rm.write("<span role='heading' aria-level='2' class='sapUiUx3TVTitleFirst'");
 		rm.writeAttributeEscaped("title", oControl.getTitle());
@@ -4393,14 +4413,14 @@ sap.ui.define("sap/ui/ux3/library",['jquery.sap.global',
 	 * @namespace
 	 * @name sap.ui.ux3
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.ux3",
-		version: "1.30.8",
+		version: "1.32.7",
 		dependencies : ["sap.ui.core","sap.ui.commons"],
 		types: [
 			"sap.ui.ux3.ActionBarSocialActions",
@@ -4794,7 +4814,7 @@ sap.ui.define("sap/ui/ux3/ActionBar",['jquery.sap.global', 'sap/ui/core/Control'
 	 * 
 	 * When using this control, please be aware that it fulfills rather specific requirements: it has been designed for and is used within composite controls QuickView and ThingInspector.
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -6335,7 +6355,7 @@ sap.ui.define("sap/ui/ux3/Collection",['jquery.sap.global', 'sap/ui/core/Element
 	 * @class
 	 * Collection
 	 * @extends sap.ui.core.Element
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -6538,7 +6558,7 @@ sap.ui.define("sap/ui/ux3/CollectionInspector",['jquery.sap.global', 'sap/ui/cor
 	 * @class
 	 * CollectionInspector
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -7168,7 +7188,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	 * @class
 	 * DataSet
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -7944,7 +7964,7 @@ sap.ui.define("sap/ui/ux3/DataSetItem",['jquery.sap.global', 'sap/ui/core/Elemen
 	 * @class
 	 * DataSet Item
 	 * @extends sap.ui.core.Element
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -8056,7 +8076,7 @@ sap.ui.define("sap/ui/ux3/DataSetSimpleView",['jquery.sap.global', 'sap/ui/core/
 	 * DataSetSimpleView provides a simple view example for DataSet usage.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.ux3.DataSetView
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -8578,7 +8598,7 @@ sap.ui.define("sap/ui/ux3/ExactArea",['jquery.sap.global', 'sap/ui/commons/Toolb
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -8667,7 +8687,7 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -9072,7 +9092,7 @@ sap.ui.define("sap/ui/ux3/ExactList",['jquery.sap.global', 'sap/ui/commons/ListB
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -9531,8 +9551,8 @@ sap.ui.define("sap/ui/ux3/ExactList",['jquery.sap.global', 'sap/ui/commons/ListB
 			case jQuery.sap.KeyCodes.NUMPAD_MINUS:
 				/* if (!!(oEvent.metaKey || oEvent.ctrlKey)) { //NUMPAD_MINUS + CTRL: Collapse list vertically
 					//Deactivated on request of UX
-					var jListContRef = jQuery.sap.byId(this.getId() + "-lst");
-					if(jListContRef.hasClass("sapUiUx3ExactLstExpanded") && jQuery.sap.byId(this.getId() + "-exp").is(":visible")){
+					var jListContRef = this.$("lst");
+					if(jListContRef.hasClass("sapUiUx3ExactLstExpanded") && this.$("exp").is(":visible")){
 						toggleVerticalCollapseState(this);
 					}
 					oEvent.preventDefault();
@@ -9550,8 +9570,8 @@ sap.ui.define("sap/ui/ux3/ExactList",['jquery.sap.global', 'sap/ui/commons/ListB
 			case jQuery.sap.KeyCodes.NUMPAD_PLUS:
 				/* if (!!(oEvent.metaKey || oEvent.ctrlKey)) { //NUMPAD_PLUS + CTRL: Expand list vertically
 					//Deactivated on request of UX
-					var jListContRef = jQuery.sap.byId(this.getId() + "-lst");
-					if(!jListContRef.hasClass("sapUiUx3ExactLstExpanded") && jQuery.sap.byId(this.getId() + "-exp").is(":visible")){
+					var jListContRef = this.$("lst");
+					if(!jListContRef.hasClass("sapUiUx3ExactLstExpanded") && this.$("exp").is(":visible")){
 						toggleVerticalCollapseState(this);
 					}
 					oEvent.preventDefault();
@@ -10062,7 +10082,7 @@ sap.ui.define("sap/ui/ux3/ExactList",['jquery.sap.global', 'sap/ui/commons/ListB
 	
 				oList._oPopup = new Popup();
 	
-				if (!!!sap.ui.Device.browser.firefox) {
+				if (!sap.ui.Device.browser.firefox) {
 					oList._oPopup._fixPositioning = function(oPosition, bRtl) {
 						Popup.prototype._fixPositioning.apply(this, arguments);
 						if (bRtl) {
@@ -10604,7 +10624,7 @@ sap.ui.define("sap/ui/ux3/FacetFilter",['jquery.sap.global', 'sap/ui/core/Contro
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -10668,7 +10688,7 @@ sap.ui.define("sap/ui/ux3/FacetFilterList",['jquery.sap.global', 'sap/ui/commons
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -10992,7 +11012,7 @@ sap.ui.define("sap/ui/ux3/Feeder",['jquery.sap.global', 'sap/ui/commons/Button',
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -11212,7 +11232,7 @@ sap.ui.define("sap/ui/ux3/Feeder",['jquery.sap.global', 'sap/ui/commons/Button',
 				// check for "linebreaking"-nodes
 				if (node.nodeName === 'DIV' ||
 						node.nodeName ===  'P' ||
-						(node.nodeName === 'BR' && !!!sap.ui.Device.browser.webkit)) { // ignore BR in webkit
+						(node.nodeName === 'BR' && !sap.ui.Device.browser.webkit)) { // ignore BR in webkit
 	
 					// ignore last <br> with type="_moz" in mozilla
 					if (node.nodeName === 'BR' &&
@@ -11329,7 +11349,7 @@ sap.ui.define("sap/ui/ux3/NavigationBar",['jquery.sap.global', 'sap/ui/core/Cont
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -11884,7 +11904,7 @@ sap.ui.define("sap/ui/ux3/NavigationBar",['jquery.sap.global', 'sap/ui/core/Cont
 	NavigationBar.prototype._scroll = function(iDelta, iDuration) {
 		var oDomRef = this.$()[0].firstChild;
 		var iScrollLeft = oDomRef.scrollLeft;
-		if (!!!sap.ui.Device.browser.internet_explorer && this._bRtl) {
+		if (!sap.ui.Device.browser.internet_explorer && this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
 		var iScrollTarget = iScrollLeft + iDelta;
@@ -11902,38 +11922,49 @@ sap.ui.define("sap/ui/ux3/NavigationBar",['jquery.sap.global', 'sap/ui/core/Cont
 	 * @private
 	 */
 	NavigationBar.prototype._checkOverflow = function(oListDomRef, of_back, of_fw) {
+
+		function isChromeOnMac() {
+			return sap.ui.Device.os.macintosh && sap.ui.Device.browser.chrome;
+		}
+
 		if (oListDomRef && this.getDomRef() && jQuery.sap.act.isActive()) {
 			var iScrollLeft = oListDomRef.scrollLeft;
-	
+
 			// check whether scrolling to the left is possible
 			var bScrollBack = false;
 			var bScrollForward = false;
-	
+
 			var realWidth = oListDomRef.scrollWidth;
 			var availableWidth = oListDomRef.clientWidth;
-			
+
+			// Exceptional case for Chrome on Mac OS
+			// Added scroll tolerance to ensure that the arrows are hidden correctly
+			// see BCP Internal Incident 1570758438
+			var iScrollTolerance = isChromeOnMac() ? 5 : 0;
+
 			if (Math.abs(realWidth - availableWidth) == 1) { // Avoid rounding issues see CSN 1316630 2013
 				realWidth = availableWidth;
 			}
-	
+
 			if (!this._bRtl) {   // normal LTR mode
-				if (iScrollLeft > 0) {
+
+				if (iScrollLeft > iScrollTolerance) {
 					bScrollBack = true;
 				}
-				if ((realWidth > availableWidth) && (iScrollLeft + availableWidth < realWidth)) {
+				if ((realWidth > availableWidth) && (realWidth - (iScrollLeft + availableWidth) > iScrollTolerance)) {
 					bScrollForward = true;
 				}
 	
 			} else {  // RTL mode
 				var $List = jQuery(oListDomRef);
-				if ($List.scrollLeftRTL() > 0) {
+				if ($List.scrollLeftRTL() > iScrollTolerance) {
 					bScrollForward = true;
 				}
-				if ($List.scrollRightRTL() > 0) {
+				if ($List.scrollRightRTL() > iScrollTolerance) {
 					bScrollBack = true;
 				}
 			}
-	
+
 			// only do DOM changes if the state changed to avoid periodic application of identical values
 			if ((bScrollForward != this._bPreviousScrollForward) || (bScrollBack != this._bPreviousScrollBack)) {
 				this._bPreviousScrollForward = bScrollForward;
@@ -12154,7 +12185,7 @@ sap.ui.define("sap/ui/ux3/NavigationItem",['jquery.sap.global', 'sap/ui/core/Ite
 	 * @extends sap.ui.core.Item
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -12226,7 +12257,7 @@ sap.ui.define("sap/ui/ux3/NotificationBar",['jquery.sap.global', 'sap/ui/core/Co
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -12495,7 +12526,7 @@ sap.ui.define("sap/ui/ux3/NotificationBar",['jquery.sap.global', 'sap/ui/core/Co
 				oRm.write(">");
 	
 				oRm.write("<img");
-				oRm.writeAttribute("src", oControl.getIcon());
+				oRm.writeAttributeEscaped("src", oControl.getIcon());
 				oRm.write("/>");
 	
 				oRm.write("</div>");
@@ -13652,7 +13683,7 @@ sap.ui.define("sap/ui/ux3/Notifier",['jquery.sap.global', 'sap/ui/commons/Callou
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -13947,13 +13978,11 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 	function(jQuery, Control, Popup, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new Overlay.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Overlay Control
@@ -13961,7 +13990,7 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 	 * @implements sap.ui.core.PopupInterface
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -13969,83 +13998,79 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Overlay = Control.extend("sap.ui.ux3.Overlay", /** @lends sap.ui.ux3.Overlay.prototype */ { metadata : {
-	
+
 		interfaces : [
 			"sap.ui.core.PopupInterface"
 		],
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
-			 * Defines whether the 'Open' button shall be visible
+			 * Defines whether the 'Open' button shall be visible.
 			 */
 			openButtonVisible : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
-			 * Defines whether the 'Close' button shall be visible
+			 * Defines whether the 'Close' button shall be visible.
 			 */
 			closeButtonVisible : {type : "boolean", group : "Misc", defaultValue : true}
 		},
 		events : {
-	
+
 			/**
-			 * Event is fired when the Overlay starts closing
+			 * Event is fired when the Overlay starts closing.
 			 */
 			close : {allowPreventDefault : true,
 				parameters : {
-	
+
 					/**
-					 * The Id of the Overlay instance
+					 * The ID of the Overlay instance.
 					 */
 					id : {type : "string"}
 				}
-			}, 
-			
+			},
+
 			/**
-			 * Event is fired when the Overlay is closed
+			 * Event is fired when the Overlay is closed.
 			 */
 			closed : {allowPreventDefault : true,
 				parameters : {
-	
+
 					/**
-					 * The Id of the Overlay instance
+					 * The ID of the Overlay instance.
 					 */
 					id : {type : "string"}
 				}
-			}, 
-	
+			},
+
 			/**
-			 * Event is fired when the 'Open' button of the Overlay is clicked
+			 * Event is fired when the 'Open' button of the Overlay is clicked.
 			 */
 			openNew : {
 				parameters : {
-	
+
 					/**
-					 * The Id of the Overlay instance
+					 * The ID of the Overlay instance.
 					 */
 					id : {type : "string"}
 				}
-			}, 
-	
+			},
+
 			/**
-			 * Event is fired when the Overlay is opened
+			 * Event is fired when the Overlay is opened.
 			 */
 			open : {
 				parameters : {
-	
+
 					/**
-					 * The Id of the Overlay instance
+					 * The ID of the Overlay instance
 					 */
 					id : {type : "string"}
 				}
 			}
 		}
 	}});
-	
-	
-	/**
-	 * This file defines behavior for the control,
-	 */
+
 	Overlay.prototype.init = function() {
 		var that = this;
 		this._oPopup = new Popup(this, false, true);
@@ -14070,9 +14095,9 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 		});
 		this._overridePopupEventing();
 	};
-	
+
 	/**
-	 * Override Popup Events. Don't put Overlay to the front on mousedown. Existing 
+	 * Override Popup Events. Don't put Overlay to the front on mousedown.
 	 * ToolPopups should always be in front of the Overlay.
 	 *
 	 * @private
@@ -14082,42 +14107,50 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 			return;
 		};
 	};
-	
+
 	/**
-	 * Returns the Shell (if both Overlay and Shell are rendered)
+	 * Returns the Shell (if both Overlay and Shell are rendered).
+	 *
+	 * @private
 	 */
 	Overlay.prototype._getShell = function() {
 		var oShell = jQuery(".sapUiUx3Shell").control();
-		
+
 		if (oShell.length > 0 && !this._oShell) {
 			this._oShell = oShell.length ? oShell[0] : null;
 		}
 		return this._oShell;
 	};
-	
-	
+
+
 	/**
 	 * Returns the ID of the close button element.
-	 * 
+	 *
 	 * @return {string} The close button ID.
 	 * @private
 	 */
 	Overlay.prototype._getCloseButtonId = function() {
 		return this.getId() + "-close";
 	};
-	
-	
+
+
 	/**
 	 * Returns the ID of the open button element.
-	 * 
+	 *
 	 * @return {string} The open button ID.
 	 * @private
 	 */
 	Overlay.prototype._getOpenButtonId = function() {
 		return this.getId() + "-openNew";
 	};
-	
-	
+
+	/**
+	 *
+	 * @param fFocusFirst
+	 * @param fFocusLast
+	 * @param fApplyChanges
+	 * @private
+	 */
 	Overlay.prototype._initDom = function(fFocusFirst, fFocusLast, fApplyChanges) {
 		//Override the popup theming and init the focus handling
 		var oShell = jQuery(".sapUiUx3Shell").control();
@@ -14131,10 +14164,14 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 			this.$("firstFocusDummyPaneBw").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusLastTool,oShell));
 			this.$("LastFocusDummyPane").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusPaneStart,oShell));
 		} else {
-			this.$().css("bottom", "0px").css("top", "0px").css("left", "0px").css("right", "0px");
+			this.$().css("bottom", "0").css("top", "0").css("left", "0").css("right", "0");
 		}
 	};
-	
+
+	/**
+	 *
+	 * @private
+	 */
 	Overlay.prototype._cleanupDom = function() {
 		if (this._oShell) {
 			this._oShell.syncWithCanvasSize(this.getId(), false);
@@ -14146,10 +14183,10 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 			this.$("LastFocusDummyPane").removeAttr("tabindex").unbind("focusin");
 		}
 	};
-	
+
 	/**
-	 * Set size of TI after rendering: If running in Shell we sync with shell
-	 * canvas (only if Popup is open/opening). The size will then be set by the shell.
+	 * Set size after rendering: If running in Shell && Popup is open/opening we sync with the shell canvas
+	 * The size will then be set by the shell.
 	 */
 	Overlay.prototype.onAfterRendering = function() {
 	    var oPopupState = this._oPopup.getOpenState();
@@ -14157,13 +14194,12 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 	          this._initDom(jQuery.proxy(this._setFocusFirst, this), jQuery.proxy(this._setFocusLast, this), jQuery.proxy(this._applyChanges, this));
 	    }
 	};
-	
+
 	Overlay.prototype.onBeforeRendering = function() {
 	};
-	
-	
+
 	/**
-	 * Destroys this instance of Overlay, called by Element#destroy()
+	 * Destroys this instance of Overlay. It's called by Element destroy().
 	 *
 	 * @private
 	 */
@@ -14173,13 +14209,11 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 		this._oPopup = null;
 		this._oShell = null;
 	};
-	
+
 	/**
-	 * Opens this instance of Overlay.
+	 * Opens the Overlay.
 	 *
-	 * @param {string} initialFocusId
-	 *         ID of the control that gets focused when the overlay is openend
-	 * @type void
+	 * @param {string} initialFocusId ID of the control that gets focused when the overlay is openend
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -14191,23 +14225,22 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 		if (initialFocusId) {
 			this._oPopup.setInitialFocusId(initialFocusId);
 		}
-		
+
 		this._oPreviousFocus = Popup.getCurrentFocusInfo();
-		
+
 		this._oPopup.open(400);
-		
+
 		this._initDom(jQuery.proxy(this._setFocusFirst, this), jQuery.proxy(this._setFocusLast, this), jQuery.proxy(this._applyChanges, this));
-	
+
 		//fire open event
 		this.fireOpen({
 			id : this.getId()
 		});
 	};
-	
+
 	/**
-	 * Closes this instance of Overlay.
+	 * Closes the Overlay.
 	 *
-	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -14219,32 +14252,31 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 		jQuery.sap.delayedCall(400, this, 'restorePreviousFocus');
 		this._cleanupDom();
 	};
-	
+
 	/**
-	 * Handle the click event happening on the Overlay instance.
+	 * Handle the click event happening on the Overlay.
 	 *
-	 * @param {jQuery.EventObject}
-	 *            oEvent
+	 * @param {jQuery.EventObject} oEvent
 	 * @private
 	 */
 	Overlay.prototype.onclick = function(oEvent) {
 		this._handleButtonEvent(oEvent);
 	};
-	
+
 	/**
-	 * Handle the sapselect pseudo event happening on the Overlay instance.
+	 * Handle the sapselect pseudo event happening on the Overlay.
 	 *
-	 * @param {jQuery.EventObject}
-	 *            oEvent
+	 * @param {jQuery.EventObject} oEvent
 	 * @private
 	 */
 	Overlay.prototype.onsapselect = function(oEvent) {
 		this._handleButtonEvent(oEvent);
 	};
-	
+
 	/**
-	 * Eventhandling for Overlay Buttons
+	 * Event handling for Overlay Buttons.
 	 *
+	 * @param {jQuery.EventObject} oEvent
 	 * @private
 	 */
 	Overlay.prototype._handleButtonEvent = function(oEvent) {
@@ -14259,10 +14291,13 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 			});
 		}
 	};
-	
+
 	/**
 	 * Load language dependent texts.
 	 *
+	 * @param {string} sKey
+	 * @param aArgs
+	 * @returns {string}
 	 * @private
 	 */
 	Overlay.prototype._getText = function(sKey, aArgs) {
@@ -14278,11 +14313,11 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 		}
 		return sText ? sText : sKey;
 	};
-	
+
 	/**
-	 * Returns the first focusable Dom element which is contained in this Overlay.
+	 * Returns the first focusable DOM element which is contained in this Overlay.
 	 * This function is used for the Shell integration for a proper keyboard handling (tab chain).
-	 * 
+	 *
 	 * This function must be overridden in sub classes appropriately.
 	 *
 	 * @private
@@ -14290,9 +14325,9 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 	Overlay.prototype._setFocusFirst = function() {
 		jQuery.sap.focus(jQuery.sap.domById(this._getOpenButtonId()));
 	};
-	
+
 	/**
-	 * Returns the last focusable Dom element which is contained in this Overlay.
+	 * Returns the last focusable DOM element which is contained in this Overlay.
 	 * This function is used for the Shell integration for a proper keyboard handling (tab chain).
 	 *
 	 * This function must be overridden in sub classes appropriately.
@@ -14302,25 +14337,23 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 	Overlay.prototype._setFocusLast = function() {
 		jQuery.sap.focus(jQuery.sap.domById(this._getCloseButtonId()));
 	};
-	
+
 	/**
-	 * Called from the Shell when properties (e.g. the HeaderType) are changing
-	 * 
-	 * This function must be overridden in sub classes appropriately.
+	 * Called from the Shell when properties (e.g. the HeaderType) are changing.
 	 *
+	 * This function must be overridden in sub classes appropriately.
+	 * @param {Object} oChanges
 	 * @private
 	 */
 	Overlay.prototype._applyChanges = function(oChanges) {
 		return this;
 	};
-	
-	
+
 	/* Redefinition of generated API methods */
-	
 	// Implementation of API method isOpen
 
 	/**
-	 * Checks whether Overlay is open
+	 * Checks whether Overlay is open.
 	 *
 	 * @type boolean
 	 * @public
@@ -14329,14 +14362,13 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 	Overlay.prototype.isOpen = function() {
 		return this._oPopup.isOpen();
 	};
-	
+
 	/* restore previous focus when closing */
 	Overlay.prototype.restorePreviousFocus = function() {
 		Popup.applyFocusInfo(this._oPreviousFocus);
 	};
 
 	return Overlay;
-
 }, /* bExport= */ true);
 
 }; // end of sap/ui/ux3/Overlay.js
@@ -14367,7 +14399,7 @@ sap.ui.define("sap/ui/ux3/OverlayContainer",['jquery.sap.global', './Overlay', '
 	 * @extends sap.ui.ux3.Overlay
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -14515,49 +14547,45 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 	function(jQuery, IntervalTrigger, Overlay, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new OverlayDialog.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
+	 * @param {object} [mSettings] Initial settings for the new control.
 	 *
 	 * @class
 	 * Dialog implementation based on the Overlay. If used in a Shell it leaves the Tool-Palette, Pane-Bar and Header-Items accessible.
 	 * @extends sap.ui.ux3.Overlay
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.ux3.OverlayDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var OverlayDialog = Overlay.extend("sap.ui.ux3.OverlayDialog", /** @lends sap.ui.ux3.OverlayDialog.prototype */ { metadata : {
-	
-		library : "sap.ui.ux3",
-		properties : {
-	
-			/**
-			 * Width of the Overlay Dialog. If the width is set to "auto" it is always 50% of the overlay width.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
-	
-			/**
-			 * Height of the Overlay Dialog. If the height is set to "auto" it is always 50% of the overlay height.
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'}
-		},
-		aggregations : {
-	
-			/**
-			 * Content for the OverlayDialog.
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+	var OverlayDialog = Overlay.extend("sap.ui.ux3.OverlayDialog", /** @lends sap.ui.ux3.OverlayDialog.prototype */ {
+		metadata: {
+			library: "sap.ui.ux3",
+			properties: {
+				/**
+				 * Determines the width of the Overlay Dialog. If the width is set to "auto" it is always 50% of the overlay width.
+				 */
+				width: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: 'auto'},
+
+				/**
+				 * Determines the height of the Overlay Dialog. If the height is set to "auto" it is always 50% of the overlay height.
+				 */
+				height: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: 'auto'}
+			},
+			aggregations: {
+				/**
+				 * Content for the OverlayDialog.
+				 */
+				content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
+			}
 		}
-	}});
-	
-	
+	});
+
 	/**
 	 * @private
 	 */
@@ -14567,9 +14595,9 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		this.setProperty("openButtonVisible",false);
 		OverlayDialog.Trigger = new IntervalTrigger(300);
 	};
-	
+
 	/**
-	 * Focus Last Element
+	 * Focus the last focusable element.
 	 *
 	 * @private
 	 */
@@ -14580,9 +14608,9 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		}
 		jQuery.sap.focus(oFocus);
 	};
-	
+
 	/**
-	 * Focus First Element
+	 * Focus the first focusable element.
 	 *
 	 * @private
 	 */
@@ -14593,9 +14621,10 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 			jQuery.sap.focus(this.$("content").firstFocusableDomRef());
 		}
 	};
-	
+
 	/**
-	 * This Method is not supported for the OverlayDialog 
+	 * This Method is not supported for the OverlayDialog.
+	 *
 	 * @param {boolean} bVisible
 	 * @public
 	 */
@@ -14603,12 +14632,12 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		jQuery.sap.log.warning("OverlayDialog does not support an openButton.");
 		return undefined;
 	};
-	
+
 	/**
-	 * Sets the width for the OverlayDialog
-	 * @param {sap.ui.core.CSSSize} sWidth
-	 * @public 
+	 * The width for the OverlayDialog.
 	 *
+	 * @param {sap.ui.core.CSSSize} sWidth
+	 * @public
 	 */
 	OverlayDialog.prototype.setWidth = function(sWidth) {
 		if (sWidth == "auto" || sWidth == "inherit") {
@@ -14616,12 +14645,12 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		}
 		return this.setProperty("width", sWidth);
 	};
-	
+
 	/**
-	 * Sets the height for the OverlayDialog
-	 * @param {sap.ui.core.CSSSize} sHeight
-	 * @public 
+	 * The height for the OverlayDialog.
 	 *
+	 * @param {sap.ui.core.CSSSize} sHeight
+	 * @public
 	 */
 	OverlayDialog.prototype.setHeight = function(sHeight) {
 		if (sHeight == "auto" || sHeight == "inherit") {
@@ -14629,7 +14658,7 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		}
 		return this.setProperty("height", sHeight);
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -14637,7 +14666,7 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		Overlay.prototype.onBeforeRendering.apply(this, arguments);
 		this._cleanup();
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -14645,7 +14674,7 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		Overlay.prototype.onAfterRendering.apply(this, arguments);
 		OverlayDialog.Trigger.addListener(this._checkChange, this);
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -14656,7 +14685,7 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		this.overlayWidth = null;
 		this.overlayHeight = null;
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -14664,7 +14693,7 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		this._cleanup();
 		Overlay.prototype.exit.apply(this,arguments);
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -14672,29 +14701,29 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 		if (!this.getDomRef()) {
 			return;
 		}
-	
+
 		var $content = this.$("content"),
 			$overlay = this.$(),
 			bAutoWidth = this.getWidth() === "auto",
 			bAutoHeight = this.getHeight() === "auto";
-	
+
 		var contentWidth = bAutoWidth ? $overlay.width() / 2 : $content.width(),
 			contentHeight = bAutoHeight ? $overlay.height() / 2 : $content.height(),
 			overlayWidth = $overlay.width(),
 			overlayHeight = $overlay.height();
-	
-		if (	contentWidth != this.contentWidth || contentHeight != this.contentHeight
+
+		if (contentWidth != this.contentWidth || contentHeight != this.contentHeight
 			|| overlayWidth != this.overlayWidth || overlayHeight != this.overlayHeight) {
-	
+
 			$content.css("left", "0").css("right", "auto").css("top", "0").css("bottom", "auto").css("width", this.getWidth()).css("height", this.getHeight());
-			
+
 			this.contentWidth = bAutoWidth ? $overlay.width() / 2 : $content.width();
 			this.contentHeight = bAutoHeight ? $overlay.height() / 2 : $content.height();
 			this.overlayWidth = overlayWidth;
 			this.overlayHeight = overlayHeight;
-	
+
 			var $close = this.$("close");
-	
+
 			if (this.contentWidth < this.overlayWidth) {
 				$content.css("left", "50%");
 				$content.css("right", "auto");
@@ -14710,7 +14739,7 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 				$close.css("right", "0");
 				$close.css("margin-right", "0");
 			}
-	
+
 			if (this.contentHeight < this.overlayHeight - 30/*Bottom Border (NotificationBar)*/) {
 				$content.css("top", "50%");
 				$content.css("bottom", "auto");
@@ -14728,10 +14757,8 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 			}
 		}
 	};
-	
 
 	return OverlayDialog;
-
 }, /* bExport= */ true);
 
 }; // end of sap/ui/ux3/OverlayDialog.js
@@ -14843,7 +14870,7 @@ sap.ui.define("sap/ui/ux3/QuickView",['jquery.sap.global', 'sap/ui/commons/Callo
 	 * @extends sap.ui.commons.CalloutBase
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -15368,7 +15395,7 @@ sap.ui.define("sap/ui/ux3/Shell",['jquery.sap.global', 'sap/ui/commons/Menu', 's
 	 * The Ux3 GoldReflection Shell, which is an application frame with navigation capabilities.
 	 * It is supposed to be added to a direct child of the BODY tag of a page and there should be no other parts of the page consuming space outside the Shell.
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -18013,21 +18040,21 @@ jQuery.sap.declare('sap.ui.ux3.ThingAction'); // unresolved dependency added by 
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
 sap.ui.define("sap/ui/ux3/ThingAction",['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element, library) {
+	function(jQuery, Element) {
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ThingAction.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Thing Action for Swatch, QuickView, Thinginspector
 	 * @extends sap.ui.core.Element
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -18035,33 +18062,33 @@ sap.ui.define("sap/ui/ux3/ThingAction",['jquery.sap.global', 'sap/ui/core/Elemen
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ThingAction = Element.extend("sap.ui.ux3.ThingAction", /** @lends sap.ui.ux3.ThingAction.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * text of action
 			 */
 			text : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * action enabled (true/false)
 			 */
 			enabled : {type : "boolean", group : "Misc", defaultValue : true}
 		},
 		events : {
-	
+
 			/**
 			 * Event will be fired when the action was triggered.
 			 */
 			select : {
 				parameters : {
-	
+
 					/**
 					 * Id of selected action
 					 */
-					id : {type : "string"}, 
-	
+					id : {type : "string"},
+
 					/**
 					 * Selected Thing Action
 					 */
@@ -18070,13 +18097,7 @@ sap.ui.define("sap/ui/ux3/ThingAction",['jquery.sap.global', 'sap/ui/core/Elemen
 			}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.ux3.ThingAction.prototype.init = function(){
-	//   // do something for initialization...
-	//};
+
 	ThingAction.prototype.onclick = function(oEvent) {
 		this.fireSelect({
 			id : this.getId(),
@@ -18107,21 +18128,21 @@ jQuery.sap.declare('sap.ui.ux3.ThingGroup'); // unresolved dependency added by S
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Element'); // unlisted dependency retained
 sap.ui.define("sap/ui/ux3/ThingGroup",['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element, library) {
+	function(jQuery, Element) {
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ThingGroup.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Thing Group Area
 	 * @extends sap.ui.core.Element
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -18129,15 +18150,15 @@ sap.ui.define("sap/ui/ux3/ThingGroup",['jquery.sap.global', 'sap/ui/core/Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ThingGroup = Element.extend("sap.ui.ux3.ThingGroup", /** @lends sap.ui.ux3.ThingGroup.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * Title of Group
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * If Group is used in a column layout the groups spans the all columns if set to true.
 			 */
@@ -18145,25 +18166,18 @@ sap.ui.define("sap/ui/ux3/ThingGroup",['jquery.sap.global', 'sap/ui/core/Element
 		},
 		defaultAggregation : "content",
 		aggregations : {
-	
+
 			/**
 			 * Content of Group
 			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}, 
-	
+			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+
 			/**
 			 * Actions of the groups content
 			 */
 			actions : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "action"}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.ui.ux3.ThingContent.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 
 	return ThingGroup;
 
@@ -18182,22 +18196,22 @@ jQuery.sap.declare('sap.ui.ux3.ThingViewer'); // unresolved dependency added by 
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
 sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Control', './library'],
-	function(jQuery, Control, library) {
+	function(jQuery, Control) {
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ThingViewer.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * ThingViewer: Same as ThingInspector but decoupled from the Overlay and the ActionBar.
 	 * The control can be added to a Parent container that has a defined width. The ThingViewer fill the whole container. If the parent container has no width defined the control will not work properly.
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -18206,40 +18220,40 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ThingViewer = Control.extend("sap.ui.ux3.ThingViewer", /** @lends sap.ui.ux3.ThingViewer.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * Title of the Thing Inspector
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Thing type
 			 */
 			type : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Thing Icon Url
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Subtitle of the Thing Inspector
 			 */
 			subtitle : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Width of the ThingViewer
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : '100%'},
-	
+
 			/**
 			 * Height of the ThingViewer
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : '100%'},
-	
+
 			/**
 			 * Defines which header type should be used.
 			 * @since 1.16.3
@@ -18247,57 +18261,57 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 			headerType : {type : "sap.ui.ux3.ThingViewerHeaderType", group : "Misc", defaultValue : sap.ui.ux3.ThingViewerHeaderType.Standard}
 		},
 		aggregations : {
-	
+
 			/**
 			 * ThingGroups for the header content
 			 */
-			headerContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "headerContent"}, 
-	
+			headerContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "headerContent"},
+
 			/**
 			 * Thing Inspector facets
 			 */
-			facets : {type : "sap.ui.ux3.NavigationItem", multiple : true, singularName : "facet"}, 
-	
+			facets : {type : "sap.ui.ux3.NavigationItem", multiple : true, singularName : "facet"},
+
 			/**
 			 * ThingGroups for content of the selected facet
 			 */
-			facetContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "facetContent"}, 
-	
+			facetContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "facetContent"},
+
 			/**
 			 * An ActionBar can be given
 			 */
-			actionBar : {type : "sap.ui.ux3.ActionBar", multiple : false}, 
-	
+			actionBar : {type : "sap.ui.ux3.ActionBar", multiple : false},
+
 			/**
 			 * NavigationBar that is managed by this ThingViewer
 			 */
 			navBar : {type : "sap.ui.ux3.NavigationBar", multiple : false, visibility : "hidden"}
 		},
 		associations : {
-	
+
 			/**
 			 * The Facet that is currently selected.
 			 */
 			selectedFacet : {type : "sap.ui.ux3.NavigationItem", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * Event for facet selection. The application is responsible for displaying the correct content for the selected one. The ThingInspector will currently always mark the first facet as selected.
 			 */
 			facetSelected : {allowPreventDefault : true,
 				parameters : {
-	
+
 					/**
 					 * Id of selected NavigationItem
 					 */
-					id : {type : "string"}, 
-	
+					id : {type : "string"},
+
 					/**
 					 * The selected NavigationItem
 					 */
-					item : {type : "sap.ui.ux3.NavigationItem"}, 
-	
+					item : {type : "sap.ui.ux3.NavigationItem"},
+
 					/**
 					 * Key of selected NavigationItem
 					 */
@@ -18306,7 +18320,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 			}
 		}
 	}});
-	
+
 	(function() {
 		/**
 		 * Initialization hook for the ThingViewer. It creates the instance of the
@@ -18319,7 +18333,6 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 			this._oNavBar = new sap.ui.ux3.NavigationBar();
 			this.setAggregation("navBar",this._oNavBar);
 			// attach NavBar selection
-			this._oSocialActions = {};
 			this._oNavBar.attachSelect(function(oControlEvent) {
 				var item = oControlEvent.getParameters().item;
 				if (that.fireFacetSelected({id:item.getId(), key:item.getKey(),item:item})) {
@@ -18329,7 +18342,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				}
 			});
 		};
-		
+
 		/*
 		 * Set size of TI after rendering: If running in Shell we sync with shell
 		 * canvas. The size will then be set by the shell.
@@ -18344,28 +18357,28 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				return;
 			}
 			this._resizeListenerId = sap.ui.core.ResizeHandler.register(this.$().find(".sapUiUx3TVFacetContent")[0], jQuery.proxy(this._onresize, this));
-			
+
 			// initial resize handling
 			this._setTriggerValue();
 			this._setHeaderPosition();
 			this._onresize();
 		};
-		
+
 		ThingViewer.prototype.onBeforeRendering = function() {
 			if (this._resizeListenerId) {
 				sap.ui.core.ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
 		};
-		
+
 		ThingViewer.prototype._setHeaderPosition = function() {
 			if (this.getHeaderType() === sap.ui.ux3.ThingViewerHeaderType.Standard) {
-				var $typeContainer = this.$().find(".sapUiUx3TVHeaderContainerIdentifier");
-				var $scrollContainer = this.$().find(".sapUiUx3TVHeaderGroupScrollContainer");
+				var $typeContainer = this.$().find(".sapUiUx3TVHeaderContainerIdentifier"),
+				    $scrollContainer = this.$().find(".sapUiUx3TVHeaderGroupScrollContainer");
 				$scrollContainer.css("top", $typeContainer.outerHeight());
 			}
 		};
-		
+
 		/**
 		 * Resize handler listening to the facet content area. If the area will be
 		 * resized and the blocks will be rearranged to one column the width will be set
@@ -18400,8 +18413,8 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				this._resize = false;
 			}
 			if (this.getActionBar()) {
-				var minWidth = this.getActionBar().getActionBarMinWidth();
-				var minWidthTI = minWidth;
+				var minWidth = this.getActionBar().getActionBarMinWidth(),
+					minWidthTI = minWidth;
 				if (this._bShell) {
 					minWidth += 36;
 					minWidthTI  = minWidth + 60;
@@ -18410,7 +18423,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				this.$().find(".sapUiUx3TVContent").css("min-width",minWidth + "px");
 			}
 		};
-		
+
 		/**
 		 * Destroys this instance of ThingViewer, called by Element#destroy()
 		 *
@@ -18423,7 +18436,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				this._resizeListenerId = null;
 			}
 		};
-		
+
 		/**
 		 * get Navigation Bar control
 		 *
@@ -18432,7 +18445,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 		ThingViewer.prototype._getNavBar = function() {
 			return this._oNavBar;
 		};
-		
+
 		/**
 		 * setDefault NavBar selection and fire SelectedItem Event
 		 *
@@ -18444,8 +18457,8 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				if (!this.getSelectedFacet()) {
 					this.setSelectedFacet(navBarItems[0]);
 				}
-				var itemID = this._oNavBar.getSelectedItem();
-				var item = sap.ui.getCore().byId(itemID);
+				var itemID = this._oNavBar.getSelectedItem(),
+					item = sap.ui.getCore().byId(itemID);
 				this.fireFacetSelected({
 					id : item.getId(),
 					key : item.getKey(),
@@ -18453,20 +18466,21 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				});
 			}
 		};
-		
+
 		/**
 		 * equal Columns
 		 *
 		 * @private
 		 */
 		ThingViewer.prototype._equalColumns = function() {
-			var headerColumn = this.$().find(".sapUiUx3TVHeader");
-			var facetsColumn = this.$().find(".sapUiUx3TVFacets");
-			var scrollContainer = this.$().find(".sapUiUx3TVContentScrollContainer");
-			facetsColumn.height(scrollContainer.get(0).scrollHeight);
-			headerColumn.height(scrollContainer.get(0).scrollHeight);
+			var headerColumn = this.$().find(".sapUiUx3TVHeader"),
+			    facetsColumn = this.$().find(".sapUiUx3TVFacets"),
+			    scrollContainer = this.$().find(".sapUiUx3TVContentScrollContainer"),
+				scrollContainerColumnHeight = scrollContainer.get(0).scrollHeight;
+			facetsColumn.height(scrollContainerColumnHeight);
+			headerColumn.height(scrollContainerColumnHeight);
 		};
-		
+
 		/**
 		 * Rerender Header
 		 *
@@ -18481,7 +18495,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				rm.destroy();
 			}
 		};
-		
+
 		/**
 		 * Rerender Header Content
 		 *
@@ -18496,7 +18510,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				rm.destroy();
 			}
 		};
-		
+
 		/**
 		 * Rerender Toolbar
 		 *
@@ -18511,7 +18525,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				rm.destroy();
 			}
 		};
-		
+
 		/**
 		 * Rerender Facet Content
 		 *
@@ -18529,59 +18543,62 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 				this._onresize();
 			}
 		};
-		
+
 		/**
 		 * set trigger value for resize handler
-		 * 
+		 *
 		 * @private
 		 */
 		ThingViewer.prototype._setTriggerValue = function() {
-			var facetGroups, minWidth,
+			var facetGroups,
+				minWidth,
 				$content = this.$("facetContent");
-			
+
 			// get triggerValue for facet content resize handler
 			if ($content.length > 0) {
 				facetGroups = this.$().find(".sapUiUx3TVFacetThingGroup");
 				minWidth = jQuery(facetGroups[0]).css("min-width");
-				this._triggerValue = parseInt(minWidth, 10) * 2;
+				if (minWidth) {
+					this._triggerValue = parseInt(minWidth, 10) * 2;
+				}
 			}
 		};
-		
+
 		/* Redefinition of generated API methods */
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.getFacets = function() {
 			return this._oNavBar.getItems();
 		};
-		
+
 		// Implementation of API method insertFacet
 		ThingViewer.prototype.insertFacet = function(oFacet, iIndex) {
 			this._oNavBar.insertItem(oFacet, iIndex);
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.addFacet = function(oFacet) {
 			this._oNavBar.addItem(oFacet);
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.removeFacet = function(vElement) {
 			return this._oNavBar.removeItem(vElement);
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.removeAllFacets = function() {
 			return this._oNavBar.removeAllItems();
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.destroyFacets = function() {
 			this._oNavBar.destroyItems();
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.setIcon = function(oIcon) {
 			this.setProperty("icon", oIcon);
@@ -18591,7 +18608,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 			this._rerenderHeader();
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.insertFacetContent = function(oFacetContent, iIndex) {
 			this.insertAggregation("facetContent", oFacetContent, iIndex, true);
@@ -18657,7 +18674,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 			var oldSelectedFacet = this.getSelectedFacet();
 			this.setAssociation("selectedFacet", selectedFacet, true);
 			var newSelectedFacet = this.getSelectedFacet();
-		
+
 			if (oldSelectedFacet != newSelectedFacet) {
 				this._oNavBar.setSelectedItem(newSelectedFacet);
 			}
@@ -18683,8 +18700,8 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 			return this;
 		};
 		ThingViewer.prototype._adjustStyles = function() {
-			var $header = this.$().find(".sapUiUx3TVHeader");
-			var $facets = this.$().find(".sapUiUx3TVFacets");
+			var $header = this.$().find(".sapUiUx3TVHeader"),
+			    $facets = this.$().find(".sapUiUx3TVFacets");
 			if ($header.length > 0) {
 				$header.addClass("sapUiUx3TVActionBar");
 				$header.removeClass("sapUiUx3TVNoActionBar");
@@ -18716,1257 +18733,1376 @@ jQuery.sap.require('sap.ui.core.IconPool'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Popup'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.theming.Parameters'); // unlisted dependency retained
 sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/theming/Parameters', './library'],
-	function(jQuery, Control, IconPool, Popup, Parameters, library) {
-	"use strict";
+	function (jQuery, Control, IconPool, Popup, Parameters, library) {
+		"use strict";
 
 
+		/**
+		 * Constructor for a new ToolPopup.
+		 *
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
+		 *
+		 * @class
+		 * A popup which the user can open from the Shell's tool pane. Generally, the starting point would be an icon.
+		 * For this pop up, buttons can be defined with any text; therefore, it has the same purpose
+		 * and similar look like any common dialog box.
+		 * A ToolPopup can have any content. Depending on the application type and design, the structure
+		 * of the texts and input fields can be for example form-like.
+		 * @extends sap.ui.core.Control
+		 * @implements sap.ui.core.PopupInterface
+		 *
+		 * @namespace
+		 * @author SAP SE
+		 * @version 1.32.7
+		 *
+		 * @constructor
+		 * @public
+		 * @alias sap.ui.ux3.ToolPopup
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		var ToolPopup = Control.extend("sap.ui.ux3.ToolPopup", /** @lends sap.ui.ux3.ToolPopup.prototype */ {
+			metadata: {
 
-	/**
-	 * Constructor for a new ToolPopup.
-	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
-	 *
-	 * @class
-	 * A pop up which the user can open from the Shell's tool pane. Generally, the starting point would be an icon.
-	 * For this pop up, buttons can be defined with any text; therefore, it has the same purpose and similar look like any common dialog box.
-	 * A ToolPopup can have any content. Depending on the application type and design, the structure of the texts and input fields can be for
-	 * example form-like.
-	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.PopupInterface
-	 *
-	 * @author SAP SE
-	 * @version 1.30.8
-	 *
-	 * @constructor
-	 * @public
-	 * @alias sap.ui.ux3.ToolPopup
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	var ToolPopup = Control.extend("sap.ui.ux3.ToolPopup", /** @lends sap.ui.ux3.ToolPopup.prototype */ { metadata : {
-
-		interfaces : [
-			"sap.ui.core.PopupInterface"
-		],
-		library : "sap.ui.ux3",
-		properties : {
-
-			/**
-			 * The title displayed in the pop up window
-			 */
-			title : {type : "string", group : "Misc", defaultValue : null},
-
-			/**
-			 * This property is relevant for Shell-use:
-			 * The URL to the icon displayed in the tool area which is used to open the ToolPopup. The recommended size is 32x32px, including some transparent border. Therefore, the content will cover about 20x20px.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-
-			/**
-			 * This property is relevant for Shell-use:
-			 * The URL to the icon in hover state, displayed in the tool area which is used to open the pop up.
-			 */
-			iconHover : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-
-			/**
-			 * This property is relevant for Shell-use:
-			 * The URL to the icon in selected state displayed in the tool area which is used to open the pop up. If no selected icon is given, the hover icon is used.
-			 */
-			iconSelected : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-
-			/**
-			 * Whether the popup is modal and blocks any user-interaction with controls in the background.
-			 * Changing this property while the ToolPopup is open is not allowed (and currently has no effect)
-			 * Please don't use "modal" and "autoclose" at the same time. In this case a warning will be prompted to the console and "autoclose" won't be used.
-			 */
-			modal : {type : "boolean", group : "Behavior", defaultValue : false},
-
-			/**
-			 * Specifies whether the ToolPopup has a dark or bright background. If set to true the background and borders will be dark. If false this stuff will be bright.
-			 * This property only has an effect for the GoldReflection-theme.
-			 * @since 1.11.1
-			 */
-			inverted : {type : "boolean", group : "Misc", defaultValue : true},
-
-			/**
-			 * This property tells the ToolPopup to close itself if the ToolPopup looses the focus. If the user e.g. clicks outside of the ToolPopup it will be closed. Please don't use "modal" and "autoclose" at the same time. In this case a warning will be prompted to the console and "autoclose" won't be used.
-			 * @since 1.13.2
-			 */
-			autoClose : {type : "boolean", group : "Misc", defaultValue : false},
-
-			/**
-			 * This property can be used to force a maximum height of the ToolPopup in pixels. If the ToolPopup content is higher than the ToolPopup, the content will be scrollable.
-			 * @since 1.13.2
-			 */
-			maxHeight : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
-
-			/**
-			 * This property can be used to force a maximum width of the ToolPopup in pixels.
-			 * @since 1.15.0
-			 */
-			maxWidth : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
-
-			/**
-			 * Time in milliseconds for the open animation.
-			 * @since 1.19.0
-			 */
-			openDuration : {type : "int", group : "Misc", defaultValue : 400},
-
-			/**
-			 * Time in milliseconds for the close animation.
-			 * @since 1.19.0
-			 */
-			closeDuration : {type : "int", group : "Misc", defaultValue : 400}
-		},
-		defaultAggregation : "content",
-		aggregations : {
-
-			/**
-			 * The buttons to appear in the pop up
-			 */
-			buttons : {type : "sap.ui.core.Control", multiple : true, singularName : "button"},
-
-			/**
-			 * The content of the pop up
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		},
-		associations : {
-
-			/**
-			 * Defines the control that shall get the focus when the ToolPopup is opened.
-			 */
-			initialFocus : {type : "sap.ui.core.Control", multiple : false},
-
-			/**
-			 * This property is relevant for stand-alone-use:
-			 * This association needs to be set if the ToolPopup should not be opened by/with the Shell. This association contains the instance of the control that assigns the ToolPopup's position.
-			 */
-			opener : {type : "sap.ui.core.Control", multiple : false},
-
-			/**
-			 * Defines one of the buttons that have been provided via button aggregation to be the default button. This default button is initially selected, if no control is set via the initialFocus association explicitly. The default button is activated when Enter is pressed in the context of the dialog and when the currently selected element does not handle the Enter event itself.
-			 * @since 1.20.1
-			 */
-			defaultButton : {type : "sap.ui.core.Control", multiple : false}
-		},
-		events : {
-
-			/**
-			 * Event is fired when the pop up opens
-			 */
-			open : {},
-
-			/**
-			 * Event is fired when the pop up closes because the user pressed Escape or the ToolPopup Button in the Shell. This is called before the closing animation.
-			 */
-			close : {allowPreventDefault : true},
-
-			/**
-			 * Event is fired whenever the user clicks the Enter or the Return key inside the pop up
-			 */
-			enter : {
-				parameters : {
+				interfaces: [
+					"sap.ui.core.PopupInterface"
+				],
+				library: "sap.ui.ux3",
+				properties: {
 
 					/**
-					 * The onsapenter event, received by the pop up
+					 * Determines the title displayed in the pop up window
 					 */
-					originalEvent : {type : "object"},
+					title: {type: "string", group: "Misc", defaultValue: null},
 
 					/**
-					 * The control that was focused when the user pressed the Enter key (may be null)
+					 * This property is relevant for Shell use:
+					 * The URL to the icon displayed in the tool area which is used to open the ToolPopup.
+					 * The recommended size is 32x32px, including some transparent border. Therefore,
+					 * the content will cover about 20x20px.
 					 */
-					originalSrcControl : {type : "sap.ui.core.Control"}
+					icon: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
+
+					/**
+					 * This property is relevant for Shell use:
+					 * The URL to the icon in hover state, displayed in the tool area which is used to open the popup.
+					 */
+					iconHover: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
+
+					/**
+					 * This property is relevant for Shell use:
+					 * The URL to the icon in selected state displayed in the tool area which is used to open the popup.
+					 * If no selected icon is given, the hover icon is used.
+					 */
+					iconSelected: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
+
+					/**
+					 * Specifies whether the popup is modal and blocks any user-interaction with controls in the background.
+					 * Changing this property while the ToolPopup is open will not have any effect.
+					 * Please don't use "modal" and "autoclose" at the same time. In this case a warning will
+					 * be prompted to the console and "autoclose" won't be used.
+					 */
+					modal: {type: "boolean", group: "Behavior", defaultValue: false},
+
+					/**
+					 * Specifies whether the ToolPopup has a dark or bright background. If set to true
+					 * the background and borders will be dark. If false they will be bright.
+					 * This property only has an effect for the GoldReflection-theme.
+					 * @since 1.11.1
+					 */
+					inverted: {type: "boolean", group: "Misc", defaultValue: true},
+
+					/**
+					 * Determines whether the ToolPopup will auto close when it loses focus.
+					 * If the user e.g. clicks outside of the ToolPopup it will be closed.
+					 * Please don't use "modal" and "autoclose" at the same time.
+					 * In this case a warning will be prompted to the console and "autoclose" won't be used.
+					 * @since 1.13.2
+					 */
+					autoClose: {type: "boolean", group: "Misc", defaultValue: false},
+
+					/**
+					 * Forces a maximum height of the ToolPopup in pixels. If the ToolPopup content
+					 * is higher than the ToolPopup, the content will be scrollable.
+					 * @since 1.13.2
+					 */
+					maxHeight: {type: "sap.ui.core.CSSSize", group: "Misc", defaultValue: null},
+
+					/**
+					 * Forces a maximum width of the ToolPopup in pixels.
+					 * @since 1.15.0
+					 */
+					maxWidth: {type: "sap.ui.core.CSSSize", group: "Misc", defaultValue: null},
+
+					/**
+					 * Time in milliseconds for the open animation.
+					 * @since 1.19.0
+					 */
+					openDuration: {type: "int", group: "Misc", defaultValue: 400},
+
+					/**
+					 * Time in milliseconds for the close animation.
+					 * @since 1.19.0
+					 */
+					closeDuration: {type: "int", group: "Misc", defaultValue: 400}
+				},
+				defaultAggregation: "content",
+				aggregations: {
+
+					/**
+					 * Defines the buttons to appear in the popup
+					 */
+					buttons: {type: "sap.ui.core.Control", multiple: true, singularName: "button"},
+
+					/**
+					 * Defines the content of the popup
+					 */
+					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
+				},
+				associations: {
+
+					/**
+					 * Defines the control that will get the focus when the ToolPopup is opened.
+					 */
+					initialFocus: {type: "sap.ui.core.Control", multiple: false},
+
+					/**
+					 * This property is relevant for stand-alone use:
+					 * This association needs to be set if the ToolPopup should not be opened by/with
+					 * the Shell. This association contains the instance of the control that
+					 * assigns the ToolPopup's position.
+					 */
+					opener: {type: "sap.ui.core.Control", multiple: false},
+
+					/**
+					 * Defines one of the buttons that have been provided via button aggregation to be
+					 * the default button. This default button is initially selected, if no control
+					 * is set via the initialFocus association explicitly. The default button is activated
+					 * when Enter is pressed in the context of the dialog and when the currently selected element
+					 * does not handle the Enter event itself.
+					 * @since 1.20.1
+					 */
+					defaultButton: {type: "sap.ui.core.Control", multiple: false}
+				},
+				events: {
+
+					/**
+					 * Event is fired when the popup opens
+					 */
+					open: {},
+
+					/**
+					 * Event is fired when the popup closes because the user pressed Escape or the ToolPopup
+					 * Button in the Shell. This is called before the closing animation.
+					 */
+					close: {allowPreventDefault: true},
+
+					/**
+					 * Event is fired whenever the user clicks the Enter or the Enter key inside the pop up
+					 */
+					enter: {
+						parameters: {
+
+							/**
+							 * The onsapenter event, received by the pop up
+							 */
+							originalEvent: {type: "object"},
+
+							/**
+							 * The control that was focused when the user pressed the Enter key (may be null)
+							 */
+							originalSrcControl: {type: "sap.ui.core.Control"}
+						}
+					},
+
+					/**
+					 * Event is fired when one of the icon properties is modified (Note: The icon is not
+					 * rendered by the ToolPopup).
+					 * To be used by other controls which want to update the icon in their UI.
+					 */
+					iconChanged: {},
+
+					/**
+					 * This event is fired after the ToolPopup has finished its closing animation.
+					 * It is called for EVERY close, regardless of whether the user has triggered the
+					 * close or whether the ToolPopup was closed via API call.
+					 */
+					closed: {},
+
+					/**
+					 * Event is being fired after the ToolPopup has been opened.
+					 * @since 1.19.0
+					 */
+					opened: {}
 				}
-			},
+			}
+		});
+
+		// regex rules for arrows corresponding to the given 'my' and 'at' parameters
+		// these regexes also consider the new offset style of jQueryUI-position from version 1.10.x
+		// from version 1.10.x the offset is used right within the 'my' parameter
+		ToolPopup.ARROW_LEFT = new RegExp(/my:(left|begin)([-+]\d*\%?)?\|[a-z]+([-+]\d*\%?)? at:(right|end)\|[a-z]+/);
+		ToolPopup.ARROW_RIGHT = new RegExp(/my:(right|end)([-+]\d*\%?)?\|[a-z]+([-+]\d*\%?)? at:(left|begin)\|[a-z]+/);
+		ToolPopup.ARROW_UP = new RegExp(/my:[a-z]+([-+]\d*\%?)?\|top([-+]\d*\%?)? at:[a-z]+\|bottom/);
+		ToolPopup.ARROW_DOWN = new RegExp(/my:[a-z]+([-+]\d*\%?)?\|bottom([-+]\d*\%?)? at:[a-z]+\|top/);
+
+		(function () {
+			ToolPopup.prototype.init = function () {
+				this.oPopup = null;
+				this._bPositionSet = false;
+
+				this._mParameters = {};
+				this._mParameters.that = this;
+				this._mParameters.firstFocusable = this.getId() + "-firstFocusable";
+				this._mParameters.lastFocusable = this.getId() + "-lastFocusable";
+
+				this._bFocusSet = false;
+				this._proxyOpened = jQuery.proxy(fnPopupOpened, this);
+				this._proxyClosed = jQuery.proxy(fnOnClosed, this);
+				this._proxyFixSize = jQuery.proxy(fnFixSize, this);
+				this._proxyOnResize = jQuery.proxy(fnOnResize, this);
+
+				fnSetArrowDimensions(this);
+			};
+			ToolPopup.prototype.exit = function () {
+				if (this.oPopup) {
+					this.oPopup.detachOpened(this._proxyOpened);
+					this.oPopup.detachClosed(this._proxyClosed);
+					this.oPopup.destroy();
+					delete this.oPopup;
+				}
+				delete this._bPositionSet;
+
+				delete this._mParameters;
+
+				delete this._bFocusSet;
+				delete this._bPreventRestoreFocus;
+				delete this._proxyOpened;
+				delete this._proxyClosed;
+
+				delete this._bRTL;
+				delete this._sArrowDir;
+				delete this._oArrowIcon;
+				delete this._bThemeInverted;
+
+				delete this._sInitialFocusId;
+			};
 
 			/**
-			 * Event is fired when one of the icon properties is modified (Note: The icon is not rendered by the ToolPopup).
-			 * To be used by other controls which want to update the icon in their UI.
+			 * Checks if the ToolPopup already has a tabbable element.
+			 * If not, it's checked whether the fake-element should be used or if there is an element that could be focused instead.
+			 *
+			 * @param {sap.ui.ux3.ToolPopup} that to get/set instance values
+			 * @returns {string} _sInitialFocusId that has been determined here
+			 * @private
 			 */
-			iconChanged : {},
+			var _fnGetInitialFocus = function (that) {
+				jQuery.sap.assert(!!that, "No ToolPopup instance given for _fnGetInitialFocus");
+
+				// if there is an initial focus it was already set to the Popup onBeforeRendering
+				if (!that._bFocusSet) {
+					_fnGetNewFocusElement(that);
+				} else {
+					that._sInitialFocusId = that.oPopup._sInitialFocusId;
+				}
+
+				return that._sInitialFocusId;
+			};
 
 			/**
-			 * This event is fired after the ToolPopup has finished its closing animation. It is called for EVERY close, regardless of whether the user has triggered the close or whether the ToolPopup was closed via API call.
-			 */
-			closed : {},
+			 * Determines the new element which will gain the focus.
+			 *
+			 * @param {sap.ui.ux3.ToolPopup} that to get/set instance values
+			 * @private
+             */
+			var _fnGetNewFocusElement = function(that) {
+				var oElement;
+                var oFocusControl;
+				var defaultFocusableElements = [that._mParameters.firstFocusable, that._mParameters.lastFocusable];
+                var aTabbables = jQuery(":sapTabbable", that.$()).get();
 
-			/**
-			 * Event is being fired after the ToolPopup has been opened.
-			 * @since 1.19.0
-			 */
-			opened : {}
-		}
-	}});
-
-	// regex rules for arrows corresponding to the given 'my' and 'at' parameters
-	// these regexes also consider the new offset style of jQueryUI-position from version 1.10.x
-	// from version 1.10.x the offset is used right within the 'my' parameter
-	ToolPopup.ARROW_LEFT =  new RegExp(/my:(left|begin)([-+]\d*\%?)?\|[a-z]+([-+]\d*\%?)? at:(right|end)\|[a-z]+/);
-	ToolPopup.ARROW_RIGHT = new RegExp(/my:(right|end)([-+]\d*\%?)?\|[a-z]+([-+]\d*\%?)? at:(left|begin)\|[a-z]+/);
-	ToolPopup.ARROW_UP =    new RegExp(/my:[a-z]+([-+]\d*\%?)?\|top([-+]\d*\%?)? at:[a-z]+\|bottom/);
-	ToolPopup.ARROW_DOWN =  new RegExp(/my:[a-z]+([-+]\d*\%?)?\|bottom([-+]\d*\%?)? at:[a-z]+\|top/);
-
-	(function() {
-	ToolPopup.prototype.init = function() {
-		this.oPopup = null;
-		this._bPositionSet = false;
-
-		this._mParameters = {};
-		this._mParameters.that = this;
-		this._mParameters.firstFocusable = this.getId() + "-firstFocusable";
-		this._mParameters.lastFocusable = this.getId() + "-lastFocusable";
-
-		this._bFocusSet = false;
-		this._proxyOpened = jQuery.proxy(fnPopupOpened, this);
-		this._proxyClosed = jQuery.proxy(fnOnClosed, this);
-		this._proxyFixSize = jQuery.proxy(fnFixSize, this);
-		this._proxyOnResize = jQuery.proxy(fnOnResize, this);
-
-		fnSetArrowDimensions(this);
-	};
-	ToolPopup.prototype.exit = function() {
-		if (this.oPopup) {
-			this.oPopup.detachOpened(this._proxyOpened);
-			this.oPopup.detachClosed(this._proxyClosed);
-			this.oPopup.destroy();
-			delete this.oPopup;
-		}
-		delete this._bPositionSet;
-
-		delete this._mParameters;
-
-		delete this._bFocusSet;
-		delete this._bPreventRestoreFocus;
-		delete this._proxyOpened;
-		delete this._proxyClosed;
-
-		delete this._bRTL;
-		delete this._sArrowDir;
-		delete this._oArrowIcon;
-		delete this._bThemeInverted;
-
-		delete this._sInitialFocusId;
-	};
-
-	/*
-	 * Checks if the ToolPopup already has a tabbable element. If not it's checked whether
-	 * the fake-element should be used or if there is an element that could be focused instead
-	 *
-	 * @private
-	 * @param {sap.ui.ux3.ToolPopup} that to get/set instance values
-	 * @return {string} _sInitialFocusId that has been determined here
-	 */
-	var fnGetInitialFocus = function(that){
-		jQuery.sap.assert(!!that, "No ToolPopup instance given for fnGetInitialFocus");
-
-		var oElement;
-		var aTabbables = jQuery(":sapTabbable", that.$()).get();
-
-		// if there is an initial focus it was already set to the Popup onBeforeRendering
-		if (!that._bFocusSet) {
-			// search the first tabbable element
-			if (aTabbables.length > 0) {
+				// search the first tabbable element
 				for (var i = 0; i < aTabbables.length; i++) {
-					if (aTabbables[i].id !== that._mParameters.firstFocusable &&
-						aTabbables[i].id !== that._mParameters.lastFocusable) {
-
+					if (defaultFocusableElements.indexOf(aTabbables[i].id) === -1) {
 						oElement = aTabbables[i];
 						break;
 					}
 				}
-			}
 
-			// If a tabbable element is part of a control, focus the controls instead
-			var oFocusControl = jQuery(oElement).control();
-			if (oFocusControl[0]) {
-				var oFocusDomRef = oFocusControl[0].getFocusDomRef();
-				oElement = oFocusDomRef ? oFocusDomRef : oElement;
-			} else {
-				// if there is no tabbable element in the content use the first fake
-				// element to set the focus to the toolpopup
-				oElement = jQuery.sap.domById(that._mParameters.firstFocusable);
-			}
-
-			// oElement might not be available if this function is called during destroy
-			if (oElement) {
-				jQuery.sap.focus(oElement);
-				that._sInitialFocusId = oElement.id;
-			}
-
-		} else {
-			that._sInitialFocusId = that.oPopup._sInitialFocusId;
-		}
-
-		return that._sInitialFocusId;
-	};
-
-	ToolPopup.prototype.getFocusDomRef = function(){
-		// always determine the best initial focus stuff because content might
-		// have changed in the meantime
-		return fnGetInitialFocus(this);
-	};
-
-	ToolPopup.prototype.onfocusin = function(oEvent){
-		this._mParameters.event = oEvent;
-		this._mParameters.$FocusablesContent = jQuery(":sapTabbable", this.$("content"));
-		this._mParameters.$FocusablesFooter = jQuery(":sapTabbable", this.$("buttons"));
-
-		this.oPopup.focusTabChain(this._mParameters);
-	};
-
-	/**
-	 * This function fixes the height of the ToolPopup if the content is too large.
-	 * So the height will be set to the possible maximum and a scrollbar is provided.
-	 * Additionally the width of the ToolPopup is fixed as well since the scrollbar reduces
-	 * the possible space for the content.
-	 */
-	var fnFixSize = function(){
-		var $This = this.$();
-		var iValue = 0;
-
-		var sMaxHeight = this.getMaxHeight();
-		var iMaxHeight = sMaxHeight ? parseInt(sMaxHeight, 10) : 0;
-
-		/*
-		 * Fix the width (if necessary)
-		 */
-		var sMaxWidth = this.getMaxWidth();
-		if (sMaxWidth) {
-			var iMaxWidth = parseInt(sMaxWidth, 10);
-
-			var sBorderLeft = $This.css("border-left-width");
-			var iBorderLeft = parseInt(sBorderLeft, 10);
-			var sBorderRight = $This.css("border-right-width");
-			var iBorderRight = parseInt(sBorderRight, 10);
-
-			var sPaddingLeft = $This.css("padding-left");
-			var iPaddingLeft = parseInt(sPaddingLeft, 10);
-			var sPaddingRight = $This.css("padding-right");
-			var iPaddingRight = parseInt(sPaddingRight, 10);
-
-			iMaxWidth -= iBorderLeft + iPaddingLeft + iPaddingRight + iBorderRight;
-			$This.css("max-width", iMaxWidth + "px");
-		} else {
-			$This.css("max-width", "");
-		}
-
-		/*
-		 * Fix the height
-		 */
-		// get all paddings
-		var sPaddingTop = $This.css("padding-top");
-		var iPaddingTop = parseInt(sPaddingTop, 10);
-		var sPaddingBottom = $This.css("padding-bottom");
-		var iPaddingBottom = parseInt(sPaddingBottom, 10);
-
-		// get all border widths
-		var sBorderTop = $This.css("border-top-width");
-		var iBorderTop = parseInt(sBorderTop, 10);
-		var sBorderBottom = $This.css("border-bottom-width");
-		var iBorderBottom = parseInt(sBorderBottom, 10);
-
-		var iPaddings = iPaddingTop + iPaddingBottom + iBorderTop + iBorderBottom;
-
-		// determine the corresponding scrollTop to calculate the proper bottom end of the ToolPopup
-		var iScrollTop = jQuery(document).scrollTop();
-		var oThisRect = $This.rect();
-		var iBottomEnd = oThisRect.top - iScrollTop + $This.outerHeight(true);
-
-		// only use this mechanism when there is NO maxHeight set
-		var iWinHeight = jQuery(window).height();
-		var bTooHigh = (iBottomEnd > iWinHeight) && (iMaxHeight === 0);
-		var iYOffset = 0;
-
-		// check if an offset forces the ToolPopup out of the window
-		// and below the opener
-		if (bTooHigh) {
-			var $Opener = jQuery.sap.byId(this.getOpener());
-			var oOpenerRect = $Opener.rect();
-			var iOpenerBottom = oOpenerRect.top - iScrollTop + $Opener.outerHeight(true);
-
-			// if bottom of the ToolPopup is below the opener and there is a possible offset
-			var aOffset = this.oPopup._getPositionOffset();
-			if (iBottomEnd > iOpenerBottom && aOffset.length > 0) {
-				// check if the offset is responsible for pushing the ToolPopup below the opener
-				// and therefore out of the window
-				iYOffset = Math.abs(parseInt(aOffset[1], 10));
-
-				// this check inverts the variable to prevent any resize of the ToolPopup since it
-				// is pushed out of the window because of the offset
-				if ((iBottomEnd - iYOffset) < iWinHeight) {
-					bTooHigh = false;
-					var sMessage = "Offset of " + iYOffset + " pushes ToolPopup out of the window";
-					jQuery.sap.log.warning(sMessage, "", "sap.ui.ux3.ToolPopup");
-				}
-			}
-
-			iMaxHeight = iMaxHeight ? iMaxHeight : iWinHeight - oThisRect.top;
-		}
-
-		$This.toggleClass("sapUiUx3TPLargeContent", bTooHigh);
-
-		if (iMaxHeight || bTooHigh) {
-			$This.css("max-height", iMaxHeight + "px");
-
-			var $Title = this.$("title");
-			var $TitleSep = this.$("title-separator");
-
-			var $Buttons = this.$("buttons");
-			var $ButtonsSep = this.$("buttons-separator");
-
-			// Calculate the correct start value. Either simply take the set maxHeight
-			// or calculate the value between Popup.top and window end (incl. padding and offset)
-			iValue = iMaxHeight > 0 ? iMaxHeight : iWinHeight - oThisRect.top - iPaddingBottom - iYOffset;
-
-			// subtract all paddings and border-widths
-			iValue -= iPaddings;
-
-			// subtracting all corresponding values from top to down
-			iValue -= $Title.outerHeight(true);
-			iValue -= $TitleSep.outerHeight(true); // including margin
-
-			// height of content needn't to be subtracted
-
-			iValue -= $ButtonsSep.outerHeight(true); // including margin
-			iValue -= $Buttons.length > 0 ? $Buttons.outerHeight(true) : 0;
-
-			// if the height has to be corrected
-			iValue = parseInt(iValue, 10);
-
-			var $Content = this.$("content");
-			$Content.css("max-height", iValue + "px");
-
-			$Content.toggleClass("sapUiUx3TPLargeContent", true);
-		}
-
-		fnSetArrow(this);
-	};
-
-	/**
-	 * Function is called via 'jQuery.proxy()' when the ToolPopup has been opened
-	 * including the fade-in-animation of the Popup
-	 */
-	var fnPopupOpened = function(){
-		this._proxyFixSize();
-
-		if (!this._sInitialFocusId) {
-			var sInitFocusId = fnGetInitialFocus(this);
-
-			// Compare the initial focus id with the current focus that is
-			// stored in the FocusHandler in the core.
-			// If the initial focus was set properly already by the Popup
-			// don't focus twice. Because Internet Explorer will be confused with
-			// two focusin and focusout events
-			if (sInitFocusId !== sap.ui.getCore().getCurrentFocusedControlId()) {
-				var oControl = jQuery.sap.byId(sInitFocusId);
-				oControl.focus();
-			}
-		}
-
-		if (!this._sResizeID) {
-			// register the ResizeHandler for the content of the toolPopup and not the whole toolPopup itself.
-			// In this way when resized the toolPopup does not change its height indefinitely.
-			this._sResizeID = sap.ui.core.ResizeHandler.register(this.$('content')[0], this._proxyOnResize);
-		}
-
-		// forward the Popup's opened event accordingly
-		// was added in "1.19.0" as a fix for a CSN and was downported to "1.18.2" and "1.16.6"
-		this.fireOpened();
-	};
-
-
-	/**
-	 * Returns whether the pop up is currently open
-	 *
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	ToolPopup.prototype.isOpen = function() {
-		return this.oPopup && (this.oPopup.getOpenState() == "OPENING" || this.oPopup.getOpenState() == "OPEN");
-	};
-
-	ToolPopup.prototype.willBeClosed = function() {
-		var eState = this.oPopup && this.oPopup.getOpenState();
-		return eState !== sap.ui.core.OpenState.OPENING && eState !== sap.ui.core.OpenState.OPEN;
-	};
-
-	// first variant of the documentation: to be parsed by the metamodel derivation
-	/**
-	 * Opens the pop up.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#open
-	 * @function
-	 * @param {string} sMy The ToolPopup's content reference position for docking. This value is optional if the position of the ToolPopup is set via 'setPosition'.
-	 * @param {string} sAt The "of" element's reference point for docking to. This value is optional if the position of the ToolPopup is set via 'setPosition'.
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	// second variant of the documentation: public documentation
-	/**
-	 * This opens the ToolPopup. It is checked which control wants to open the ToolPopup. The Shell was previously set as parent so the
-	 * corresponding parent element is used to set the correct position of the ToolPopup.
-	 * If another control (i.e. a button) opens the ToolPopup, the control must be previously set as 'opener' via 'setOpener' to the
-	 * ToolPopup. Corresponding to this opener the position of the ToolPopup will be set.
-	 * It's also possible to set the position above, below or left from the opener. This can be done via the possible parameters 'my' and 'at'.
-	 * These parameters refers to work the same way as they do of sap.ui.core.Popup.open.
-	 *
-	 * @param {sap.ui.core.Popup.Dock} [my=sap.ui.core.Popup.Dock.CenterCenter] the ToolPopup's content reference position for docking
-	 * @param {sap.ui.core.Popup.Dock} [at=sap.ui.core.Popup.Dock.CenterCenter] the "of" element's reference point for docking to
-	 * @public
-	 */
-	ToolPopup.prototype.open = function(my, at) {
-		this._my = my;
-		this._at = at;
-		this._sArrowDir = fnGetArrowDirection(this);
-		var $OpenerRef = null;
-		this.sOffset = "";
-		fnUpdateThemeInverted(this);
-
-		// if the popup position has not been (re-)initialized since the last time this was opened, try to apply the default position
-		if (!this._bPositionSet) {
-			var iOffsetX = 0;
-			var iOffsetY = 0;
-
-			// any further validation of the values is done within the Popup
-			if (!this._my) {
-				this._my = Popup.Dock.BeginTop;
-			}
-			if (!this._at) {
-				this._at = Popup.Dock.EndTop;
-			}
-
-			$OpenerRef = jQuery.sap.domById(this.getOpener());
-			if ($OpenerRef) {
-				switch (this._sArrowDir) {
-					case "Up":
-						iOffsetX = 0;
-						iOffsetY = this.iArrowWidth;
-						break;
-
-					case "Down":
-						iOffsetX = 0;
-						iOffsetY = -this.iArrowWidth;
-						break;
-
-					case "Right":
-						iOffsetX = -this.iArrowWidth;
-						break;
-
-					default:
-					case "Left":
-						iOffsetX = this.iArrowWidth;
-						break;
-				}
-
-				iOffsetX = parseInt( iOffsetX, 10 );
-				iOffsetY = parseInt( iOffsetY, 10 );
-				this.sOffset = "" + iOffsetX + " " + iOffsetY;
-				// my, at, of, offset, collision /*none*/
-				this.setPosition(this._my, this._at, $OpenerRef, this.sOffset, "none");
-			} else {
-				this.setPosition(Popup.Dock.BeginTop, Popup.Dock.BeginTop, window, "0 0", "fit");
-				jQuery.sap.log.warning("No opener set. Using a default position for Popup", "", "sap.ui.ux3.ToolPopup");
-			}
-			/* value is set in 'setPosition'. This value shows if the position was previously set manually =>
-			 * in this case it was definitely not set manually
-			 */
-			this._bPositionSet = false;
-		}
-		// create popup if required
-		this._ensurePopup();
-
-		var bAutoClose = this.getAutoClose();
-		var bModal = this.getModal();
-		if (bAutoClose && bModal) {
-			jQuery.sap.log.warning("A modal & autoclose ToolPopup will not work properly. Therefore 'autoclose' will be deactived!");
-			bAutoClose = false;
-		}
-		this.oPopup.setAutoClose(bAutoClose);
-		this.oPopup.setModal(bModal);
-
-		// Save current focused element to restore the focus after closing the dialog
-		this._oPreviousFocus = Popup.getCurrentFocusInfo();
-		// open popup
-		this.fireOpen();
-
-		// the opener is needed for the intelligent arrow positioning
-		fnCheckOpener(this);
-
-		// function(iDuration, my, at, of, offset, collision /*empty to avoid any override*/, followOf /*true*/)
-		this.oPopup.open(this.getOpenDuration(), this._my, this._at, $OpenerRef, this.sOffset, "", true);
-		fnSetArrow(this);
-
-		return this;
-	};
-
-	/**
-	 * Checks if an opener was set. If not this functions tries to get the opener from the Popup.
-	 */
-	var fnCheckOpener = function(oThis) {
-		if (!oThis.getOpener()) {
-			var sId = "";
-			if (oThis.oPopup) {
-				if (oThis.oPopup._oPosition.of instanceof sap.ui.core.Element) {
-					sId = oThis.oPopup._oPosition.of.getId();
+				// If a tabbable element is part of a control, focus the control instead
+				oFocusControl = jQuery(oElement).control();
+				if (oFocusControl[0]) {
+					var oFocusDomRef = oFocusControl[0].getFocusDomRef();
+					oElement = oFocusDomRef || oElement;
 				} else {
-					if (oThis.oPopup._oPosition.of.length > 0) {
-						sId = oThis.oPopup._oPosition.of[0].id;
-					} else {
-						sId = oThis.oPopup._oPosition.of.id;
-					}
-				}
-			}
-
-			if (sId !== "") {
-				oThis.setAssociation("opener", sId, true);
-			} else {
-				jQuery.sap.log.error("Neither an opener was set properly nor a corresponding one can be distinguished", "", "sap.ui.ux3.ToolPopup");
-			}
-		}
-	};
-
-	var fnSetArrowDimensions = function(oThis){
-		var sParam = "sapUiUx3ToolPopupArrowWidth";
-		oThis.sArrowWidth = Parameters.get(sParam);
-		oThis.iArrowWidth = parseInt(oThis.sArrowWidth, 10);
-
-		sParam = "sapUiUx3ToolPopupArrowHeight";
-		oThis.sArrowHeight = Parameters.get(sParam);
-		oThis.iArrowHeight = parseInt(oThis.sArrowHeight, 10);
-
-		sParam = "sapUiUx3ToolPopupArrowRightMarginCorrection";
-		oThis.sArrowPadding = Parameters.get(sParam);
-		oThis.iArrowPadding = parseInt(oThis.sArrowPadding, 10);
-
-		sParam = "sapUiUx3ToolPopupArrowRightMarginCorrectionInverted";
-		oThis.sArrowPaddingInverted = Parameters.get(sParam);
-		oThis.iArrowPaddingInverted = parseInt(oThis.sArrowPaddingInverted, 10);
-	};
-
-	/**
-	 * Calculates the desired arrow direction related to the set docking. This only works when "my" and "at" both use the jQuery-based docking
-	 * which means they are strings like "begin top".
-	 *
-	 * @private
-	 */
-	var fnGetArrowDirection = function(oThis) {
-
-		// do not mirror the arrow direction here in RTL mode, because otherwise the offset is calculated wrong
-		// (Because the offset mirroring happens inside popup)
-		// the arrow is later mirrored at the output...
-
-		// this is the default case if no match was found
-		var sDirection = "Left";
-
-		// if 'my' is not set check if it was previously set via 'setPosition'
-		var my = oThis._my;
-		var at = oThis._at;
-		if (!my && oThis.oPopup) {
-			my = oThis.oPopup._oPosition.my;
-		}
-		if (!at && oThis.oPopup) {
-			at = oThis.oPopup._oPosition.at;
-		}
-
-		oThis._bHorizontalArrow = false;
-
-		if (my && at) {
-			var aMy = my.split(" ");
-			var aAt = at.split(" ");
-			// create a rule like "my:top|left at:left|top"
-			var sRule = "my:" + aMy[0] + "|" + aMy[1];
-			sRule += " at:" + aAt[0] + "|" + aAt[1];
-
-			if (ToolPopup.ARROW_LEFT.exec(sRule)) {
-				oThis._bHorizontalArrow = true;
-				sDirection = "Left";
-			} else if (ToolPopup.ARROW_RIGHT.exec(sRule)) {
-				oThis._bHorizontalArrow = true;
-				sDirection = "Right";
-			} else if (ToolPopup.ARROW_UP.exec(sRule)) {
-				sDirection = "Up";
-			} else if (ToolPopup.ARROW_DOWN.exec(sRule)) {
-				sDirection = "Down";
-			}
-
-			if (oThis.getDomRef() && oThis.isOpen()) {
-				var $This = oThis.$();
-				var oPopRect = $This.rect();
-				var $Opener = jQuery.sap.byId(oThis.getOpener());
-				var oOpenerRect = $Opener.rect();
-
-				if (oOpenerRect) {
-					// check if the ToolPopup was positioned at another side relative to the opener due to any collision.
-					if (oThis._bHorizontalArrow) {
-						// left/right arrow
-						var iPopRight = oPopRect.left + $This.outerWidth(true) + oThis.iArrowWidth;
-						var iOpenerRight = oOpenerRect.left + $Opener.outerWidth(true);
-
-						if (iPopRight <= iOpenerRight) {
-							sDirection = "Right";
-
-						} else {
-							sDirection = "Left";
-						}
-					} else {
-					// up/down arrow
-						var iPopBottom = oPopRect.top + $This.outerHeight(true) + oThis.iArrowWidth;
-						var iOpenerBottom = oOpenerRect.top + $Opener.outerHeight(true);
-
-						if (iPopBottom <= iOpenerBottom) {
-							sDirection = "Down";
-						} else {
-							sDirection = "Up";
-						}
-					}
-				}
-			}
-		}
-
-		return sDirection;
-	};
-
-	/**
-	 * Calculates the desired arrow position related to the set docking and to the size of the popup.
-	 * This only works when "my" and "at" both use the jQuery-based docking which means they are strings like "begin top".
-	 * If there is no opener set properly an error is logged into the console and there will be no arrow for the ToolPopup.
-	 *
-	 * @private
-	 */
-	var fnSetArrow = function(oThis){
-		if (!oThis.getDomRef()) {
-			return;
-		}
-
-		var sKey = "";
-		var iVal = 0;
-		var iZero = 0; // this is the 0 of the  relative position between ToolPopup and Opener
-		var iHalfArrow = oThis.iArrowHeight / 2;
-
-		oThis._sArrowDir = fnGetArrowDirection(oThis);
-		var sArrowDir = oThis._sArrowDir;
-		if (oThis._bRTL) {
-			// in RTL mode arrow must be mirrowed here
-			if (oThis._sArrowDir === "Right") {
-				sArrowDir = "Left";
-			} else if (oThis._sArrowDir === "Left") {
-				sArrowDir = "Right";
-			}
-		}
-
-		var oPopRect = oThis.$().rect();
-		var oOpenerRect = jQuery.sap.byId(oThis.getOpener()).rect();
-		if (!oOpenerRect) {
-			// if a proper opener isn't available
-			jQuery.sap.log.warning("Opener wasn't set properly. Therefore arrow will be at a default position", "", "sap.ui.ux3.ToolPopup");
-		}
-		var $Arrow = oThis.$("arrow");
-
-		// get the corresponding my-property
-		if (!oThis._my && oThis.oPopup) {
-			oThis._my = oThis.oPopup._oPosition.my;
-		}
-
-		// calculate the horizontal/vertical value of the arrow
-		if (oThis._bHorizontalArrow) {
-			// left or right arrow
-			sKey = "top";
-
-			if (oOpenerRect) {
-				iZero = oOpenerRect.top - oPopRect.top;
-
-				iVal = Math.round(iZero + oOpenerRect.height / 2);
-
-				// if the position would exceed the ToolPopup's height
-				iVal = iVal + iHalfArrow > oPopRect.height ? iVal - oThis.iArrowHeight : iVal;
-			}
-		} else {
-			// up/down arrow
-			sKey = "left";
-
-			if (oOpenerRect) {
-				iZero = oOpenerRect.left - oPopRect.left;
-				if (iZero < 0) {
-					iZero = oPopRect.width - oThis.iArrowHeight;
+					// if there is no tabbable element in the content use the first fake
+					// element to set the focus to the toolpopup
+					oElement = jQuery.sap.domById(defaultFocusableElements[0]);
 				}
 
-				iVal = Math.round(iZero + oOpenerRect.width / 2);
-				// if the position would exceed the ToolPopup's width
-				iVal = iVal + iHalfArrow > oPopRect.width ? iVal - oThis.iArrowHeight : iVal;
-			}
-		}
-
-		if (oOpenerRect) {
-			iVal -= iHalfArrow;
-		} else {
-			iVal =  oThis.iArrowHeight;
-		}
-
-
-		// set the corresponding classes
-		var sClassAttr = "";
-		if ($Arrow.hasClass("sapUiUx3TPNewArrow")) {
-			sClassAttr = "sapUiUx3TPNewArrow sapUiUx3TPNewArrow";
-		} else {
-			sClassAttr = oThis.isInverted() ? "sapUiUx3TPArrow sapUiTPInverted sapUiUx3TPArrow" : "sapUiUx3TPArrow sapUiUx3TPArrow";
-		}
-		$Arrow.attr("class", sClassAttr + sArrowDir);
-
-		if (sArrowDir === "Right" ) {
-			var iWidth = oPopRect.width;
-			// if the ToolPopup is invertable and it is being inverted use another
-			// value since in such a case the padding is different for the arrow
-			if (oThis.isInverted()) {
-				iWidth += oThis.iArrowPaddingInverted;
-			} else {
-				iWidth += oThis.iArrowPadding;
-			}
-
-			oThis._bRTL = sap.ui.getCore().getConfiguration().getRTL();
-			if (oThis._bRTL) {
-				$Arrow.css("right", iWidth + "px");
-			} else {
-				$Arrow.css("left", iWidth + "px");
-			}
-		} else {
-			$Arrow.css({
-				"left" : "",
-				"right" : ""
-			});
-		}
-
-		iVal = parseInt(iVal, 10);
-		iVal = iVal < 0 ? 0 : iVal;
-		if (iVal > 0) {
-			iVal -= 2; // due to some padding
-			// only correct corresponding position if there is something to correct
-			// otherwise the default position is used (via styling)
-			$Arrow.css(sKey, iVal + "px");
-		}
-	};
-	/**
-	 * Handles the sapescape event, triggers closing of the ToolPopup.
-	 *
-	 * @private
-	 */
-	ToolPopup.prototype.onsapescape = function() {
-		if (this.fireClose()) {
-			this.close();
-		}
-	};
-
-	/**
-	 * This function is called when the Popup has been closed. No matter if through the "close"-function
-	 * or through the autoClose-mechanism.
-	 * Additionally it is necessary to restore the focus as if the ToolPopup was closed via "close()".
-	 * If the corresponding suppress-parameter was given to "close" no focus will be restored.
-	 */
-	var fnOnClosed = function(oEvent) {
-		if (!this._bPreventRestoreFocus) {
-			Popup.applyFocusInfo(this._oPreviousFocus);
-		}
-
-		// Not removing the content DOM leads to the problem that control DOM with the same ID exists in two places if
-		// the control is added to a different aggregation without the dialog being destroyed. In this special case the
-		// RichTextEditor (as an example) renders a textarea-element and afterwards tells the TinyMCE component which ID
-		// to use for rendering; since there are two elements with the same ID at that point, it does not work.
-		// As the Dialog can only contain other controls, we can safely discard the DOM - we cannot do this inside
-		// the Popup, since it supports displaying arbitrary HTML content.
-		this.$().remove();
-
-		this.fireClosed();
-	};
-
-
-	/**
-	 * Closes the pop up. Can be called by the Shell when the pop up's button is clicked again; or by the application
-	 * when the interaction in the pop up has been completed or canceled.
-	 *
-	 * @param {boolean} bPreventRestoreFocus
-	 *         If set, the focus is NOT restored to the element that had the focus before the ToolPopup was opened. This makes sense when the ToolPopup is closed programmatically from a different area of the application (outside the ToolPopup) and the focus should not move aways from that place.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	ToolPopup.prototype.close = function(bPreventRestoreFocus) {
-		if (this.oPopup && this.oPopup.isOpen()) {
-			if (this._sResizeID) {
-				sap.ui.core.ResizeHandler.deregister(this._sResizeID);
-				delete this._sResizeID;
-			}
-
-			this.oPopup.close(this.getCloseDuration());
-			this._bPreventRestoreFocus = bPreventRestoreFocus;
-
-		}
-		return this;
-	};
-
-	/**
-	 * Whether the ToolPopup is currently enabled or not.
-	 *
-	 * Applications can't control the enabled state via a property. A ToolPopup is implicitly
-	 * enabled depending on its <code>openStatey</code>. Descendant controls that honor the
-	 * enabled state of their ancestors will appear disabled after the ToolPopup is closed.
-	 *
-	 * @experimental Since 1.13.1. Whether a dialog is regarded as "enabled" during the state transitions
-	 * (OPENING, CLOSING) is not fully decided. Currently, it is enabled during the OPENING phase
-	 * and disabled during the CLOSING phase. The only potential change would be to treat the
-	 * OPENING phase as disabled as well. Applications should be prepared to receive events from
-	 * "enabled" controls after they called open() on the dialog until close() is called on it.
-	 * If the mentioned potential change should happen, the dialog will become enabled only
-	 * after the transition to OPEN. Events from "enabled" children then can still only arrive
-	 * between open() and close(), so applications that obey the previous rule should continue
-	 * to work. Only end users or code that explicitly triggers pseudo user events would notice
-	 * a difference. <br>
-	 * A second aspect that might change is the visual behavior of the content: during the CLOSING
-	 * phase it 'looks' enabled but in fact it is already disabled. This avoids unnecessary redraws
-	 * for content that becomes hidden soon. Should this show to be confusing for end users, it might
-	 * be changed.
-	 *
-	 * @since 1.13.1
-	 * @return {boolean} whether the ToolPopup is currently enabled or not.
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	ToolPopup.prototype.getEnabled = function() {
-		var eState = this.oPopup ? this.oPopup.getOpenState() : sap.ui.core.OpenState.CLOSED; // assuming that a ToolPopup without a Popup can’t be open
-
-		//TODO the check for state OPENING is a compromise. Without that, the content of the dialog will render
-		// in disabled state but will be enabled. As an alternative, the dialog could render again after OPEN is reached
-		// and after switching to CLOSING (to properly reflect the changed enabled state in the descendants)
-		return eState === sap.ui.core.OpenState.OPENING || eState === sap.ui.core.OpenState.OPEN;
-	};
-
-	ToolPopup.prototype.onsapenter = function(oEvent) {
-		// See open-method
-		var sInitFocus = this.getDefaultButton();
-		var oFocusCtrl = sap.ui.getCore().byId(sInitFocus);
-
-		// trigger the default button if it exists and is inside the Dialog
-		if (sInitFocus && oFocusCtrl && jQuery.contains(this.getDomRef(), oFocusCtrl.getDomRef())) {
-			// Okay, we have the control
-			if (oFocusCtrl instanceof sap.ui.commons.Button) {
-				var $FocusCtrl = oFocusCtrl.$();
-				$FocusCtrl.click();
-				$FocusCtrl.focus();
-			}
-		}
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-	};
-
-	ToolPopup.prototype.onBeforeRendering = function() {
-		var sInitialFocusId = this.getInitialFocus();
-		var sDefaultButtontId = this.getDefaultButton();
-		this._bFocusSet = true;
-
-		if (sInitialFocusId) {
-			this.oPopup.setInitialFocusId(sInitialFocusId);
-		} else if (sDefaultButtontId) {
-			this.oPopup.setInitialFocusId(sDefaultButtontId);
-		} else {
-			this._bFocusSet = false;
-		}
-
-		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
-	};
-
-	ToolPopup.prototype._ensurePopup = function() {
-		if (!this.oPopup) {
-			this.oPopup = new Popup(this, false, true, false);
-			this.oPopup.attachOpened(this._proxyOpened);
-			this.oPopup.attachClosed(this._proxyClosed);
-
-			var that = this;
-			this.oPopup._applyPosition = function(){
-				Popup.prototype._applyPosition.apply(that.oPopup, arguments);
-
-				var of = that.oPopup._oLastPosition.of;
-				if (!of) {
-					// In case setPosition is called from the outside and the opener has
-					// been removed, this leads to closing the ToolPopup instead of causing
-					// an error
-					that.oPopup.close();
-				} else {
-					var $of = jQuery.sap.byId(of.id);
-					// only after an open popup the corresponding arrow can be determined
-					// if the position was set manually
-					if (that._bPositionSet) {
-						// shell stuff should still use the left arrow
-						if (!$of.hasClass("sapUiUx3ShellTool")) {
-							that._my = that.oPopup._oLastPosition.my;
-							that._at = that.oPopup._oLastPosition.at;
-						}
-					}
-					fnSetArrow(that);
+				// oElement might not be available if this function is called during destroy
+				if (oElement) {
+					jQuery.sap.focus(oElement);
+					that._sInitialFocusId = oElement.id;
 				}
 			};
-		}
-		return this.oPopup;
-	};
 
-	var fnOnResize = function() {
-		if (this.getContent().length) {
-			// This fixes the height of the ToolPopup if the height exceeds the window height.
-			// Maybe there is a Layout as content that changed its aggregation
-			this._proxyFixSize();
-
-			// If the height/width changed the Popup's position has to be fixed as well.
-			// Setting the arrow isn't needed after that because it happens inside "_applyPosition"
-			this.oPopup._applyPosition(this.oPopup._oLastPosition);
-		}
-	};
-
-	/**
-	 * Sets the position of the pop up, the same parameters as for sap.ui.core.Popup can be used.
-	 *
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	ToolPopup.prototype.setPosition = function() {
-		this._ensurePopup();
-		this.oPopup.setPosition.apply(this.oPopup, arguments);
-		this._bPositionSet = true;
-
-		fnCheckOpener(this);
-
-		return this;
-	};
-
-	var fnChangeContent = function(that, sType) {
-		if (sType === "content") {
-			fnRenderContent(that);
-		} else if (sType === "buttons") {
-			fnRenderButtons(that);
-		}
-
-		// this fixes the height of the ToolPopup if the height exceeds the window height
-		that._proxyFixSize();
-		// If the height/width changed the Popup's position has to be fixed as well
-		// Setting the arrow isn't needed after that because it happens inside "_applyPosition"
-		that.oPopup._applyPosition(that.oPopup._oLastPosition);
-	};
-
-	var fnRenderContent = function(oThis) {
-		var oContentDomRef = oThis.getDomRef("content");
-		oContentDomRef.innerHTML = "";
-
-		var aContent = oThis.getContent();
-		var rm = sap.ui.getCore().createRenderManager();
-
-		for (var i = 0; i < aContent.length; i++) {
-			rm.renderControl(aContent[i]);
-		}
-
-		rm.flush(oContentDomRef, true);
-		rm.destroy();
-	};
-	var fnRenderButtons = function(oThis) {
-		var oButtons = oThis.getDomRef("buttons");
-		var oSeparator = oThis.getDomRef("buttons-separator");
-		var aButtons = oThis.getButtons();
-
-		if (aButtons.length === 0) {
-			jQuery(oButtons).addClass("sapUiUx3TPButtonRowHidden");
-			jQuery(oSeparator).addClass("sapUiUx3TPButtonRowHidden");
-		} else {
-			jQuery(oButtons).removeClass("sapUiUx3TPButtonRowHidden");
-			jQuery(oSeparator).removeClass("sapUiUx3TPButtonRowHidden");
-			oButtons.innerHTML = "";
-			var rm = sap.ui.getCore().createRenderManager();
-
-			for (var i = 0; i < aButtons.length; i++) {
-				rm.renderControl(aButtons[i]);
+			/**
+			 * Returns a DOM element by its Id.
+			 *
+			 * @param {Number} id
+			 * @returns {Element|sap.ui.core.Element|Object|sap.ui.core.tmpl.Template}
+             * @private
+             */
+			function _fnGetFocusElementById(id) {
+				var domElement = sap.ui.getCore().byId(id);
+				return domElement;
 			}
 
-			rm.flush(oButtons, true);
-			rm.destroy();
-		}
-	};
+			/**
+			 * Determines the focus DOM reference.
+			 *
+			 * @returns {string}
+			 * @private
+			 */
+			ToolPopup.prototype.getFocusDomRef = function () {
+				var domRefId;
+				var focusElement = _fnGetFocusElementById(this._sInitialFocusId);
 
-	ToolPopup.prototype.addContent = function(oContent) {
-		this.addAggregation("content", oContent, /* suppressInvalidate */true);
+				// always determine the best initial focus stuff because content might
+				// have changed in the mean time
 
-		if (this.isOpen()) {
-			fnChangeContent(this, "content");
-		}
+				if (!focusElement){
+					this._bFocusSet = false;
+					domRefId = _fnGetInitialFocus(this);
+					focusElement = _fnGetFocusElementById(domRefId);
+				}
 
-		return this;
-	};
-	ToolPopup.prototype.insertContent = function(oContent, index) {
-		this.insertAggregation("content", oContent, index, /* suppressInvalidate */true);
+				return focusElement ? focusElement.getDomRef() : this.getDomRef();
+			};
 
-		if (this.isOpen()) {
-			fnChangeContent(this, "content");
-		}
+			/**
+			 * Handler for focus, adapted for this control,
+			 * @param {jQuery.EventObject} oEvent
+			 *
+			 * @private
+			 */
+			ToolPopup.prototype.onfocusin = function (oEvent) {
+				this._mParameters.event = oEvent;
+				this._mParameters.$FocusablesContent = jQuery(":sapTabbable", this.$("content"));
+				this._mParameters.$FocusablesFooter = jQuery(":sapTabbable", this.$("buttons"));
 
-		return this;
-	};
-	ToolPopup.prototype.removeContent = function(oContent) {
-		this.removeAggregation("content", oContent, /* suppressInvalidate */true);
+				this.oPopup.focusTabChain(this._mParameters);
+			};
 
-		if (this.isOpen()) {
-			fnChangeContent(this, "content");
-		}
+			/**
+			 * This function fixes the height of the ToolPopup if the content is too large.
+			 * So the height will be set to the possible maximum and a scrollbar is provided.
+			 * Additionally the width of the ToolPopup is fixed as well since the scrollbar reduces
+			 * the possible space for the content.
+			 *
+			 * @private
+			 */
+			var fnFixSize = function () {
+				var $This = this.$();
+				var iValue = 0;
 
-		return this;
-	};
-	ToolPopup.prototype.addButton = function(oButton) {
-		this.addAggregation("buttons", oButton, /* suppressInvalidate */true);
+				var sMaxHeight = this.getMaxHeight();
+				var iMaxHeight = sMaxHeight ? parseInt(sMaxHeight, 10) : 0;
 
-		if (this.isOpen()) {
-			fnChangeContent(this, "buttons");
-		}
+				/*
+				 * Fix the width (if necessary)
+				 */
+				var sMaxWidth = this.getMaxWidth();
+				if (sMaxWidth) {
+					var iMaxWidth = parseInt(sMaxWidth, 10);
 
-		return this;
-	};
-	ToolPopup.prototype.insertButton = function(oButton, index) {
-		this.insertAggregation("buttons", oButton, index, /* suppressInvalidate */true);
+					var sBorderLeft = $This.css("border-left-width");
+					var iBorderLeft = parseInt(sBorderLeft, 10);
+					var sBorderRight = $This.css("border-right-width");
+					var iBorderRight = parseInt(sBorderRight, 10);
 
-		if (this.isOpen()) {
-			fnChangeContent(this, "buttons");
-		}
+					var sPaddingLeft = $This.css("padding-left");
+					var iPaddingLeft = parseInt(sPaddingLeft, 10);
+					var sPaddingRight = $This.css("padding-right");
+					var iPaddingRight = parseInt(sPaddingRight, 10);
 
-		return this;
-	};
-	ToolPopup.prototype.removeButton = function(oButton) {
-		this.removeAggregation("button", oButton, /* suppressInvalidate */true);
+					iMaxWidth -= iBorderLeft + iPaddingLeft + iPaddingRight + iBorderRight;
+					$This.css("max-width", iMaxWidth + "px");
+				} else {
+					$This.css("max-width", "");
+				}
 
-		if (this.isOpen()) {
-			fnChangeContent(this, "buttons");
-		}
+				/*
+				 * Fix the height
+				 */
+				// get all paddings
+				var sPaddingTop = $This.css("padding-top");
+				var iPaddingTop = parseInt(sPaddingTop, 10);
+				var sPaddingBottom = $This.css("padding-bottom");
+				var iPaddingBottom = parseInt(sPaddingBottom, 10);
 
-		return this;
-	};
+				// get all border widths
+				var sBorderTop = $This.css("border-top-width");
+				var iBorderTop = parseInt(sBorderTop, 10);
+				var sBorderBottom = $This.css("border-bottom-width");
+				var iBorderBottom = parseInt(sBorderBottom, 10);
 
-	/**
-	 * This updates the instance's parameter if the ToolPopup is inverted per default
-	 *
-	 * @private
-	 */
-	var fnUpdateThemeInverted = function(oThis) {
-		var sParam = "sapUiUx3ToolPopupInverted";
+				var iPaddings = iPaddingTop + iPaddingBottom + iBorderTop + iBorderBottom;
 
-		sParam = Parameters.get(sParam);
-		oThis._bThemeInverted = sParam === "true";
-	};
+				// determine the corresponding scrollTop to calculate the proper bottom end of the ToolPopup
+				var iScrollTop = jQuery(document).scrollTop();
+				var oThisRect = $This.rect();
+				var iBottomEnd = oThisRect.top - iScrollTop + $This.outerHeight(true);
 
-	/**
-	 * @private
-	 */
-	ToolPopup.prototype.onThemeChanged = function() {
-		fnUpdateThemeInverted(this);
-	};
+				// only use this mechanism when there is NO maxHeight set
+				var iWinHeight = jQuery(window).height();
+				var bTooHigh = (iBottomEnd > iWinHeight) && (iMaxHeight === 0);
+				var iYOffset = 0;
 
-	/**
-	 * This checks if the ToolPopup is inverted. This depends on the parameter
-	 * 'inverted' and the LESS-parameter 'sapUiUx3ToolPopupInverted' in the current
-	 * theme.
-	 *
-	 * @return {sap.ui.core.boolean} whether the ToolPopup is inverted
-	 * @private
-	 */
-	ToolPopup.prototype.isInverted = function() {
-		fnUpdateThemeInverted(this);
-		return this.getInverted() && this._bThemeInverted;
-	};
+				// check if an offset forces the ToolPopup out of the window
+				// and below the opener
+				if (bTooHigh) {
+					var $Opener = jQuery.sap.byId(this.getOpener());
+					var oOpenerRect = $Opener.rect();
+					var iOpenerBottom = oOpenerRect.top - iScrollTop + $Opener.outerHeight(true);
 
-	/**
-	 * This is just a forward to the Popup's function (sap.ui.core.Popup.setAutoCloseAreas)
-	 * with the same functionality.
-	 *
-	 * @param {Element[]} aAutoCloseAreas
-	 * @public
-	 * @since 1.19.0
-	 */
-	ToolPopup.prototype.setAutoCloseAreas = function(aAutoCloseAreas) {
-		this._ensurePopup();
-		return this.oPopup.setAutoCloseAreas(aAutoCloseAreas);
-	};
+					// if bottom of the ToolPopup is below the opener and there is a possible offset
+					var aOffset = this.oPopup._getPositionOffset();
+					if (iBottomEnd > iOpenerBottom && aOffset.length > 0) {
+						// check if the offset is responsible for pushing the ToolPopup below the opener
+						// and therefore out of the window
+						iYOffset = Math.abs(parseInt(aOffset[1], 10));
 
-	/**
-	 * Adds an ID to the Popup that should be focusable as well when using 'autoclose'.
-	 * Chaining is only possible if a valid type (string) is given.
-	 *
-	 * @param {sap.ui.core.string} [sID] Id of the corresponding element that should be focusable as well
-	 * @since 1.19.0
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	ToolPopup.prototype.addFocusableArea = function(sID) {
-		this._ensurePopup();
+						// this check inverts the variable to prevent any resize of the ToolPopup since it
+						// is pushed out of the window because of the offset
+						if ((iBottomEnd - iYOffset) < iWinHeight) {
+							bTooHigh = false;
+							var sMessage = "Offset of " + iYOffset + " pushes ToolPopup out of the window";
+							jQuery.sap.log.warning(sMessage, "", "sap.ui.ux3.ToolPopup");
+						}
+					}
 
-		if (typeof (sID) === "string") {
-			// channelId & eventId are mandatory dummy values
-			this.oPopup._addFocusableArea("channelId", "eventId", {
-				id : sID
-			});
+					iMaxHeight = iMaxHeight ? iMaxHeight : iWinHeight - oThisRect.top;
+				}
+
+				$This.toggleClass("sapUiUx3TPLargeContent", bTooHigh);
+
+				if (iMaxHeight || bTooHigh) {
+					$This.css("max-height", iMaxHeight + "px");
+
+					var $Title = this.$("title");
+					var $TitleSep = this.$("title-separator");
+
+					var $Buttons = this.$("buttons");
+					var $ButtonsSep = this.$("buttons-separator");
+
+					// Calculate the correct start value. Either simply take the set maxHeight
+					// or calculate the value between Popup.top and window end (incl. padding and offset)
+					iValue = iMaxHeight > 0 ? iMaxHeight : iWinHeight - oThisRect.top - iPaddingBottom - iYOffset;
+
+					// subtract all paddings and border-widths
+					iValue -= iPaddings;
+
+					// subtracting all corresponding values from top to down
+					iValue -= $Title.outerHeight(true);
+					iValue -= $TitleSep.outerHeight(true); // including margin
+
+					// height of content needn't to be subtracted
+
+					iValue -= $ButtonsSep.outerHeight(true); // including margin
+					iValue -= $Buttons.length > 0 ? $Buttons.outerHeight(true) : 0;
+
+					// if the height has to be corrected
+					iValue = parseInt(iValue, 10);
+
+					var $Content = this.$("content");
+					$Content.css("max-height", iValue + "px");
+
+					$Content.toggleClass("sapUiUx3TPLargeContent", true);
+				}
+
+				fnSetArrow(this);
+			};
+
+			/**
+			 * Function is called via 'jQuery.proxy()' when the ToolPopup has been opened
+			 * including the fade-in-animation of the Popup
+			 *
+			 * @private
+			 */
+			var fnPopupOpened = function () {
+				this._proxyFixSize();
+
+				if (!this._sInitialFocusId) {
+					var sInitFocusId = _fnGetInitialFocus(this);
+
+					// Compare the initial focus id with the current focus that is
+					// stored in the FocusHandler in the core.
+					// If the initial focus was set properly already by the Popup
+					// don't focus twice. Because Internet Explorer will be confused with
+					// two focusin and focusout events
+					if (sInitFocusId !== sap.ui.getCore().getCurrentFocusedControlId()) {
+						var oControl = jQuery.sap.byId(sInitFocusId);
+						oControl.focus();
+					}
+				}
+
+				if (!this._sResizeID) {
+					// register the ResizeHandler for the content of the toolPopup and not the whole toolPopup itself.
+					// In this way when resized the toolPopup does not change its height indefinitely.
+					this._sResizeID = sap.ui.core.ResizeHandler.register(this.$('content')[0], this._proxyOnResize);
+				}
+
+				// forward the Popup's opened event accordingly
+				// was added in "1.19.0" as a fix for a CSN and was downported to "1.18.2" and "1.16.6"
+				this.fireOpened();
+			};
+
+
+			/**
+			 * Indicates whether the pop up is currently open
+			 *
+			 * @returns {boolean}
+			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+			 * @public
+			 */
+			ToolPopup.prototype.isOpen = function () {
+				return this.oPopup && (this.oPopup.getOpenState() == "OPENING" || this.oPopup.getOpenState() == "OPEN");
+			};
+
+			/**
+			 * Indicates whether the control will be closed
+			 *
+			 * @returns {boolean}
+			 * @private
+			 */
+			ToolPopup.prototype.willBeClosed = function () {
+				var eState = this.oPopup && this.oPopup.getOpenState();
+				return eState !== sap.ui.core.OpenState.OPENING && eState !== sap.ui.core.OpenState.OPEN;
+			};
+
+			// first variant of the documentation: to be parsed by the metamodel derivation
+			/**
+			 * Opens the ToolPopup.
+			 * It is checked which control wants to open the ToolPopup. The Shell was previously
+			 * set as parent so the corresponding parent element is used to set the correct position of the ToolPopup.
+			 * If another control (i.e. a button) opens the ToolPopup, the control must be previously
+			 * set as <code>opener</code> via <code>setOpener</code> to the ToolPopup.
+			 * Corresponding to this opener the position of the ToolPopup will be set.
+			 * It's also possible to set the position above, below or left from the opener.
+			 * This can be done via the possible parameters <code>my</code> and <code>at</code>.
+			 * These parameters refers to work the same way as they do of sap.ui.core.Popup.open.
+			 *
+			 * @param {sap.ui.core.Popup.Dock} [my=sap.ui.core.Popup.Dock.CenterCenter] The ToolPopup's content
+			 * reference position for docking
+			 * @param {sap.ui.core.Popup.Dock} [at=sap.ui.core.Popup.Dock.CenterCenter] The "of" element's
+			 * reference point for docking to
+			 * @returns {sap.ui.ux3.ToolPopup}
+			 * @public
+			 */
+			ToolPopup.prototype.open = function (my, at) {
+				this._my = my;
+				this._at = at;
+				this._sArrowDir = fnGetArrowDirection(this);
+				var $OpenerRef = null;
+				this.sOffset = "";
+				fnUpdateThemeInverted(this);
+
+				// if the popup position has not been (re-)initialized since the last time this was opened,
+				// try to apply the default position
+				if (!this._bPositionSet) {
+					var iOffsetX = 0;
+					var iOffsetY = 0;
+
+					// any further validation of the values is done within the Popup
+					if (!this._my) {
+						this._my = Popup.Dock.BeginTop;
+					}
+					if (!this._at) {
+						this._at = Popup.Dock.EndTop;
+					}
+
+					$OpenerRef = jQuery.sap.domById(this.getOpener());
+					if ($OpenerRef) {
+						switch (this._sArrowDir) {
+							case "Up":
+								iOffsetX = 0;
+								iOffsetY = this.iArrowWidth;
+								break;
+
+							case "Down":
+								iOffsetX = 0;
+								iOffsetY = -this.iArrowWidth;
+								break;
+
+							case "Right":
+								iOffsetX = -this.iArrowWidth;
+								break;
+
+							default:
+							case "Left":
+								iOffsetX = this.iArrowWidth;
+								break;
+						}
+
+						iOffsetX = parseInt(iOffsetX, 10);
+						iOffsetY = parseInt(iOffsetY, 10);
+						this.sOffset = "" + iOffsetX + " " + iOffsetY;
+						// my, at, of, offset, collision /*none*/
+						this.setPosition(this._my, this._at, $OpenerRef, this.sOffset, "none");
+					} else {
+						this.setPosition(Popup.Dock.BeginTop, Popup.Dock.BeginTop, window, "0 0", "fit");
+						jQuery.sap.log.warning("No opener set. Using a default position for Popup", "", "sap.ui.ux3.ToolPopup");
+					}
+					/* value is set in 'setPosition'. This value shows if the position was previously set manually =>
+					 * in this case it was definitely not set manually
+					 */
+					this._bPositionSet = false;
+				}
+				// create popup if required
+				this._ensurePopup();
+
+				var bAutoClose = this.getAutoClose();
+				var bModal = this.getModal();
+				if (bAutoClose && bModal) {
+					jQuery.sap.log.warning("A modal & autoclose ToolPopup will not work properly. Therefore 'autoclose' will be deactived!");
+					bAutoClose = false;
+				}
+				this.oPopup.setAutoClose(bAutoClose);
+				this.oPopup.setModal(bModal);
+
+				// Save current focused element to restore the focus after closing the dialog
+				this._oPreviousFocus = Popup.getCurrentFocusInfo();
+				// open popup
+				this.fireOpen();
+
+				// the opener is needed for the intelligent arrow positioning
+				fnCheckOpener(this);
+
+				// function(iDuration, my, at, of, offset, collision /*empty to avoid any override*/, followOf /*true*/)
+				this.oPopup.open(this.getOpenDuration(), this._my, this._at, $OpenerRef, this.sOffset, "", true);
+				fnSetArrow(this);
+
+				return this;
+			};
+
+			/**
+			 * Checks if an opener was set. If not, this functions tries to get the opener from the Popup.
+			 *
+			 * @private
+			 */
+			var fnCheckOpener = function (oThis) {
+				if (!oThis.getOpener()) {
+					var sId = "";
+					if (oThis.oPopup) {
+						if (oThis.oPopup._oPosition.of instanceof sap.ui.core.Element) {
+							sId = oThis.oPopup._oPosition.of.getId();
+						} else {
+							if (oThis.oPopup._oPosition.of.length > 0) {
+								sId = oThis.oPopup._oPosition.of[0].id;
+							} else {
+								sId = oThis.oPopup._oPosition.of.id;
+							}
+						}
+					}
+
+					if (sId !== "") {
+						oThis.setAssociation("opener", sId, true);
+					} else {
+						jQuery.sap.log.error("Neither an opener was set properly nor a corresponding one can be distinguished", "", "sap.ui.ux3.ToolPopup");
+					}
+				}
+			};
+
+			/**
+			 * Sets the arrow dimensions.
+			 *
+			 * @param {sap.ui.ux3.ToolPopup} oThis The Toolpopup instnace
+			 * @private
+			 */
+			var fnSetArrowDimensions = function (oThis) {
+				var sParam = "sapUiUx3ToolPopupArrowWidth";
+				oThis.sArrowWidth = Parameters.get(sParam);
+				oThis.iArrowWidth = parseInt(oThis.sArrowWidth, 10);
+
+				sParam = "sapUiUx3ToolPopupArrowHeight";
+				oThis.sArrowHeight = Parameters.get(sParam);
+				oThis.iArrowHeight = parseInt(oThis.sArrowHeight, 10);
+
+				sParam = "sapUiUx3ToolPopupArrowRightMarginCorrection";
+				oThis.sArrowPadding = Parameters.get(sParam);
+				oThis.iArrowPadding = parseInt(oThis.sArrowPadding, 10);
+
+				sParam = "sapUiUx3ToolPopupArrowRightMarginCorrectionInverted";
+				oThis.sArrowPaddingInverted = Parameters.get(sParam);
+				oThis.iArrowPaddingInverted = parseInt(oThis.sArrowPaddingInverted, 10);
+			};
+
+			/**
+			 * Calculates the desired arrow direction related to the set docking.
+			 * This only works when "my" and "at" both use the jQuery-based docking which means they are strings like "begin top".
+			 *
+			 * @param {sap.ui.ux3.ToolPopup} oThis the instance of the ToolPopup
+			 * @returns {string} with arrow's direction
+			 * @private
+			 */
+			var fnGetArrowDirection = function (oThis) {
+
+				// do not mirror the arrow direction here in RTL mode, because otherwise the offset is calculated wrong
+				// (Because the offset mirroring happens inside popup)
+				// the arrow is later mirrored at the output...
+
+				// this is the default case if no match was found
+				var sDirection = "Left";
+
+				// if 'my' is not set check if it was previously set via 'setPosition'
+				var my = oThis._my;
+				var at = oThis._at;
+				if (!my && oThis.oPopup) {
+					my = oThis.oPopup._oPosition.my;
+				}
+				if (!at && oThis.oPopup) {
+					at = oThis.oPopup._oPosition.at;
+				}
+
+				oThis._bHorizontalArrow = false;
+
+				if (my && at) {
+					var aMy = my.split(" ");
+					var aAt = at.split(" ");
+					// create a rule like "my:top|left at:left|top"
+					var sRule = "my:" + aMy[0] + "|" + aMy[1];
+					sRule += " at:" + aAt[0] + "|" + aAt[1];
+
+					if (ToolPopup.ARROW_LEFT.exec(sRule)) {
+						oThis._bHorizontalArrow = true;
+						sDirection = "Left";
+					} else if (ToolPopup.ARROW_RIGHT.exec(sRule)) {
+						oThis._bHorizontalArrow = true;
+						sDirection = "Right";
+					} else if (ToolPopup.ARROW_UP.exec(sRule)) {
+						sDirection = "Up";
+					} else if (ToolPopup.ARROW_DOWN.exec(sRule)) {
+						sDirection = "Down";
+					}
+
+					if (oThis.getDomRef() && oThis.isOpen()) {
+						var $This = oThis.$();
+						var oPopRect = $This.rect();
+						var $Opener = jQuery.sap.byId(oThis.getOpener());
+						var oOpenerRect = $Opener.rect();
+
+						if (oOpenerRect) {
+							// check if the ToolPopup was positioned at another side relative to the opener due to any collision.
+							if (oThis._bHorizontalArrow) {
+								// left/right arrow
+								var iPopRight = oPopRect.left + $This.outerWidth(true) + oThis.iArrowWidth;
+								var iOpenerRight = oOpenerRect.left + $Opener.outerWidth(true);
+
+								if (iPopRight <= iOpenerRight) {
+									sDirection = "Right";
+
+								} else {
+									sDirection = "Left";
+								}
+							} else {
+								// up/down arrow
+								var iPopBottom = oPopRect.top + $This.outerHeight(true) + oThis.iArrowWidth;
+								var iOpenerBottom = oOpenerRect.top + $Opener.outerHeight(true);
+
+								if (iPopBottom <= iOpenerBottom) {
+									sDirection = "Down";
+								} else {
+									sDirection = "Up";
+								}
+							}
+						}
+					}
+				}
+
+				return sDirection;
+			};
+
+			/**
+			 * Calculates the desired arrow position related to the set docking and to the size of the popup.
+			 * This only works when "my" and "at" both use the jQuery-based docking which means they
+			 * are strings like "begin top".
+			 * If there is no opener set properly an error is logged into the console and there will
+			 * be no arrow for the ToolPopup.
+			 *
+			 * @param {sap.ui.ux3.ToolPopup} oThis
+			 * @private
+			 */
+			var fnSetArrow = function (oThis) {
+				if (!oThis.getDomRef()) {
+					return;
+				}
+
+				var sKey = "";
+				var iVal = 0;
+				var iZero = 0; // this is the 0 of the  relative position between ToolPopup and Opener
+				var iHalfArrow = oThis.iArrowHeight / 2;
+
+				oThis._sArrowDir = fnGetArrowDirection(oThis);
+				var sArrowDir = oThis._sArrowDir;
+				if (oThis._bRTL) {
+					// in RTL mode arrow must be mirrowed here
+					if (oThis._sArrowDir === "Right") {
+						sArrowDir = "Left";
+					} else if (oThis._sArrowDir === "Left") {
+						sArrowDir = "Right";
+					}
+				}
+
+				var oPopRect = oThis.$().rect();
+				var oOpenerRect = jQuery.sap.byId(oThis.getOpener()).rect();
+				if (!oOpenerRect) {
+					// if a proper opener isn't available
+					jQuery.sap.log.warning("Opener wasn't set properly. Therefore arrow will be at a default position", "", "sap.ui.ux3.ToolPopup");
+				}
+				var $Arrow = oThis.$("arrow");
+
+				// get the corresponding my-property
+				if (!oThis._my && oThis.oPopup) {
+					oThis._my = oThis.oPopup._oPosition.my;
+				}
+
+				// calculate the horizontal/vertical value of the arrow
+				if (oThis._bHorizontalArrow) {
+					// left or right arrow
+					sKey = "top";
+
+					if (oOpenerRect) {
+						iZero = oOpenerRect.top - oPopRect.top;
+
+						iVal = Math.round(iZero + oOpenerRect.height / 2);
+
+						// if the position would exceed the ToolPopup's height
+						iVal = iVal + iHalfArrow > oPopRect.height ? iVal - oThis.iArrowHeight : iVal;
+					}
+				} else {
+					// up/down arrow
+					sKey = "left";
+
+					if (oOpenerRect) {
+						iZero = oOpenerRect.left - oPopRect.left;
+						if (iZero < 0) {
+							iZero = oPopRect.width - oThis.iArrowHeight;
+						}
+
+						iVal = Math.round(iZero + oOpenerRect.width / 2);
+						// if the position would exceed the ToolPopup's width
+						iVal = iVal + iHalfArrow > oPopRect.width ? iVal - oThis.iArrowHeight : iVal;
+					}
+				}
+
+				if (oOpenerRect) {
+					iVal -= iHalfArrow;
+				} else {
+					iVal = oThis.iArrowHeight;
+				}
+
+
+				// set the corresponding classes
+				var sClassAttr = "";
+				if ($Arrow.hasClass("sapUiUx3TPNewArrow")) {
+					sClassAttr = "sapUiUx3TPNewArrow sapUiUx3TPNewArrow";
+				} else {
+					sClassAttr = oThis.isInverted() ? "sapUiUx3TPArrow sapUiTPInverted sapUiUx3TPArrow" : "sapUiUx3TPArrow sapUiUx3TPArrow";
+				}
+				$Arrow.attr("class", sClassAttr + sArrowDir);
+
+				if (sArrowDir === "Right") {
+					var iWidth = oPopRect.width;
+					// if the ToolPopup is invertable and it is being inverted use another
+					// value since in such a case the padding is different for the arrow
+					if (oThis.isInverted()) {
+						iWidth += oThis.iArrowPaddingInverted;
+					} else {
+						iWidth += oThis.iArrowPadding;
+					}
+
+					oThis._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+					if (oThis._bRTL) {
+						$Arrow.css("right", iWidth + "px");
+					} else {
+						$Arrow.css("left", iWidth + "px");
+					}
+				} else {
+					$Arrow.css({
+						"left": "",
+						"right": ""
+					});
+				}
+
+				iVal = parseInt(iVal, 10);
+				iVal = iVal < 0 ? 0 : iVal;
+				if (iVal > 0) {
+					iVal -= 2; // due to some padding
+					// only correct corresponding position if there is something to correct
+					// otherwise the default position is used (via styling)
+					$Arrow.css(sKey, iVal + "px");
+				}
+			};
+			/**
+			 * Handles the sapescape event, triggers closing of the ToolPopup.
+			 *
+			 * @private
+			 */
+			ToolPopup.prototype.onsapescape = function () {
+				if (this.fireClose()) {
+					this.close();
+				}
+			};
+
+			/**
+			 * This function is called when the Popup has been closed.
+			 * It does not matter if it is closed through the "close"-function or through the autoClose-mechanism.
+			 * Additionally it is necessary to restore the focus as if the ToolPopup was closed via "close()".
+			 * If the corresponding suppress-parameter was given to "close" no focus will be restored.
+			 *
+			 * @param {jQuery.EventObject} oEvent
+			 * @private
+			 */
+			var fnOnClosed = function (oEvent) {
+				if (!this._bPreventRestoreFocus) {
+					Popup.applyFocusInfo(this._oPreviousFocus);
+				}
+
+				// Not removing the content DOM leads to the  problem that control DOM with the same ID exists in two places if
+				// the control is added to a different aggregation without the dialog being destroyed. In this special case the
+				// RichTextEditor (as an example) renders a textarea-element and afterwards tells the TinyMCE component which ID
+				// to use for rendering; since there are two elements with the same ID at that point, it does not work.
+				// As the Dialog can only contain other controls, we can safely discard the DOM - we cannot do this inside
+				// the Popup, since it supports displaying arbitrary HTML content.
+				this.$().remove();
+
+				this.fireClosed();
+			};
+
+
+			/**
+			 * Closes the pop up.
+			 * Can be called by the Shell when the pop up's button is clicked again; or by the application
+			 * when the interaction in the pop up has been completed or canceled.
+			 *
+			 * @param {boolean} bPreventRestoreFocus
+			 *         If set, the focus is NOT restored to the element that had the focus before the ToolPopup was opened.
+			 *         This makes sense when the ToolPopup is closed programmatically from a different area of the application
+			 *         (outside the ToolPopup) and the focus should not move aways from that place.
+			 * @returns {sap.ui.ux3.ToolPopup}
+			 * @public
+			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+			 */
+			ToolPopup.prototype.close = function (bPreventRestoreFocus) {
+				if (this.oPopup && this.oPopup.isOpen()) {
+					if (this._sResizeID) {
+						sap.ui.core.ResizeHandler.deregister(this._sResizeID);
+						delete this._sResizeID;
+					}
+
+					this.oPopup.close(this.getCloseDuration());
+					this._bPreventRestoreFocus = bPreventRestoreFocus;
+
+				}
+				return this;
+			};
+
+			/**
+			 * Indicates whether the ToolPopup is currently enabled or not.
+			 *
+			 * Applications can't control the enabled state via a property. A ToolPopup is implicitly
+			 * enabled depending on its <code>openState</code>. Descendant controls that honor the
+			 * enabled state of their ancestors will appear disabled after the ToolPopup is closed.
+			 *
+			 * Since 1.13.1. Whether a dialog is regarded as "enabled" during the state transitions
+			 * (OPENING, CLOSING) is not fully decided. Currently, it is enabled during the OPENING phase
+			 * and disabled during the CLOSING phase. The only potential change would be to treat the
+			 * OPENING phase as disabled as well. Applications should be prepared to receive events from
+			 * "enabled" controls after they called open() on the dialog until close() is called on it.
+			 * If the mentioned potential change should happen, the dialog will become enabled only
+			 * after the transition to OPEN. Events from "enabled" children then can still only arrive
+			 * between open() and close(), so applications that obey the previous rule should continue
+			 * to work. Only end users or code that explicitly triggers pseudo user events would notice
+			 * a difference. <br>
+			 * A second aspect that might change is the visual behavior of the content: during the CLOSING
+			 * phase it 'looks' enabled but in fact it is already disabled. This avoids unnecessary redraws
+			 * for content that becomes hidden soon. Should this show to be confusing for end users, it might
+			 * be changed.
+			 *
+			 * @since 1.13.1
+			 * @returns {boolean}
+			 * @public
+			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+			 */
+			ToolPopup.prototype.getEnabled = function () {
+				// assuming that a ToolPopup without a Popup can’t be open
+				var eState = this.oPopup ? this.oPopup.getOpenState() : sap.ui.core.OpenState.CLOSED;
+
+				//TODO the check for state OPENING is a compromise. Without that, the content of the dialog will render
+				// in disabled state but will be enabled. As an alternative, the dialog could render again after OPEN is reached
+				// and after switching to CLOSING (to properly reflect the changed enabled state in the descendants)
+				return eState === sap.ui.core.OpenState.OPENING || eState === sap.ui.core.OpenState.OPEN;
+			};
+
+			ToolPopup.prototype.onsapenter = function (oEvent) {
+				// See open-method
+				var sInitFocus = this.getDefaultButton();
+				var oFocusCtrl = sap.ui.getCore().byId(sInitFocus);
+
+				// trigger the default button if it exists and is inside the Dialog
+				if (sInitFocus && oFocusCtrl && jQuery.contains(this.getDomRef(), oFocusCtrl.getDomRef())) {
+					// Okay, we have the control
+					if (oFocusCtrl instanceof sap.ui.commons.Button) {
+						var $FocusCtrl = oFocusCtrl.$();
+						$FocusCtrl.click();
+						$FocusCtrl.focus();
+					}
+				}
+
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+			};
+
+			ToolPopup.prototype.onBeforeRendering = function () {
+				var sInitialFocusId = this.getInitialFocus() || this._sInitialFocusId;
+				var sDefaultButtontId = this.getDefaultButton();
+				this._bFocusSet = true;
+
+				if (sInitialFocusId) {
+					this.oPopup.setInitialFocusId(sInitialFocusId);
+				} else if (sDefaultButtontId) {
+					this.oPopup.setInitialFocusId(sDefaultButtontId);
+				} else {
+					this._bFocusSet = false;
+				}
+
+				this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			};
+
+			ToolPopup.prototype._ensurePopup = function () {
+				if (!this.oPopup) {
+					this.oPopup = new Popup(this, false, true, false);
+					this.oPopup.attachOpened(this._proxyOpened);
+					this.oPopup.attachClosed(this._proxyClosed);
+
+					var that = this;
+					this.oPopup._applyPosition = function () {
+						Popup.prototype._applyPosition.apply(that.oPopup, arguments);
+
+						var of = that.oPopup._oLastPosition.of;
+						if (!of) {
+							// In case setPosition is called from the outside and the opener has
+							// been removed, this leads to closing the ToolPopup instead of causing
+							// an error
+							that.oPopup.close();
+						} else {
+							var $of = jQuery.sap.byId(of.id);
+							// only after an open popup the corresponding arrow can be determined
+							// if the position was set manually
+							if (that._bPositionSet) {
+								// shell stuff should still use the left arrow
+								if (!$of.hasClass("sapUiUx3ShellTool")) {
+									that._my = that.oPopup._oLastPosition.my;
+									that._at = that.oPopup._oLastPosition.at;
+								}
+							}
+							fnSetArrow(that);
+						}
+					};
+				}
+				return this.oPopup;
+			};
+
+			var fnOnResize = function () {
+				if (this.getContent().length) {
+					// This fixes the height of the ToolPopup if the height exceeds the window height.
+					// Maybe there is a Layout as content that changed its aggregation
+					this._proxyFixSize();
+
+					// If the height/width changed the Popup's position has to be fixed as well.
+					// Setting the arrow isn't needed after that because it happens inside "_applyPosition"
+					this.oPopup._applyPosition(this.oPopup._oLastPosition);
+				}
+			};
+
+			/**
+			 * Sets the position of the pop up, the same parameters as for sap.ui.core.Popup can be used.
+			 *
+			 * @public
+			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+			 */
+			ToolPopup.prototype.setPosition = function () {
+				this._ensurePopup();
+				this.oPopup.setPosition.apply(this.oPopup, arguments);
+				this._bPositionSet = true;
+
+				fnCheckOpener(this);
+
+				return this;
+			};
+
+			var fnChangeContent = function (that, sType) {
+				if (sType === "content") {
+					fnRenderContent(that);
+				} else if (sType === "buttons") {
+					fnRenderButtons(that);
+				}
+
+				// this fixes the height of the ToolPopup if the height exceeds the window height
+				that._proxyFixSize();
+				// If the height/width changed the Popup's position has to be fixed as well
+				// Setting the arrow isn't needed after that because it happens inside "_applyPosition"
+				that.oPopup._applyPosition(that.oPopup._oLastPosition);
+			};
+
+			var fnRenderContent = function (oThis) {
+				var oContentDomRef = oThis.getDomRef("content");
+				oContentDomRef.innerHTML = "";
+
+				var aContent = oThis.getContent();
+				var rm = sap.ui.getCore().createRenderManager();
+
+				for (var i = 0; i < aContent.length; i++) {
+					rm.renderControl(aContent[i]);
+				}
+
+				rm.flush(oContentDomRef, true);
+				rm.destroy();
+			};
+			var fnRenderButtons = function (oThis) {
+				var oButtons = oThis.getDomRef("buttons");
+				var oSeparator = oThis.getDomRef("buttons-separator");
+				var aButtons = oThis.getButtons();
+
+				if (aButtons.length === 0) {
+					jQuery(oButtons).addClass("sapUiUx3TPButtonRowHidden");
+					jQuery(oSeparator).addClass("sapUiUx3TPButtonRowHidden");
+				} else {
+					jQuery(oButtons).removeClass("sapUiUx3TPButtonRowHidden");
+					jQuery(oSeparator).removeClass("sapUiUx3TPButtonRowHidden");
+					oButtons.innerHTML = "";
+					var rm = sap.ui.getCore().createRenderManager();
+
+					for (var i = 0; i < aButtons.length; i++) {
+						rm.renderControl(aButtons[i]);
+					}
+
+					rm.flush(oButtons, true);
+					rm.destroy();
+				}
+			};
+
+			ToolPopup.prototype.addContent = function (oContent) {
+				this.addAggregation("content", oContent, /* suppressInvalidate */true);
+
+				if (this.isOpen()) {
+					fnChangeContent(this, "content");
+				}
+
+				return this;
+			};
+			ToolPopup.prototype.insertContent = function (oContent, index) {
+				this.insertAggregation("content", oContent, index, /* suppressInvalidate */true);
+
+				if (this.isOpen()) {
+					fnChangeContent(this, "content");
+				}
+
+				return this;
+			};
+			ToolPopup.prototype.removeContent = function (oContent) {
+				this.removeAggregation("content", oContent, /* suppressInvalidate */true);
+
+				if (this.isOpen()) {
+					fnChangeContent(this, "content");
+				}
+
+				return this;
+			};
+			ToolPopup.prototype.addButton = function (oButton) {
+				this.addAggregation("buttons", oButton, /* suppressInvalidate */true);
+
+				if (this.isOpen()) {
+					fnChangeContent(this, "buttons");
+				}
+
+				return this;
+			};
+			ToolPopup.prototype.insertButton = function (oButton, index) {
+				this.insertAggregation("buttons", oButton, index, /* suppressInvalidate */true);
+
+				if (this.isOpen()) {
+					fnChangeContent(this, "buttons");
+				}
+
+				return this;
+			};
+			ToolPopup.prototype.removeButton = function (oButton) {
+				this.removeAggregation("button", oButton, /* suppressInvalidate */true);
+
+				if (this.isOpen()) {
+					fnChangeContent(this, "buttons");
+				}
+
+				return this;
+			};
+
+			/**
+			 * This updates the instance's parameter if the ToolPopup is inverted per default
+			 *
+			 * @private
+			 */
+			var fnUpdateThemeInverted = function (oThis) {
+				var sParam = "sapUiUx3ToolPopupInverted";
+
+				sParam = Parameters.get(sParam);
+				oThis._bThemeInverted = sParam === "true";
+			};
+
+			/**
+			 * @private
+			 */
+			ToolPopup.prototype.onThemeChanged = function () {
+				fnUpdateThemeInverted(this);
+			};
+
+			/**
+			 * This checks if the ToolPopup is inverted. This depends on the parameter
+			 * 'inverted' and the LESS-parameter 'sapUiUx3ToolPopupInverted' in the current
+			 * theme.
+			 *
+			 * @returns {boolean} Whether the ToolPopup is inverted
+			 * @private
+			 */
+			ToolPopup.prototype.isInverted = function () {
+				fnUpdateThemeInverted(this);
+				return this.getInverted() && this._bThemeInverted;
+			};
+
+			/**
+			 * This is just a forward to the Popup's function (sap.ui.core.Popup.setAutoCloseAreas)
+			 * with the same functionality.
+			 *
+			 * @param {Element[]} aAutoCloseAreas
+			 * @public
+			 * @since 1.19.0
+			 */
+			ToolPopup.prototype.setAutoCloseAreas = function (aAutoCloseAreas) {
+				this._ensurePopup();
+				return this.oPopup.setAutoCloseAreas(aAutoCloseAreas);
+			};
+
+			/**
+			 * Adds an ID to the Popup that should be focusable as well when using <code>autoclose</code>.
+			 * Chaining is only possible if a valid type (string) is given.
+			 *
+			 * @param {sap.ui.core.string} [sID] ID of the corresponding element that should be focusable as well
+			 * @since 1.19.0
+			 * @public
+			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+			 */
+			ToolPopup.prototype.addFocusableArea = function (sID) {
+				this._ensurePopup();
+
+				if (typeof (sID) === "string") {
+					// channelId & eventId are mandatory dummy values
+					this.oPopup._addFocusableArea("channelId", "eventId", {
+						id: sID
+					});
+					return this;
+				} else {
+					jQuery.sap.log.error("Wrong type of focusable area ID - string expected", "", "sap.ui.ux3.ToolPopup");
+				}
+			};
+
+			/**
+			 * Removes an ID to the Popup that should be focusable as well when using <code>autoclose</code>.
+			 * Chaining is only possible if a valid type (string) is given.
+			 *
+			 * @param {sap.ui.core.string} [sID] ID of the corresponding element
+			 * @since 1.19.0
+			 * @public
+			 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+			 */
+			ToolPopup.prototype.removeFocusableArea = function (sID) {
+				this._ensurePopup();
+
+				if (typeof (sID) === "string") {
+					// channelId & eventId are mandatory dummy values
+					this.oPopup._removeFocusableArea("channelId", "eventId", {
+						id: sID
+					});
+					return this;
+				} else {
+					jQuery.sap.log.error("Wrong type of focusable area ID - string expected", "", "sap.ui.ux3.ToolPopup");
+				}
+			};
+		}());
+
+		/**
+		 * Overriden setter for the Icon.
+		 *
+		 * @param {string} sIcon
+		 * @returns {sap.ui.ux3.ToolPopup}
+		 */
+		ToolPopup.prototype.setIcon = function (sIcon) {
+			this.setProperty("icon", sIcon, true); // rerendering makes no sense, as this icon is not rendered by the ToolPopup
+			this.fireIconChanged(); // tell other interested parties to update the icon
 			return this;
-		} else {
-			jQuery.sap.log.error("Wrong type of focusable area ID - string expected", "", "sap.ui.ux3.ToolPopup");
-		}
-	};
+		};
 
-	/**
-	 * Removes an ID to the Popup that should be focusable as well when using 'autoclose'.
-	 * Chaining is only possible if a valid type (string) is given.
-	 *
-	 * @param {sap.ui.core.string} [sID] of the corresponding element
-	 * @since 1.19.0
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	ToolPopup.prototype.removeFocusableArea = function(sID) {
-		this._ensurePopup();
-
-		if (typeof (sID) === "string") {
-			// channelId & eventId are mandatory dummy values
-			this.oPopup._removeFocusableArea("channelId", "eventId", {
-				id : sID
-			});
+		/**
+		 * Overriden setter for the icon hover.
+		 *
+		 * @param {string} sIconHover
+		 * @returns {sap.ui.ux3.ToolPopup}
+		 */
+		ToolPopup.prototype.setIconHover = function (sIconHover) {
+			this.setProperty("iconHover", sIconHover, true); // rerendering makes no sense, as this icon is not rendered by the ToolPopup
+			this.fireIconChanged(); // tell other interested parties to update the icon
 			return this;
-		} else {
-			jQuery.sap.log.error("Wrong type of focusable area ID - string expected", "", "sap.ui.ux3.ToolPopup");
-		}
-	};
-	}());
+		};
 
-	ToolPopup.prototype.setIcon = function(sIcon) {
-		this.setProperty("icon", sIcon, true); // rerendering makes no sense, as this icon is not rendered by the ToolPopup
-		this.fireIconChanged(); // tell other interested parties to update the icon
-		return this;
-	};
-	ToolPopup.prototype.setIconHover = function(sIconHover) {
-		this.setProperty("iconHover", sIconHover, true); // rerendering makes no sense, as this icon is not rendered by the ToolPopup
-		this.fireIconChanged(); // tell other interested parties to update the icon
-		return this;
-	};
-	ToolPopup.prototype.setIconSelected = function(sIconSelected) {
-		this.setProperty("iconSelected", sIconSelected, true); // rerendering makes no sense, as this icon is not rendered by the ToolPopup
-		this.fireIconChanged(); // tell other interested parties to update the icon
-		return this;
-	};
-	ToolPopup.prototype.getIconSelected = function() {
-		return this.getProperty("iconSelected") || this.getProperty("iconHover"); // implement the documented fallback
-	};
+		/**
+		 * Overriden setter for the selected icon.
+		 * @param {string} sIconSelected
+		 * @returns {sap.ui.ux3.ToolPopup}
+		 */
+		ToolPopup.prototype.setIconSelected = function (sIconSelected) {
+			this.setProperty("iconSelected", sIconSelected, true); // rerendering makes no sense, as this icon is not rendered by the ToolPopup
+			this.fireIconChanged(); // tell other interested parties to update the icon
+			return this;
+		};
 
-	ToolPopup.prototype.setMaxWidth = function(sMaxWidth) {
-		var pattern = /[0-9]+px/;
+		/**
+		 * Gets the selected icon or icon hover.
+		 *
+		 * @returns {object}
+		 */
+		ToolPopup.prototype.getIconSelected = function () {
+			return this.getProperty("iconSelected") || this.getProperty("iconHover"); // implement the documented fallback
+		};
 
-		if (pattern.test(sMaxWidth)) {
-			this.setProperty("maxWidth", sMaxWidth);
-		} else {
-			jQuery.sap.log.error("Only values in pixels are possible", "", "sap.ui.ux3.ToolPopup");
-		}
-	};
+		/**
+		 * Overriden setter for the max width internally.
+		 *
+		 * @param sMaxWidth
+		 */
+		ToolPopup.prototype.setMaxWidth = function (sMaxWidth) {
+			var pattern = /[0-9]+px/;
 
-	return ToolPopup;
+			if (pattern.test(sMaxWidth)) {
+				this.setProperty("maxWidth", sMaxWidth);
+			} else {
+				jQuery.sap.log.error("Only values in pixels are possible", "", "sap.ui.ux3.ToolPopup");
+			}
+		};
 
-}, /* bExport= */ true);
+		return ToolPopup;
+
+	}, /* bExport= */ true);
 
 }; // end of sap/ui/ux3/ToolPopup.js
 if ( !jQuery.sap.isDeclared('sap.ui.ux3.ExactBrowser') ) {
@@ -20001,7 +20137,7 @@ sap.ui.define("sap/ui/ux3/ExactBrowser",['jquery.sap.global', 'sap/ui/commons/Bu
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -20403,7 +20539,7 @@ sap.ui.define("sap/ui/ux3/Feed",['jquery.sap.global', 'sap/ui/commons/DropdownBo
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -20909,7 +21045,7 @@ sap.ui.define("sap/ui/ux3/FeedChunk",['jquery.sap.global', 'sap/ui/commons/MenuB
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -21597,21 +21733,21 @@ if ( !jQuery.sap.isDeclared('sap.ui.ux3.ThingInspector') ) {
 jQuery.sap.declare('sap.ui.ux3.ThingInspector'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', './Overlay', './ThingViewer', './library'],
-	function(jQuery, ActionBar, Overlay, ThingViewer, library) {
+	function(jQuery, ActionBar, Overlay, ThingViewer) {
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ThingInspector.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Thing Inspector
 	 * @extends sap.ui.ux3.Overlay
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -21619,65 +21755,65 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ThingInspector = Overlay.extend("sap.ui.ux3.ThingInspector", /** @lends sap.ui.ux3.ThingInspector.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * First Line of the Thing Inspector Title
 			 */
 			firstTitle : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Thing type
 			 */
 			type : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Thing Icon Url
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Second Line of the Thing Inspector Title
 			 */
 			secondTitle : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Follow State of a Thing
 			 */
 			followState : {type : "sap.ui.ux3.FollowActionState", group : "Misc", defaultValue : sap.ui.ux3.FollowActionState.Default},
-	
+
 			/**
 			 * State of Flag Action
 			 */
 			flagState : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * State Of favorite Action
 			 */
 			favoriteState : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * Favorite action enabled/disabled. If disabled the action will be invisible.
 			 */
 			favoriteActionEnabled : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Update action enabled/disabled. If disabled the action will be invisible.
 			 */
 			updateActionEnabled : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Follow action enabled/disabled. If disabled the action will be invisible.
 			 */
 			followActionEnabled : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Flag action enabled/disabled. If disabled the action will be invisible.
 			 */
 			flagActionEnabled : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Defines which header type should be used.
 			 * @since 1.16.3
@@ -21685,93 +21821,93 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			headerType : {type : "sap.ui.ux3.ThingViewerHeaderType", group : "Misc", defaultValue : sap.ui.ux3.ThingViewerHeaderType.Standard}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Actions of a Thing
 			 */
-			actions : {type : "sap.ui.ux3.ThingAction", multiple : true, singularName : "action"}, 
-	
+			actions : {type : "sap.ui.ux3.ThingAction", multiple : true, singularName : "action"},
+
 			/**
 			 * ThingGroups for the header content
 			 */
-			headerContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "headerContent"}, 
-	
+			headerContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "headerContent"},
+
 			/**
 			 * Thing Inspector facets
 			 */
-			facets : {type : "sap.ui.ux3.NavigationItem", multiple : true, singularName : "facet"}, 
-	
+			facets : {type : "sap.ui.ux3.NavigationItem", multiple : true, singularName : "facet"},
+
 			/**
 			 * ThingGroups for content of the selected facet
 			 */
-			facetContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "facetContent"}, 
-	
+			facetContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "facetContent"},
+
 			/**
 			 * ActionBar. If no actionBar is set a default ActionBar will be created.
 			 */
-			actionBar : {type : "sap.ui.ux3.ActionBar", multiple : false}, 
-	
+			actionBar : {type : "sap.ui.ux3.ActionBar", multiple : false},
+
 			/**
 			 * The ThingViewer managed by this ThingInspector
 			 */
 			thingViewer : {type : "sap.ui.ux3.ThingViewer", multiple : false, visibility : "hidden"}
 		},
 		associations : {
-	
+
 			/**
 			 * The Facet that is currently selected.
 			 */
 			selectedFacet : {type : "sap.ui.ux3.NavigationItem", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * Further thing related Action selected
 			 */
 			actionSelected : {
 				parameters : {
-	
+
 					/**
 					 * Id of selected ThingAction
 					 */
-					id : {type : "string"}, 
-	
+					id : {type : "string"},
+
 					/**
 					 * Selected ThingAction
 					 */
 					action : {type : "sap.ui.ux3.ThingAction"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Event for facet selection. The application is responsible for displaying the correct content for the selected one. The ThingInspector will currently always mark the first facet as selected.
 			 */
 			facetSelected : {allowPreventDefault : true,
 				parameters : {
-	
+
 					/**
 					 * Id of selected NavigationItem
 					 */
-					id : {type : "string"}, 
-	
+					id : {type : "string"},
+
 					/**
 					 * The selected NavigationItem
 					 */
-					item : {type : "sap.ui.ux3.NavigationItem"}, 
-	
+					item : {type : "sap.ui.ux3.NavigationItem"},
+
 					/**
 					 * Key of selected NavigationItem
 					 */
 					key : {type : "string"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Fired when a new feed entry is submitted.
 			 */
 			feedSubmit : {
 				parameters : {
-	
+
 					/**
 					 * Feed text
 					 */
@@ -21780,8 +21916,8 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 		}
 	}});
-	
-	
+
+
 	(function() {
 		/**
 		 * Initialization hook for the Thinginspector. It creates the instance of the
@@ -21810,11 +21946,12 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 				oActionBar.setDividerWidth("252px");
 				oActionBar.attachActionSelected(function (oEvent) {
 					var sActionID = oEvent.getParameters().id,
-							oBarAction = oEvent.getParameters().action,
-							oThingAction;
-					if (sActionID.indexOf('Favorite') != -1 ||
-						sActionID.indexOf('Follow') != -1 ||
-						sActionID.indexOf('Flag') != -1) {
+						oBarAction = oEvent.getParameters().action,
+						oThingAction;
+
+					if (sActionID.indexOf(sap.ui.ux3.ActionBarSocialActions.Favorite) !== -1 ||
+						sActionID.indexOf(sap.ui.ux3.ActionBarSocialActions.Follow) !== -1 ||
+						sActionID.indexOf(sap.ui.ux3.ActionBarSocialActions.Flag) !== -1) {
 						if (that._oSocialActions[sActionID]) {
 							oThingAction = that._oSocialActions[sActionID];
 						} else {
@@ -21844,7 +21981,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 				this.setActionBar(oActionBar);
 			}
 		};
-		
+
 		/*
 		 * Set size of TI after rendering: If running in Shell we sync with shell
 		 * canvas. The size will then be set by the shell.
@@ -21857,11 +21994,11 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 				this._applyChanges({showOverlay:false});
 			}
 		};
-		
+
 		ThingInspector.prototype.onBeforeRendering = function() {
 			Overlay.prototype.onBeforeRendering.apply(this,arguments);
 		};
-		
+
 		/**
 		 * Destroys this instance of ThingInspector, called by Element#destroy()
 		 *
@@ -21870,9 +22007,10 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 		ThingInspector.prototype.exit = function() {
 			this._oThingViewer.exit(arguments);
 			this._oThingViewer.destroy();
+			this._oThingViewer = null;
 			Overlay.prototype.exit.apply(this,arguments);
 		};
-		
+
 		/**
 		 * Opens this instance of ThingIspector
 		 *
@@ -21886,7 +22024,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			Overlay.prototype.open.apply(this,arguments);
 			this._selectDefault();
 		};
-		
+
 		/**
 		 * get Navigation Bar control
 		 *
@@ -21895,7 +22033,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 		ThingInspector.prototype._getNavBar = function() {
 			return this._oThingViewer._oNavBar;
 		};
-		
+
 		/**
 		 * setDefault NavBar selection and fire SelectedItem Event
 		 *
@@ -21904,7 +22042,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 		ThingInspector.prototype._selectDefault = function() {
 			this._oThingViewer._selectDefault();
 		};
-		
+
 		/**
 		 * equal Columns
 		 *
@@ -21913,16 +22051,16 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 		ThingInspector.prototype._equalColumns = function() {
 			this._oThingViewer._equalColumns();
 		};
-		
+
 		/**
 		 * set trigger value for resize handler
-		 * 
+		 *
 		 * @private
 		 */
 		ThingInspector.prototype._setTriggerValue = function() {
 			this._oThingViewer._setTriggerValue();
 		};
-		
+
 		/**
 		 * Focus Last Element
 		 *
@@ -21937,7 +22075,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			jQuery.sap.focus(oFocus);
 		};
-		
+
 		/**
 		 * Focus First Element
 		 *
@@ -21952,9 +22090,9 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 				jQuery.sap.focus(this.$("thingViewer-content").firstFocusableDomRef());
 			}
 		};
-		
+
 		/* Redefinition of generated API methods */
-		
+
 		// Implementation of API method insertAction
 		ThingInspector.prototype.insertAction = function(oAction, iIndex) {
 			if (this.getActionBar()) {
@@ -21962,7 +22100,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return this;
 		};
-		
+
 		// Implementation of API method addAction
 		ThingInspector.prototype.addAction = function(oAction) {
 			if (this.getActionBar()) {
@@ -21970,7 +22108,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return this;
 		};
-		
+
 		// Implementation of API method removeAction
 		ThingInspector.prototype.removeAction = function(oAction) {
 			var result;
@@ -21979,7 +22117,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return result;
 		};
-		
+
 		// Implementation of API method removeAllActions
 		ThingInspector.prototype.removeAllActions = function() {
 			var result;
@@ -21988,7 +22126,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return result;
 		};
-		
+
 		// Implementation of API method getActions
 		ThingInspector.prototype.getActions = function() {
 			var result;
@@ -21997,7 +22135,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return result;
 		};
-		
+
 		// Implementation of API method destroyActions
 		ThingInspector.prototype.destroyActions = function() {
 			if (this.getActionBar()) {
@@ -22005,7 +22143,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return this;
 		};
-		
+
 		ThingInspector.prototype.indexOfAction = function(oAction) {
 			var result = -1;
 			if (this.getActionBar()) {
@@ -22013,46 +22151,46 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return result;
 		};
-		
-		
+
+
 		// Implementation of API method
 		ThingInspector.prototype.getFacets = function() {
 			return this._oThingViewer.getFacets();
 		};
-		
+
 		// Implementation of API method insertFacet
 		ThingInspector.prototype.insertFacet = function(oFacet, iIndex) {
 			this._oThingViewer.insertFacet(oFacet, iIndex);
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingInspector.prototype.addFacet = function(oFacet) {
 			this._oThingViewer.addFacet(oFacet);
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingInspector.prototype.removeFacet = function(vElement) {
 			return this._oThingViewer.removeFacet(vElement);
 		};
-		
+
 		// Implementation of API method
 		ThingInspector.prototype.removeAllFacets = function() {
 			return this._oThingViewer.removeAllFacets();
 		};
-		
+
 		// Implementation of API method
 		ThingInspector.prototype.destroyFacets = function() {
 			this._oThingViewer.destroyFacets();
 			return this;
 		};
-		
+
 		ThingInspector.prototype.indexOfFacet = function(oFacet) {
 			return this._oThingViewer.indexOfFacet(oFacet);
 		};
-		
-		
+
+
 		// Implementation of API method
 		ThingInspector.prototype.setFollowState = function(oFollowState) {
 			if (this.getActionBar()) {
@@ -22098,7 +22236,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return result;
 		};
-		
+
 		// Implementation of API method
 		ThingInspector.prototype.setIcon = function(oIcon) {
 			this._oThingViewer.setIcon(oIcon);
@@ -22107,23 +22245,23 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingInspector.prototype.getIcon = function() {
 			return this._oThingViewer.getIcon();
 		};
-		
+
 		// Implementation of API method
 		ThingInspector.prototype.setType = function(sType) {
 			this._oThingViewer.setType(sType);
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingInspector.prototype.getType = function() {
 			return this._oThingViewer.getType();
 		};
-		
+
 		// Implementation of API method
 		ThingInspector.prototype.insertFacetContent = function(oFacetContent, iIndex) {
 			this._oThingViewer.insertFacetContent(oFacetContent, iIndex);
@@ -22153,12 +22291,12 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 		ThingInspector.prototype.getFacetContent = function() {
 			return this._oThingViewer.getFacetContent();
 		};
-		
+
 		ThingInspector.prototype.indexOfFacetContent = function(oFacetContent) {
 			return this._oThingViewer.indexOfFacetContent(oFacetContent);
 		};
-		
-		
+
+
 		// Implementation of API method
 		ThingInspector.prototype.setActionBar = function(oActionBar) {
 			this._oThingViewer.setActionBar(oActionBar);
@@ -22201,12 +22339,12 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			this._oThingViewer.destroyHeaderContent();
 			return this;
 		};
-		
+
 		ThingInspector.prototype.indexOfHeaderContent = function(oHeaderContent) {
 			return this._oThingViewer.indexOfHeaderContent(oHeaderContent);
 		};
-		
-		
+
+
 		// Implementation of API method
 		ThingInspector.prototype.setSelectedFacet = function(selectedFacet) {
 			this._oThingViewer.setSelectedFacet(selectedFacet);
@@ -22230,7 +22368,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return result;
 		};
-		
+
 		//Implementation of API method
 		ThingInspector.prototype.setFlagActionEnabled = function(bEnabled) {
 			if (this.getActionBar()) {
@@ -22246,7 +22384,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return result;
 		};
-		
+
 		//Implementation of API method
 		ThingInspector.prototype.setUpdateActionEnabled = function(bEnabled) {
 			if (this.getActionBar()) {
@@ -22262,7 +22400,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			}
 			return result;
 		};
-		
+
 		//Implementation of API method
 		ThingInspector.prototype.setFollowActionEnabled = function(bEnabled) {
 			if (this.getActionBar()) {
@@ -22282,17 +22420,17 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 		ThingInspector.prototype.setFirstTitle = function(sTitle) {
 			this._oThingViewer.setTitle(sTitle);
 		};
-		
+
 		//Implementation of API method
 		ThingInspector.prototype.getFirstTitle = function() {
 			return this._oThingViewer.getTitle();
 		};
-		
+
 		//Implementation of API method
 		ThingInspector.prototype.setSecondTitle = function(sTitle) {
 			this._oThingViewer.setSubtitle(sTitle);
 		};
-		
+
 		//Implementation of API method
 		ThingInspector.prototype.getSecondTitle = function() {
 			return this._oThingViewer.getSubtitle();
@@ -22305,7 +22443,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			var result = this._oThingViewer.getHeaderType();
 			return result;
 		};
-		
+
 		ThingInspector.prototype._applyChanges = function(oChanges) {
 			this.oChanges = oChanges;
 			if ( oChanges.showOverlay ) {
@@ -22316,7 +22454,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 			return this;
 		};
 	}());
-	
+
 
 	return ThingInspector;
 
@@ -22356,7 +22494,7 @@ sap.ui.define("sap/ui/ux3/Exact",['jquery.sap.global', 'sap/ui/commons/Button', 
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public

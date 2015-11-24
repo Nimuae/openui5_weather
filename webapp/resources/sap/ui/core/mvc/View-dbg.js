@@ -5,8 +5,8 @@
  */
 
 // Provides control sap.ui.core.mvc.View.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/ExtensionPoint', 'sap/ui/core/library'],
-	function(jQuery, ManagedObject, Control, ExtensionPoint, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/library'],
+	function(jQuery, ManagedObject, Control, library) {
 	"use strict";
 
 
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * and provides lifecycle events.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -224,10 +224,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				that.onControllerConnected(that.oController);
 			}
 		};
-		
+
 		var fnPropagateOwner = function(fn) {
 			jQuery.sap.assert(typeof fn === "function", "fn must be a function");
-			
+
 			var Component = sap.ui.require("sap/ui/core/Component");
 			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
 			if (oOwnerComponent) {
@@ -423,12 +423,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		var sViewType = this.getMetadata().getClass()._sType ,
 			oViewInfo = {
 				name: this.sViewName,
+				componentId: this._sOwnerId,
 				id: this.getId(),
 				caller: this + " (" + this.sViewName + ")",
 				sync: !!bSync
 			},
 			//global preprocessor availability
 			oConfig = View._mPreprocessors[sViewType] ? View._mPreprocessors[sViewType][sType] : undefined,
+			//settings passed to the preprocessor
+			oSettings = oConfig ? oConfig.settings : {},
 			//local preprocessor availability
 			oLocalConfig = this.mPreprocessors[sType],
 			fnProcess;
@@ -444,11 +447,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		// determine preprocessor type (local || onDemand || global)
 		if (oLocalConfig && oLocalConfig.preprocessor) {
-			// local preprocessor
+			// local preprocessor, settings are equal to configuration
 			oConfig = oLocalConfig;
+			oSettings = oLocalConfig;
 		} else if (oLocalConfig && (oConfig && oConfig.onDemand)) {
-			// onDemand activated, enrich default config with locally supplied infos
-			 jQuery.extend(true, oConfig, oLocalConfig);
+			// onDemand activated, enrich local config with globally provided settings
+			 oSettings = jQuery.extend(oLocalConfig, oSettings);
 		} else if (oConfig && oConfig.onDemand) {
 			// default not activated
 				return fnResult(vSource);
@@ -468,7 +472,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			}
 			// determine preprocessor validity (only syncSupport preprocessors when in sync mode)
 			if (fnProcess && (!bSync || oConfig.syncSupport == bSync)) {
-				return fnResult(fnProcess(vSource, oViewInfo, oConfig));
+				return fnResult(fnProcess(vSource, oViewInfo, oSettings));
 			}
 		}
 		// no valid preprocessor found
@@ -523,9 +527,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			} else if (!View._mPreprocessors[sViewType][sType]) {
 				View._mPreprocessors[sViewType][sType] = {};
 			}
-			View._mPreprocessors[sViewType][sType] = {preprocessor: vPreprocessor, onDemand: bOnDemand, syncSupport: bSyncSupport};
-			// to be consistent with local preprocessors, everything in one config object
-			jQuery.extend(true, View._mPreprocessors[sViewType][sType], mSettings);
+			View._mPreprocessors[sViewType][sType] = {preprocessor: vPreprocessor, onDemand: bOnDemand, syncSupport: bSyncSupport, settings: mSettings};
 		} else {
 			jQuery.sap.log.error("Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
 		}
@@ -662,10 +664,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	View.prototype.loaded = function() {
 		if (!this._oAsyncState) {
 			// resolve immediately with this view instance
-			var that = this;
-			return new Promise(function(fnResolve) {
-				fnResolve(that);
-			});
+			return Promise.resolve(this);
 		} else {
 			return this._oAsyncState.promise;
 		}
@@ -767,6 +766,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * @param {object} oViewInfo identification information about the calling instance
 	 * @param {string} oViewInfo.id the id
 	 * @param {string} oViewInfo.name the name
+	 * @param {string} oViewInfo.componentId the id of the owning Component
 	 * @param {string} oViewInfo.caller
 	 * 		identifies the caller of this preprocessor; basis for log or exception messages
 	 * @param {object} [mSettings]

@@ -89,16 +89,19 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.FlexItemData} oLayoutData an object representation of the layout data
 	 */
-	FlexBoxStylingHelper.setFlexItemStyles = function(oRm, oLayoutData) {
+	FlexBoxStylingHelper.setFlexItemStyles = function(oRm, oLayoutData, oControl) {
+		oRm = oRm || null;
+		oControl = oControl || null;
+
 		// Set values if different from default
 		var order = oLayoutData.getOrder();
 		if (order) {
-			FlexBoxStylingHelper.setStyle(oRm, null, "order", order);
+			FlexBoxStylingHelper.setStyle(oRm, oControl, "order", order);
 		}
 	
 		var growFactor = oLayoutData.getGrowFactor();
 		if (growFactor !== undefined) {
-			FlexBoxStylingHelper.setStyle(oRm, null, "flex-grow", growFactor);
+			FlexBoxStylingHelper.setStyle(oRm, oControl, "flex-grow", growFactor);
 		}
 	
 		var alignSelf = oLayoutData.getAlignSelf().toLowerCase();
@@ -109,19 +112,19 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		}
 	
 		if (alignSelf && alignSelf !== "auto") {
-			FlexBoxStylingHelper.setStyle(oRm, null, "align-self", alignSelf);
+			FlexBoxStylingHelper.setStyle(oRm, oControl, "align-self", alignSelf);
 		}
 	
-		if (jQuery.support.newFlexBoxLayout) {
+		if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
 			var shrinkFactor = oLayoutData.getShrinkFactor();
 			if (shrinkFactor !== 1) {
-				FlexBoxStylingHelper.setStyle(oRm, null, "flex-shrink", shrinkFactor);
+				FlexBoxStylingHelper.setStyle(oRm, oControl, "flex-shrink", shrinkFactor);
 			}
 	
-	//		var baseSize = oLayoutData.getBaseSize().toLowerCase();
-	//		if(baseSize !== undefined) {
-	//			sap.m.FlexBoxStylingHelper.setStyle(oRm, null, "flex-basis", baseSize);
-	//		}
+			var baseSize = oLayoutData.getBaseSize().toLowerCase();
+			if (baseSize !== undefined) {
+				sap.m.FlexBoxStylingHelper.setStyle(oRm, oControl, "flex-basis", baseSize);
+			}
 		}
 	};
 	
@@ -145,7 +148,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		if (jQuery.support.flexBoxPrefixed) {
 			if (sap.ui.Device.browser.webkit) {
 				sVendorPrefix = "-webkit-";
-			} else if (jQuery.browser.mozilla) {
+			} else if (sap.ui.Device.browser.mozilla) {
 				sVendorPrefix = "-moz-";
 			} else if (sap.ui.Device.browser.internet_explorer) {
 				sVendorPrefix = "-ms-";

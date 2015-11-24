@@ -3,8 +3,8 @@
     {
       "name" : "sap/ui/suite/QuickViewUtils.js",
       "description" : "Provides",
-      "size" : 6349,
-      "compressedSize" : 3995,
+      "size" : 6347,
+      "compressedSize" : 3993,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
@@ -46,6 +46,12 @@
       "size" : 1393,
       "compressedSize" : 617,
       "required" : ["jquery.sap.global.js", "sap/ui/core/library.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/suite/manifest.json",
+      "size" : 734,
+      "required" : [],
       "includes" : []
     }
   ]

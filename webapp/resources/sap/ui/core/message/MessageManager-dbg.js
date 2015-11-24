@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -80,12 +80,19 @@ sap.ui.define([
 			if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
 				this.removeMessages(this.mMessages[sProcessorId][sTarget]);
 			}
+			var oReference = {};
+			oReference[oElement.getId()] = {
+					properties:{},
+					fieldGroupIds: oElement.getFieldGroupIds ? oElement.getFieldGroupIds() : undefined
+			};
+			oReference[oElement.getId()].properties[sProperty] = true;
 			var oMessage = new Message({
 					type: sap.ui.core.MessageType.Error,
 					message: oEvent.getParameter("message"), 
 					target: sTarget,
 					processor: this.oControlMessageProcessor,
-					technical: bTechnical
+					technical: bTechnical,
+					references: oReference
 				});
 			this.addMessages(oMessage);
 		}
@@ -162,7 +169,7 @@ sap.ui.define([
 			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {}; 
 			that._sortMessages(vMessages);
 			//push a copy
-			oProcessor.setMessages(vMessages);
+			oProcessor.setMessages(jQuery.extend(true, {}, vMessages));
 		});
 	};
 	
@@ -195,8 +202,8 @@ sap.ui.define([
 				aMessages = jQuery.merge(aMessages, vMessages);
 			});
 		});
-		oMessageModel.setData(aMessages);
 		this._pushMessages();
+		oMessageModel.setData(aMessages);
 	};
 	
 	/**
@@ -262,6 +269,10 @@ sap.ui.define([
 				}
 			}
 		}
+		// delete empty message array
+		if (mMessages[oMessage.getTarget()].length === 0) {
+			delete mMessages[oMessage.getTarget()];
+		}
 	};
 	
 	/**
@@ -282,9 +293,13 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.registerMessageProcessor = function(oProcessor) {
-		if (!this.mProcessors[oProcessor.getId()]) {
-			this.mProcessors[oProcessor.getId()] = oProcessor;
+		var sProcessorId = oProcessor.getId();
+		if (!this.mProcessors[sProcessorId]) {
+			this.mProcessors[sProcessorId] = oProcessor;
 			oProcessor.attachMessageChange(this.onMessageChange, this);
+			if (sProcessorId in this.mMessages) {
+				this._pushMessages();
+			}
 		}
 	};
 	
@@ -337,34 +352,14 @@ sap.ui.define([
 	};
 	
 	/**
-	 * destroy MessageManager 
+	 * destroy MessageManager
+	 * @deprecated 
 	 * @public
 	 */
 	MessageManager.prototype.destroy = function() {
-		var that = this;
-		//Detach handler
-		jQuery.each(this.mProcessors, function(sId, oProcessor) {
-			oProcessor.detachMessageChange(this.onMessageChange);
-		});
-		jQuery.each(this.mObjects, function(sId, oObject) {
-			oObject.detachValidationSuccess(that._handleSuccess);
-			oObject.detachValidationError(that._handleError);
-			oObject.detachParseError(that._handleError);
-			oObject.detachFormatError(that._handleError);
-			//TODO: delete Messages for Objects
-		});
-		if (sap.ui.getCore().getConfiguration().getHandleValidation()) { 
-			sap.ui.getCore().detachValidationSuccess(this._handleSuccess);
-			sap.ui.getCore().detachValidationError(this._handleError);
-			sap.ui.getCore().detachParseError(this._handleError);
-			sap.ui.getCore().detachFormatError(this._handleError);
-		}
-		this.mProcessors = undefined;
-		this.mMessages = undefined;
-		this.mObjects = undefined;
-		this.oMessageModel.destroy();
+		jQuery.sap.log.warning("Deprecated: Do not call destroy on a MessageManager");
 	};
-	
+
 	/**
 	 * Get the MessageModel
 	 * @return {sap.ui.core.message.MessageModel} oMessageModel The Message Model 
@@ -377,7 +372,6 @@ sap.ui.define([
 		}
 		return this.oMessageModel;
 	};
-	
 	return MessageManager;
 
 });

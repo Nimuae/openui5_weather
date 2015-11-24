@@ -19,14 +19,14 @@ sap.ui.define(['jquery.sap.global',
 	 * @namespace
 	 * @name sap.ui.unified
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @public
 	 */
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.unified",
-		version: "1.30.8",
+		version: "1.32.7",
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.unified.CalendarDayType",
@@ -38,9 +38,13 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.unified.calendar.Header",
 			"sap.ui.unified.calendar.Month",
 			"sap.ui.unified.calendar.MonthPicker",
+			"sap.ui.unified.calendar.MonthsRow",
+			"sap.ui.unified.calendar.TimesRow",
 			"sap.ui.unified.calendar.YearPicker",
 			"sap.ui.unified.Calendar",
 			"sap.ui.unified.CalendarDateInterval",
+			"sap.ui.unified.CalendarMonthInterval",
+			"sap.ui.unified.CalendarTimeInterval",
 			"sap.ui.unified.CalendarLegend",
 			"sap.ui.unified.ContentSwitcher",
 			"sap.ui.unified.Currency",
@@ -256,7 +260,7 @@ sap.ui.define(['jquery.sap.global',
 
 	sap.ui.unified._iNumberOfOpenedShellOverlays = 0;
 
-	//factory for the FileUploader to create TextField an Button to be overwritten by commons and mobile library
+	//factory for the FileUploader to create TextField and Button to be overwritten by commons and mobile library
 	if (!sap.ui.unified.FileUploaderHelper) {
 		sap.ui.unified.FileUploaderHelper = {
 			createTextField: function(sId){ throw new Error("no TextField control available!"); }, /* must return a TextField control */

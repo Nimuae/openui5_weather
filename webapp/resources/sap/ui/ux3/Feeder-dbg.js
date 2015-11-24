@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/Contro
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -243,7 +243,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/Contro
 				// check for "linebreaking"-nodes
 				if (node.nodeName === 'DIV' ||
 						node.nodeName ===  'P' ||
-						(node.nodeName === 'BR' && !!!sap.ui.Device.browser.webkit)) { // ignore BR in webkit
+						(node.nodeName === 'BR' && !sap.ui.Device.browser.webkit)) { // ignore BR in webkit
 	
 					// ignore last <br> with type="_moz" in mozilla
 					if (node.nodeName === 'BR' &&

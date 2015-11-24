@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -167,12 +167,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @private
 	 */
 	FeedListItem.prototype.ontap = function(oEvent) {
-		if (((	 (!this.getIconActive() && oEvent.srcControl.getId() == this._oImageControl.getId())) // click on inactive image
-					|| (!this.getSenderActive() && oEvent.srcControl.getId() == this._oLinkControl.getId())) // click on inactive sender link
-					|| ((!this._oImageControl || (oEvent.srcControl.getId() !== this._oImageControl.getId())) // not image clicked
-								&& (!this._oLinkControl || (oEvent.srcControl.getId() !== this._oLinkControl.getId())) // not sender link clicked
-								&& (!this._oLinkExpandCollapse || (oEvent.srcControl.getId() !== this._oLinkExpandCollapse.getId())))) { // not expand/collapse link clicked
-			ListItemBase.prototype.ontap.apply(this, [oEvent]);
+		if (oEvent.srcControl) {
+			if ((!this.getIconActive() && this._oImageControl && oEvent.srcControl.getId() === this._oImageControl.getId()) || // click on inactive image
+					(!this.getSenderActive() && this._oLinkControl && oEvent.srcControl.getId() === this._oLinkControl.getId()) || // click on inactive sender link
+					(!this._oImageControl || (oEvent.srcControl.getId() !== this._oImageControl.getId()) &&                        // not image clicked
+					(!this._oLinkControl || (oEvent.srcControl.getId() !== this._oLinkControl.getId())) &&                         // not sender link clicked
+					(!this._oLinkExpandCollapse || (oEvent.srcControl.getId() !== this._oLinkExpandCollapse.getId())))) {          // not expand/collapse link clicked
+				ListItemBase.prototype.ontap.apply(this, [oEvent]);
+			}
 		}
 	};
 
@@ -189,7 +191,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			src : sIconSrc,
 			alt : this.getSender(),
 			densityAware : this.getIconDensityAware(),
-			decorative : false
+			decorative : false,
+			useIconTooltip : false
 		}, aCssClasses = ['sapMFeedListItemImage'];
 
 		var that = this;
@@ -289,8 +292,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @private
 	 */
 	FeedListItem.prototype._toggleTextExpanded = function() {
-		var $text = jQuery.sap.byId(this.getId() + "-realtext");
-		var $threeDots = jQuery.sap.byId(this.getId() + "-threeDots");
+		var $text = this.$("realtext");
+		var $threeDots = this.$("threeDots");
 		if (this._bTextExpanded) {
 			$text.html(jQuery.sap.encodeHTML(this._sShortText).replace(/&#xa;/g, "<br>"));
 			$threeDots.text(" ... ");

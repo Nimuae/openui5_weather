@@ -24,7 +24,7 @@ function(Plugin, DOMUtil) {
 	 * @extends sap.ui.dt.plugin.Plugin
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -34,7 +34,7 @@ function(Plugin, DOMUtil) {
 	 */
 	var DragDrop = Plugin.extend("sap.ui.dt.plugin.DragDrop", /** @lends sap.ui.dt.plugin.DragDrop.prototype */ {		
 		metadata : {
-			abstract : true,
+			"abstract" : true,
 			// ---- object ----
 
 			// ---- control specific ----

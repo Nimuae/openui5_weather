@@ -1,5 +1,7 @@
-/**
- * @copyright
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	function(jQuery, IconPool) {
@@ -700,9 +702,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.addClass("sapMOH");
 		if (bCondensed) {
 			oRM.addClass("sapMOHC");
-			oRM.addClass("sapMOHBg" + oOH.getBackgroundDesign());
 		}
-
+		oRM.addClass("sapMOHBg" + oOH._getBackground());
+		
 		oRM.writeClasses();
 		var sTooltip = oOH.getTooltip_AsString();
 		if (sTooltip) {
@@ -783,11 +785,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		oRM.write("<div");
 		oRM.addClass("sapMOHR");
+		oRM.addClass("sapMOHRBg" + oOH._getBackground());
 		oRM.writeClasses();
 		oRM.write(">");
 		oRM.write("<div");
 
-		oRM.addClass("sapMOHRBg" + oOH.getBackgroundDesign());
 		if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
 			oRM.addClass("sapMOHRStatesOneOrThree");
 		}
@@ -860,7 +862,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 
-		if (!oControl.getAggregation("_objectNumber")) {
+		if (!oControl.getNumber()) {
 			oRM.addClass("sapMOHRTitleDivFull");
 		}
 		oRM.writeClasses();

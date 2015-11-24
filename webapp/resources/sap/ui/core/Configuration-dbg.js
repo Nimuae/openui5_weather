@@ -5,9 +5,12 @@
  */
 
 //Provides class sap.ui.core.Configuration
-sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', 'sap/ui/thirdparty/URI'],
-	function(jQuery, Device, BaseObject, Locale, URI) {
+sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', './Locale', 'sap/ui/thirdparty/URI', 'jquery.sap.script'],
+	function(jQuery, Device, Global, BaseObject, Locale, URI /*, jQuerySapScript */ ) {
 	"use strict";
+
+	// lazy dependencies. Can't be declared as this would result in cyclic dependencies
+	var CalendarType, LocaleData;
 
 	/**
 	 * Creates a new Configuration object.
@@ -96,9 +99,10 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 					"application"           : { type : "string",   defaultValue : "" },
 					"appCacheBuster"        : { type : "string[]", defaultValue : [] },
 					"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
-					
+					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
+
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
-					"frameOptions"          : { type : "string",   defaultValue : "allow",   noUrl: true }, // allow/deny/trusted
+					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
@@ -107,6 +111,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 					"xx-disableCustomizing" : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
+					"xx-domPatching"        : { type : "boolean",  defaultValue : false },
 					"xx-componentPreload"   : { type : "string",   defaultValue : "" },
 					"xx-designMode"         : { type : "boolean",  defaultValue : false },
 					"xx-supportedLanguages" : { type : "string[]", defaultValue : [] }, // *=any, sapui5 or list of locales
@@ -255,7 +260,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 			function _getCVers(key){
 				var v = !key ? DEFAULT_CVERS || BASE_CVERS.toString()
 						: oCfg[PARAM_CVERS + "-" + key.toLowerCase()] || DEFAULT_CVERS || M_COMPAT_FEATURES[key] || BASE_CVERS.toString();
-				v = jQuery.sap.Version(v.toLowerCase() === "edge" ? sap.ui.version : v);
+				v = jQuery.sap.Version(v.toLowerCase() === "edge" ? Global.version : v);
 				//Only major and minor version are relevant
 				return jQuery.sap.Version(v.getMajor(), v.getMinor());
 			}
@@ -364,13 +369,46 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 				config["bindingSyntax"] = (config.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
 			}
 
-			if (!config["frameOptions"] ||
-				(config["frameOptions"] !== 'allow'
-				&& config["frameOptions"] !== 'deny'
-				&& config["frameOptions"] !== 'trusted')) {
+			// Configure whitelistService / frameOptions via <meta> tag if not already defined via UI5 configuration
+			if (!config["whitelistService"]) {
+				var oMetaTag = document.querySelector("META[name='sap.whitelistService']");
+				if (oMetaTag) {
+					config["whitelistService"] = oMetaTag.getAttribute("content");
+					// Set default "frameOptions" to "trusted" instead of "allow"
+					if (config["frameOptions"] === "default") {
+						config["frameOptions"] = "trusted";
+					}
+				}
+			}
 
-				// default
-				config["frameOptions"] = 'allow';
+			// Verify and set default for "frameOptions" configuration
+			if (config["frameOptions"] === "default" ||
+				(config["frameOptions"] !== "allow"
+				&& config["frameOptions"] !== "deny"
+				&& config["frameOptions"] !== "trusted")) {
+
+				// default => allow
+				config["frameOptions"] = "allow";
+			}
+
+			var aCSSLibs = config['preloadLibCss'];
+			if ( aCSSLibs.length > 0 ) {
+				// a leading "!" denotes that the application has loaded the file already
+				aCSSLibs.appManaged = aCSSLibs[0].slice(0,1) === "!";
+				if ( aCSSLibs.appManaged ) {
+					aCSSLibs[0] = aCSSLibs[0].slice(1); // also affect same array in "config"!
+				}
+				if ( aCSSLibs[0] === "*" ) {
+					// replace with configured libs
+					aCSSLibs.splice(0,1); // remove *
+					var pos = 0;
+					jQuery.each(config.modules, function(i,mod) {
+						var m = mod.match(/^(.*)\.library$/);
+						if ( m ) {
+							aCSSLibs.splice(pos,0,m[1]);
+						}
+					});
+				}
 			}
 
 			// log  all non default value
@@ -394,7 +432,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 				return this._version;
 			}
 
-			this._version = new jQuery.sap.Version(sap.ui.version);
+			this._version = new jQuery.sap.Version(Global.version);
 			return this._version;
 		},
 
@@ -533,8 +571,18 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		getCalendarType :  function() {
 			var sName;
 
+			// lazy load of sap.ui.core library and LocaleData to avoid cyclic dependencies
+			if ( !CalendarType ) {
+				Global.getCore().loadLibrary('sap.ui.core');
+				CalendarType = sap.ui.require("sap/ui/core/library").CalendarType;
+			}
+			if ( !LocaleData ) {
+				jQuery.sap.require("sap.ui.core.LocaleData");
+				LocaleData = sap.ui.require("sap/ui/core/LocaleData");
+			}
+
 			if (this.calendarType) {
-				for (sName in sap.ui.core.CalendarType) {
+				for (sName in CalendarType) {
 					if (sName.toLowerCase() === this.calendarType.toLowerCase()) {
 						this.calendarType = sName;
 						return this.calendarType;
@@ -545,16 +593,14 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 
 			var sLegacyDateFormat = this.oFormatSettings.getLegacyDateFormat();
 			if (sLegacyDateFormat === "A" || sLegacyDateFormat === "B") {
-				return sap.ui.core.CalendarType.Islamic;
+				return CalendarType.Islamic;
 			}
 
-			// synchornize loading of LocaleData because of cyclic dependency between Configuration.js and LocaleData.js
-			jQuery.sap.require("sap.ui.core.LocaleData");
-			return sap.ui.core.LocaleData.getInstance(this.getLocale()).getPreferredCalendarType();
+			return LocaleData.getInstance(this.getLocale()).getPreferredCalendarType();
 		},
 
 		/**
-		 * Sets the new calendar type to be used from now on in locale dependent functionalities (for example, 
+		 * Sets the new calendar type to be used from now on in locale dependent functionalities (for example,
 		 * formatting, translation texts, etc.).
 		 *
 		 * @param {sap.ui.core.CalendarType|null} sCalendarType the new calendar type. Set it with null to clear the calendar type
@@ -641,11 +687,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		getAccessibility : function () {
 			return this.accessibility;
 		},
-		
+
 		/**
 		 * Returns whether the framework automatically adds automatically
 		 * the ARIA role 'application' to the html body or not.
-		 * @return {boolean} 
+		 * @return {boolean}
 		 * @since 1.27.0
 		 * @public
 		 */
@@ -788,7 +834,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		},
 
 		/**
-		 * Return whether the controller code is deactivated. During design mode the 
+		 * Return whether the controller code is deactivated. During design mode the
 		 *
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.26.4
@@ -894,6 +940,17 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		},
 
 		/**
+		 * Determines whether DOM patching is enabled or not.
+		 *
+		 * @see {jQuery.sap#replaceDOM}
+		 * @returns {boolean}
+		 * @private
+		 */
+		getDomPatching : function() {
+			return this["xx-domPatching"];
+		},
+
+		/**
 		 * Currently active preload mode for libraries or falsy value
 		 *
 		 * @returns {string} preload mode
@@ -923,6 +980,26 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		 */
 		getFormatSettings : function() {
 			return this.oFormatSettings;
+		},
+
+		/**
+		 * frameOptions mode (allow/deny/trusted).
+		 *
+		 * @return {string} frameOptions mode
+		 * @private
+		 */
+		getFrameOptions : function() {
+			return this.frameOptions;
+		},
+
+		/**
+		 * URL of the whitelist service.
+		 *
+		 * @return {string} whitelist service URL
+		 * @private
+		 */
+		getWhitelistService : function() {
+			return this.whitelistService;
 		},
 
 		_collect : function() {
@@ -965,7 +1042,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		getNoNativeScroll : function() {
 			return false;
 		},
-		
+
 		/**
 		 * Return whether type validation is handled by core
 		 *

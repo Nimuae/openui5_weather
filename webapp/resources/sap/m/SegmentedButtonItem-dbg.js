@@ -14,16 +14,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		/**
 		 * Constructor for a new SegmentedButtonItem.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * SegmentedButtonItem is used for creating buttons for the sap.m.SegmentedButton.
-		 * It is derived from a core sap.ui.core.Item
+		 * The SegmentedButtonItem control is used for creating buttons for the sap.m.SegmentedButton.
+		 * It is derived from a core sap.ui.core.Item.
 		 * @extends sap.ui.core.Item
 		 *
 		 * @author SAP SE
-		 * @version 1.30.8
+		 * @version 1.32.7
 		 *
 		 * @constructor
 		 * @public
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			properties : {
 
 				/**
-				 * The icon belonging to the button.
+				 * The icon, which belongs to the button.
 				 * This can be an URI to an image or an icon font URI.
 				 */
 				icon : {type : "string", group : "Appearance", defaultValue : null},
@@ -51,17 +51,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			events: {
 
 				/**
-				 * Event is fired when the user clicks on a individual button.
+				 * Fires when the user clicks on an individual button.
 				 */
 				press : {}
 			}
 
 		}});
 
-		/**
-		 * Overwrite property setters to update buttons on item property change
-		 * @overwrite
-		 */
 		SegmentedButtonItem.prototype.setText = function (sValue) {
 			this.setProperty("text", sValue, true);
 			if (this.oButton) {

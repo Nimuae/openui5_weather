@@ -33,6 +33,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	 * @param {int} [oFormatOptions.maxFractionDigits] defines maximum number of decimal digits
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {int} [oFormatOptions.shortDecimals] defines the number of decimal in the shortified format string. If this isn't specified, the 'decimals' options is used
+	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
+	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled] defines whether grouping is enabled (show the grouping separators)
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator
@@ -50,7 +52,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	 * @param {boolean} [oFormatOptions.currencyCode] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there's symbol defined
 	 *  for the given currency code.
 	 * @param {string} [oFormatOptions.currencyContext] It can be set either with 'standard' (the default value) or with 'accounting' for an accounting specific currency display
-
+	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are only NaN, null or 0.
+	 *  The 'format' and 'parse' are done in a symmetric way which means when this parameter is set to NaN, empty string is parsed as NaN and NaN is formatted as empty string.
+	 *
 	 * @alias sap.ui.core.format.NumberFormat
 	 */
 	var NumberFormat = BaseObject.extend("sap.ui.core.format.NumberFormat", /** @lends sap.ui.core.format.NumberFormat.prototype */ {
@@ -170,7 +174,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		showMeasure: false,
 		style: "standard",
 		parseAsString: false,
-		roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO
+		roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO,
+		emptyString: NaN
 	};
 
 	/*
@@ -192,7 +197,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		showMeasure: false,
 		style: "standard",
 		parseAsString: false,
-		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
+		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
+		emptyString: NaN
 	};
 
 	/*
@@ -215,7 +221,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		showMeasure: false,
 		style: "standard",
 		parseAsString: false,
-		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
+		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
+		emptyString: NaN
 	};
 
 	/*
@@ -240,7 +247,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		currencyContext: 'standard',
 		style: "standard",
 		parseAsString: false,
-		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
+		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
+		emptyString: NaN
 	};
 
 	/**
@@ -382,12 +390,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
 
 		// If a pattern is defined in the format option, parse it and add options
-		if (oFormatOptions && oFormatOptions.pattern) {
-			oPatternOptions = this.parseNumberPattern(oFormatOptions.pattern);
-			jQuery.each(oPatternOptions, function(sName, vOption) {
-				oFormatOptions[sName] = vOption;
-			});
+		if (oFormatOptions) {
+			if (oFormatOptions.pattern) {
+				oPatternOptions = this.parseNumberPattern(oFormatOptions.pattern);
+				jQuery.each(oPatternOptions, function(sName, vOption) {
+					oFormatOptions[sName] = vOption;
+				});
+			}
+			if (oFormatOptions.emptyString !== undefined) {
+				jQuery.sap.assert(typeof oFormatOptions.emptyString !== "string", "The format option 'emptyString' can not be with type 'string'");
+				jQuery.sap.assert(oFormatOptions.emptyString === 0 || oFormatOptions.emptyString === null || /* check if it's NaN (only NaN doesn't equal to itself) */ oFormatOptions.emptyString !== oFormatOptions.emptyString, "The format option 'emptyString' must be either 0, null or NaN");
+			}
 		}
+
 		return oFormat;
 	};
 
@@ -528,20 +543,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			iGroupSize = 0,
 			bNegative = oValue < 0,
 			iDotPos = -1,
-			oOptions = jQuery.extend({}, this.oFormatOptions), aPatternParts;
+			oOptions = jQuery.extend({}, this.oFormatOptions), 
+			aPatternParts,
+			oShortFormat;
+
+		if (oValue === oOptions.emptyString || (isNaN(oValue) && isNaN(oOptions.emptyString))) {
+			// if the value equals the 'emptyString' format option, return empty string.
+			// the NaN case has to be checked by using isNaN because NaN !== NaN
+			return "";
+		}
 
 		if (oOptions.decimals !== undefined) {
 			oOptions.minFractionDigits = oOptions.decimals;
 			oOptions.maxFractionDigits = oOptions.decimals;
-		}
-
-		var oShortFormat = getShortenedFormat(oValue, this.oFormatOptions.style, this.oLocaleData);
-		if (oShortFormat) {
-			if (oOptions.shortDecimals !== undefined) {
-				oOptions.minFractionDigits = oOptions.shortDecimals;
-				oOptions.maxFractionDigits = oOptions.shortDecimals;
+		}	
+		
+		if (oOptions.shortLimit === undefined || Math.abs(oValue) >= oOptions.shortLimit) {
+			oShortFormat = getShortenedFormat(oValue, oOptions.style, oOptions.precision, oOptions.shortDecimals || oOptions.maxFractionDigits, this.oLocaleData);
+			if (oShortFormat && oShortFormat.formatString != "0") {
+				oValue = oValue / oShortFormat.magnitude;
+				// If shortDecimals is defined, override the fractionDigits
+				if (oOptions.shortDecimals !== undefined) {
+					oOptions.minFractionDigits = oOptions.shortDecimals;
+					oOptions.maxFractionDigits = oOptions.shortDecimals;
+				}
+				// Always use HALF_AWAY_FROM_ZERO for short formats
+				oOptions.roundingMode = NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
 			}
-			oValue =  oValue / oShortFormat.magnitude;
+		}
+		
+		// Must be done after calculating the short value, as it depends on the value
+		if (oOptions.precision !== undefined) {
+			oOptions.minFractionDigits = 0;
+			oOptions.maxFractionDigits = getDecimals(oValue, oOptions.precision);
 		}
 
 		if (oOptions.type == mNumberType.PERCENT) {
@@ -565,7 +599,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		// number isn't changed. After this operation, the number of fraction digits is
 		// equal or less than oOptions.maxFractionDigits.
 		if (typeof oValue == "number") {
-			oValue = rounding(oValue, oOptions);
+			oValue = rounding(oValue, oOptions.maxFractionDigits, oOptions.roundingMode);
 		}
 
 		sNumber = this.convertToDecimal(oValue);
@@ -708,7 +742,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			sPercentPattern = this.oLocaleData.getPercentPattern(),
 			sPercentSign = this.oLocaleData.getNumberSymbol("percentSign"),
 			oRegExp, bPercent, sRegExpCurrency, sRegExpCurrencyMeasure, aParsed, sCurrencyMeasure,
-			vResult = 0;
+			vResult = 0,
+			oShort;
+
+		if (sValue === "") {
+			if (oOptions.type === mNumberType.CURRENCY) {
+				return [oOptions.emptyString, undefined];
+			} else {
+				return oOptions.emptyString;
+			}
+		}
 
 		if (sPercentPattern.charAt(0) === "%") {
 			sRegExpFloat = sRegExpFloat.slice(0, 1) + "%?" + sRegExpFloat.slice(1);
@@ -720,11 +763,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		// user will not input it this way. Also white spaces or grouping separator can be ignored by determining the value
 		sValue = sValue.replace(/\s/g, "");
 
-		var oShort = getNumberFromShortened(sValue, this.oFormatOptions.style, this.oLocaleData);
-		sValue = oShort.number;
+		oShort = getNumberFromShortened(sValue, this.oFormatOptions.style, this.oLocaleData);
 
 		// Check for valid syntax
-		if (oOptions.isInteger) {
+		if (oShort) {
+			sValue = oShort.number;
+			oRegExp = new RegExp(sRegExpFloat);
+		} else if (oOptions.isInteger) {
 			oRegExp = new RegExp(sRegExpInt);
 		} else if (oOptions.type === mNumberType.CURRENCY) {
 			sRegExpCurrencyMeasure = "[^\\d\\s+-]*";
@@ -767,6 +812,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		// Remove the leading "+" sign because when "parseAsString" is set to true the "parseInt" or "parseFloat" isn't called and the leading "+" has to be moved manually
 		sValue = sValue.replace(/^\+/, "");
 
+		// Expanding short value before using parseInt/parseFloat
+		if (oShort) {
+			sValue = sValue.replace(oDecimalRegExp, ".");
+			sValue = NumberFormat._shiftDecimalPoint(sValue, Math.round(Math.log(oShort.factor) / Math.LN10));
+		}
+
 		if (oOptions.isInteger) {
 			vResult = oOptions.parseAsString ? sValue : parseInt(sValue, 10);
 		} else {
@@ -781,8 +832,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			}
 		}
 
-		if (oShort.factor > 1 || oOptions.parseAsString) {
-			vResult = NumberFormat._shiftDecimalPoint(vResult, Math.round(Math.log(oShort.factor) / Math.LN10));
+		// Get rid of leading zeros
+		if (oOptions.parseAsString) {
+			vResult = NumberFormat._shiftDecimalPoint(sValue, 0);
 		}
 
 		return oOptions.type === mNumberType.CURRENCY ? [vResult, sCurrencyMeasure] : vResult;
@@ -905,31 +957,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		}
 	};
 
-	function getShortenedFormat(fValue, sStyle, oLocaleData) {
+	function getShortenedFormat(fValue, sStyle, iPrecision, iDecimals, oLocaleData) {
 
-		var oShortFormat;
+		var oShortFormat, iKey,
+			bPrecisionDefined = iPrecision !== undefined;
+		
+		// In case precision is not defined 
+		if (!bPrecisionDefined) {
+			iPrecision = 2;
+		}
 
 		if (sStyle != "short" && sStyle != "long") {
 			return oShortFormat;
 		}
 
-		var iKey = 1;
-		while ( Math.abs(fValue) >= iKey * 10 && iKey < 1e14) {
-			iKey = iKey * 10;
+		for (var i = 0; i < 14; i++) {
+			iKey = Math.pow(10, i);
+			if (rounding(Math.abs(fValue) / iKey, iPrecision - 1) < 10) {
+				break;
+			}
 		}
 
-		// determine plural version of format
-		var fShortNumber = fValue / iKey;
+		// determine plural version of format, number has to be rounded to find right zero/one/two patterns
+		var fShortNumber = fValue / iKey,
+			iDecimals = bPrecisionDefined ? getDecimals(fShortNumber, iPrecision) : iDecimals,
+			fRoundedNumber = rounding(Math.abs(fShortNumber), iDecimals);
+			
 		var sPlural = "other";
-		if (fShortNumber == 0) {
+		if (fRoundedNumber == 0) {
 			sPlural = "zero";
-		} else if (fShortNumber == 1) {
+		} else if (fRoundedNumber == 1) {
 			sPlural = "one";
-		} else if (fShortNumber == 2) {
+		} else if (fRoundedNumber == 2) {
 			sPlural = "two";
-		} else if (fShortNumber > 2 && fShortNumber <= 5) {
+		} else if (fRoundedNumber > 2 && fRoundedNumber <= 5) {
 			sPlural = "few";
-		} else if (fShortNumber > 5 && fShortNumber <= 10) {
+		} else if (fRoundedNumber > 5 && fRoundedNumber <= 10) {
 			sPlural = "many";
 		}
 
@@ -978,7 +1041,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		var iFactor = 1;
 
 		if (sStyle != "short" && sStyle != "long") {
-			return {number: sValue, factor: iFactor};
+			return;
 		}
 
 		var iKey = 10;
@@ -1043,21 +1106,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		}
 
 		if (!sNumber) {
-			// no match found -> use given value
-			sNumber = sValue;
+			return;
 		}
 
 		return {number: sNumber, factor: iFactor};
 
 	}
 
-	function rounding(fValue, oOptions) {
+	function rounding(fValue, iMaxFractionDigits, sRoundingMode) {
 		if (typeof fValue !== "number") {
 			return NaN;
 		}
 
-		var sRoundingMode = oOptions.roundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
-				iMaxFractionDigits = parseInt(oOptions.maxFractionDigits, 10);
+		sRoundingMode = sRoundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
+		iMaxFractionDigits = parseInt(iMaxFractionDigits, 10);
 
 		if (typeof sRoundingMode === "function") {
 			// Support custom function for rounding the number
@@ -1083,6 +1145,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 
 	function quote(sRegex) {
 		return sRegex.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+	}
+	
+	function getDecimals(fValue, iPrecision) {
+		var iIntegerDigits = Math.floor(Math.log(Math.abs(fValue)) / Math.LN10);
+		return Math.max(0, iPrecision - iIntegerDigits - 1);
 	}
 
 	return NumberFormat;

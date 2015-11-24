@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -292,7 +292,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				oRm.write(">");
 	
 				oRm.write("<img");
-				oRm.writeAttribute("src", oControl.getIcon());
+				oRm.writeAttributeEscaped("src", oControl.getIcon());
 				oRm.write("/>");
 	
 				oRm.write("</div>");

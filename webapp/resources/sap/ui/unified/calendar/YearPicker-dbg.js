@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * renders a YearPicker with ItemNavigation
 	 * This is used inside the calendar. Not for stand alone usage
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -139,13 +139,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 		};
 
+		YearPicker.prototype.onmouseup = function(oEvent){
+
+			// fire select event on mouseup to prevent closing MonthPicker during click
+
+			if (this._bMousedownChange) {
+				this._bMousedownChange = false;
+				this.fireSelect();
+			}
+
+		};
 
 		function _initItemNavigation(oThis){
 
 			var iYear = oThis.getYear();
 			var iYears = oThis.getYears();
 			var oRootDomRef = oThis.getDomRef();
-			var aDomRefs = oThis.$().find(".sapUiCalYear");
+			var aDomRefs = oThis.$().find(".sapUiCalItem");
 			var iIndex = Math.floor(iYears / 2);
 
 			if (iYear > 10000 - Math.floor(iYears / 2)) {
@@ -219,7 +229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 
 			_selectYear(oThis, iIndex);
-			oThis.fireSelect();
+			oThis._bMousedownChange = true;
 
 			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
 			oEvent.setMark("cancelAutoClose");
@@ -287,9 +297,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				$DomRef = jQuery(aDomRefs[i]);
 				if ($DomRef.attr("id") == sId) {
-					$DomRef.addClass("sapUiCalYearSel");
+					$DomRef.addClass("sapUiCalItemSel");
 				}else {
-					$DomRef.removeClass("sapUiCalYearSel");
+					$DomRef.removeClass("sapUiCalItemSel");
 				}
 			}
 
@@ -331,10 +341,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				var $DomRef = jQuery(aDomRefs[i]);
 				$DomRef.attr("id", oThis.getId() + "-y" + iYear);
 				$DomRef.text(iYear);
-				if ($DomRef.hasClass("sapUiCalYearSel") && $DomRef.text() != sCurrentYear) {
-					$DomRef.removeClass("sapUiCalYearSel");
-				} else if (!$DomRef.hasClass("sapUiCalYearSel") && $DomRef.text() == sCurrentYear) {
-					$DomRef.addClass("sapUiCalYearSel");
+				if ($DomRef.hasClass("sapUiCalItemSel") && $DomRef.text() != sCurrentYear) {
+					$DomRef.removeClass("sapUiCalItemSel");
+				} else if (!$DomRef.hasClass("sapUiCalItemSel") && $DomRef.text() == sCurrentYear) {
+					$DomRef.addClass("sapUiCalItemSel");
 				}
 				iYear++;
 			}

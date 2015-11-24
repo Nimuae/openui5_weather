@@ -136,7 +136,8 @@
 .sapUiTable > .sapUiTableHdr {
 	border: none;
 	border-bottom: 0.188rem solid @sapHCStandardFG;
-	height: 25px;
+	min-height: 25px;
+	height: auto;
 	padding: 0;
 	margin-bottom: 2px;
 }
@@ -147,8 +148,8 @@
 }
 
 .sapUiTable > .sapUiTableFtr {
-	height: 28px;
-	line-height: 28px;
+	height: auto;
+	min-height: 28px;
 	background-color: @sapHCStandardBG;
 	padding-top: 4px;
 }
@@ -277,10 +278,10 @@
 /* Table Cells */
 
 .sapUiTableCell {
-	padding: 0 10px;
+	padding: 0 0.5rem;
 }
 
-.sapUiTableCell>.sapUiTv {
+.sapUiTableCell > .sapUiTv {
 	font-weight: normal;
 	font-size: 12px;
 }
@@ -339,19 +340,19 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 }
 
 .sapUiTableColCell {
-	padding: 0 10px;
+	padding: 0 0.5rem;
 }
 
 .sapUiSizeCondensed .sapUiTableColCell {
-	padding: 0 8px;
+	padding: 0 0.5rem;
 }
 
 .sapUiSizeCompact .sapUiTableColCell > .sapUiLbl,
-.sapUiSizeCompact .sapUiTableColCell>.sapMLabel,
-.sapUiSizeCompact .sapUiTableCell>.sapMLabel,
-.sapUiTableColCell>.sapUiLbl {
+.sapUiSizeCompact .sapUiTableColCell > .sapMLabel,
+.sapUiSizeCompact .sapUiTableCell > .sapMLabel,
+.sapUiTableColCell > .sapUiLbl {
 	font-weight: normal;
-	font-size: 14px;
+	font-size: 0.875rem;
 	color: @sapHCStandardFG;
 }
 
@@ -470,7 +471,8 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 }
 
 // Fixed Left Row Indicator
-.sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td:last-child {
+.sapUiTableCtrlFixed .sapUiTableTr:not(.sapUiTableGroupHeader) > td:last-child,
+.sapUiTableColHdrFixed .sapUiTableColLastFixed {
 	border-right: 0.188rem solid @sapHCStandardFG;
 }
 

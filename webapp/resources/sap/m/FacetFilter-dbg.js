@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * FacetFilter is used to provide filtering functionality with multiple parameters.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -648,7 +648,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 			return;
@@ -659,7 +658,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -669,7 +667,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -678,7 +675,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -694,40 +690,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		jQuery(oEvent.target).blur();
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 		this.focus();
-	};
-
-	// move focus to the next/prev tabbable element after or before the list
-	// TODO: This implementation search parent which means we are out of our sandbox!
-	sap.m.FacetFilter.prototype._navToTabChain = function(bForward) {
-		var $Current = this.$();
-		var $Tabbables = $Current.find(":sapTabbable");
-		var $Reference = $Tabbables.eq(bForward ? -1 : 0).add($Current).eq(-1);
-		var oStaticUIArea = sap.ui.getCore().getStaticAreaRef();
-		var sTabIndex = $Reference.attr("tabindex");
-		var iStep = bForward ? 1 : -1;
-
-		// make the dummy tabbable
-		$Reference.attr("tabindex", "0");
-
-		// search all dom parents to find next/prev tabbable item
-		while (($Current = $Current.parent()) && $Current[0] && $Current[0] !== oStaticUIArea) {
-			$Tabbables = $Current.find(":sapTabbable");
-			var iLimit = bForward ? $Tabbables.length - 1 : 0;
-			var iIndex = $Tabbables.index($Reference);
-
-			// should have more tabbables element then before or after reference
-			// should keep searching if the $Reference is the first or last one
-			if ($Tabbables.length > 1 && iIndex != iLimit) {
-				break;
-			}
-		}
-
-		// find next/prev tabbable item and reset tabindex
-		iIndex = $Tabbables.index($Reference) + iStep;
-		$Reference.attr("tabindex", sTabIndex);
-
-		// focus and return the found tabbable if possible
-		return $Tabbables[iIndex] && $Tabbables.eq(iIndex).focus();
 	};
 
 	/**
@@ -756,14 +718,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 						this.setSubHeader(that._createSelectAllCheckboxBar(that._displayedList));
 					}
 				},
-				//keyboard acc - the 1st binding category (list) can't use initialfocus, so focus on 1st item from here
-/*				afterOpen: function(oEvent) {
-					if (this.getInitialFocus() == null && that._displayedList.getItems().length > 0) {
-						jQuery.sap.delayedCall(1000, this, function() {
-							jQuery.sap.focus(that._displayedList.getItemNavigation().getItemDomRefs()[0]);
-						});
-					}
-				},*/
 				afterClose: function(oEvent) {
 
 					that._addDelegateFlag = true;
@@ -780,20 +734,19 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose, [oList]);
 					} else {
-					//that._handlePopoverAfterClose(oList);
 //fix remove icon press issue. click remove icon and can't remove facet, so delay the popover close
 						jQuery.sap.delayedCall(120, that, that._handlePopoverAfterClose, [oList]);
 						oPopover.destroySubHeader();
 					}
 				},
 				horizontalScrolling: false
-			});
+			}); 
 
 			// Suppress invalidate so that FacetFilter is not rerendered when the popover is opened (causing it to immediately close)
 			this.setAggregation("popover", oPopover, true);
-			oPopover.setContentWidth("30%");
+			oPopover.setContentWidth("30%");   
 
-		//IE9
+		//IE9 
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 
 				oPopover.setContentWidth("30%");
@@ -850,7 +803,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	              this._moveListToDisplayContainer(oList, oPopover);
 	              //keyboard acc - focus on 1st item of 1st page
-//	              oPopover.setInitialFocus(oList.getItems()[0]);
 	              oList.fireListOpen({});
 	              oPopover.openBy(oControl);
 	              //Display remove facet icon only if ShowRemoveFacetIcon property is set to true
@@ -933,7 +885,6 @@ oPopover.setContentWidth("30%");
 						that._oOpenPopoverDeferred.promise().done(fnOpenPopover);
 						});
 					} else {
-						//that._openPopover(oPopover, this);
 						jQuery.sap.delayedCall(100, this, fnOpenPopover);
 					}
 				}
@@ -1935,7 +1886,7 @@ FacetFilter.prototype._addResetToSummary = function(oSummaryBar) {
 
 	       var oDomRef = this.getDomRef("head");
 	       var iScrollLeft = oDomRef.scrollLeft;
-		if (!!!sap.ui.Device.browser.internet_explorer && this._bRtl) {
+		if (!sap.ui.Device.browser.internet_explorer && this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
 

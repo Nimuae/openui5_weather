@@ -6,6 +6,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	intervalSelection: false, // boolean
 	singleSelection: true, // boolean
 	months: 1, // int, since 1.28.0
@@ -17,6 +18,9 @@
 	selectedDates: [], // sap.ui.unified.DateRange
 	specialDates: [], // sap.ui.unified.DateTypeRange, since 1.24.0
 	ariaLabelledBy: [], // sap.ui.core.Control, since 1.28.0
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	select: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -30,12 +34,14 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	intervalSelection="false"
 	singleSelection="true"
 	months="1"
 	firstDayOfWeek="-1"
 	nonWorkingDays=""
 	ariaLabelledBy=""
+	validateFieldGroup=""
 	select=""
 	cancel="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -51,6 +57,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	intervalSelection: false, // boolean
 	singleSelection: true, // boolean
 	months: 1, // int, since 1.28.0
@@ -65,6 +72,9 @@
 	selectedDates: [], // sap.ui.unified.DateRange
 	specialDates: [], // sap.ui.unified.DateTypeRange, since 1.24.0
 	ariaLabelledBy: [], // sap.ui.core.Control, since 1.28.0
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	select: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -78,6 +88,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	intervalSelection="false"
 	singleSelection="true"
 	months="1"
@@ -87,6 +98,7 @@
 	days="7"
 	width=""
 	ariaLabelledBy=""
+	validateFieldGroup=""
 	select=""
 	cancel="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -102,11 +114,15 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	columnWidth: "120px", // sap.ui.core.CSSSize
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
-	items: [] // sap.ui.unified.CalendarLegendItem
+	items: [], // sap.ui.unified.CalendarLegendItem
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<CalendarLegend xmlns="sap.ui.unified"
@@ -114,7 +130,9 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
-	columnWidth="120px">
+	fieldGroupIds=""
+	columnWidth="120px"
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<items></items> <!-- sap.ui.unified.CalendarLegendItem -->
@@ -140,19 +158,127 @@
 </CalendarLegendItem>
 ]]></xmlTemplate>
 </Template>
+<Template name="sap.ui.unified.CalendarMonthInterval" alias="CalendarMonthInterval,Interval">
+	<jsTemplate><![CDATA[new sap.ui.unified.CalendarMonthInterval({
+	id: "${id}", // sap.ui.core.ID
+	busy: false, // boolean
+	busyIndicatorDelay: 1000, // int
+	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
+	width: undefined, // sap.ui.core.CSSSize
+	startDate: undefined, // object
+	intervalSelection: false, // boolean
+	singleSelection: true, // boolean
+	months: 12, // int
+	tooltip: undefined, // sap.ui.core.TooltipBase
+	customData: [], // sap.ui.core.CustomData
+	dependents: [], // sap.ui.core.Control, since 1.19
+	selectedDates: [], // sap.ui.unified.DateRange
+	specialDates: [], // sap.ui.unified.DateTypeRange
+	ariaLabelledBy: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
+	select: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
+	cancel: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
+})
+]]></jsTemplate>
+	<xmlTemplate><![CDATA[<CalendarMonthInterval xmlns="sap.ui.unified"
+	id="${id}"
+	busy="false"
+	busyIndicatorDelay="1000"
+	visible="true"
+	fieldGroupIds=""
+	width=""
+	startDate=""
+	intervalSelection="false"
+	singleSelection="true"
+	months="12"
+	ariaLabelledBy=""
+	validateFieldGroup=""
+	select=""
+	cancel="">
+		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
+		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
+		<selectedDates></selectedDates> <!-- sap.ui.unified.DateRange -->
+		<specialDates></specialDates> <!-- sap.ui.unified.DateTypeRange -->
+</CalendarMonthInterval>
+]]></xmlTemplate>
+</Template>
+<Template name="sap.ui.unified.CalendarTimeInterval" alias="CalendarTimeInterval,Interval">
+	<jsTemplate><![CDATA[new sap.ui.unified.CalendarTimeInterval({
+	id: "${id}", // sap.ui.core.ID
+	busy: false, // boolean
+	busyIndicatorDelay: 1000, // int
+	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
+	width: undefined, // sap.ui.core.CSSSize
+	startDate: undefined, // object
+	intervalSelection: false, // boolean
+	singleSelection: true, // boolean
+	items: 12, // int
+	intervalMinutes: 60, // int
+	tooltip: undefined, // sap.ui.core.TooltipBase
+	customData: [], // sap.ui.core.CustomData
+	dependents: [], // sap.ui.core.Control, since 1.19
+	selectedDates: [], // sap.ui.unified.DateRange
+	specialDates: [], // sap.ui.unified.DateTypeRange
+	ariaLabelledBy: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
+	select: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
+	cancel: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
+})
+]]></jsTemplate>
+	<xmlTemplate><![CDATA[<CalendarTimeInterval xmlns="sap.ui.unified"
+	id="${id}"
+	busy="false"
+	busyIndicatorDelay="1000"
+	visible="true"
+	fieldGroupIds=""
+	width=""
+	startDate=""
+	intervalSelection="false"
+	singleSelection="true"
+	items="12"
+	intervalMinutes="60"
+	ariaLabelledBy=""
+	validateFieldGroup=""
+	select=""
+	cancel="">
+		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
+		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
+		<selectedDates></selectedDates> <!-- sap.ui.unified.DateRange -->
+		<specialDates></specialDates> <!-- sap.ui.unified.DateTypeRange -->
+</CalendarTimeInterval>
+]]></xmlTemplate>
+</Template>
 <Template name="sap.ui.unified.ContentSwitcher" alias="ContentSwitcher,Switcher">
 	<jsTemplate><![CDATA[new sap.ui.unified.ContentSwitcher({
 	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	animation: "None", // string
 	activeContent: 1, // int
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	content1: [], // sap.ui.core.Control
-	content2: [] // sap.ui.core.Control
+	content2: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ContentSwitcher xmlns="sap.ui.unified"
@@ -160,8 +286,10 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	animation="None"
-	activeContent="1">
+	activeContent="1"
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<content1></content1> <!-- sap.ui.core.Control -->
@@ -175,13 +303,17 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	value: 0, // float
 	currency: undefined, // string
 	maxPrecision: 3, // int
 	useSymbol: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
-	dependents: [] // sap.ui.core.Control, since 1.19
+	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Currency xmlns="sap.ui.unified"
@@ -189,10 +321,12 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	value="0"
 	currency=""
 	maxPrecision="3"
-	useSymbol="true">
+	useSymbol="true"
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 </Currency>
@@ -244,6 +378,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	value: "", // string
 	enabled: true, // boolean
 	uploadUrl: "", // sap.ui.core.URI
@@ -274,6 +409,9 @@
 	dependents: [], // sap.ui.core.Control, since 1.19
 	parameters: [], // sap.ui.unified.FileUploaderParameter, since 1.12.2
 	headerParameters: [], // sap.ui.unified.FileUploaderParameter
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	change: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -308,6 +446,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	value=""
 	enabled="true"
 	uploadUrl=""
@@ -333,6 +472,7 @@
 	iconSelected=""
 	iconFirst="true"
 	iconOnly="false"
+	validateFieldGroup=""
 	change=""
 	uploadComplete=""
 	typeMissmatch=""
@@ -374,6 +514,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	enabled: true, // boolean
 	ariaDescription: undefined, // string
 	maxVisibleItems: 0, // int
@@ -383,6 +524,9 @@
 	dependents: [], // sap.ui.core.Control, since 1.19
 	items: [], // sap.ui.unified.MenuItemBase
 	ariaLabelledBy: [], // sap.ui.core.Control, since 1.26.3
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	itemSelect: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this]
@@ -393,11 +537,13 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	enabled="true"
 	ariaDescription=""
 	maxVisibleItems="0"
 	pageSize="5"
 	ariaLabelledBy=""
+	validateFieldGroup=""
 	itemSelect="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -504,6 +650,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	showPane: false, // boolean
 	headerHiding: false, // boolean
 	headerVisible: true, // boolean
@@ -522,7 +669,10 @@
 	headItems: [], // sap.ui.unified.ShellHeadItem
 	headEndItems: [], // sap.ui.unified.ShellHeadItem
 	search: undefined, // sap.ui.core.Control
-	user: undefined // sap.ui.unified.ShellHeadUserItem, since 1.22.0
+	user: undefined, // sap.ui.unified.ShellHeadUserItem, since 1.22.0
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Shell xmlns="sap.ui.unified"
@@ -530,13 +680,15 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	showPane="false"
 	headerHiding="false"
 	headerVisible="true"
 	icon=""
 	showCurtain=""
 	showCurtainPane=""
-	searchVisible="true">
+	searchVisible="true"
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<content></content> <!-- sap.ui.core.Control -->
@@ -617,6 +769,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	showPane: false, // boolean
 	headerHiding: false, // boolean
 	headerVisible: true, // boolean
@@ -625,7 +778,10 @@
 	dependents: [], // sap.ui.core.Control, since 1.19
 	content: [], // sap.ui.core.Control
 	paneContent: [], // sap.ui.core.Control
-	header: undefined // sap.ui.core.Control
+	header: undefined, // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ShellLayout xmlns="sap.ui.unified"
@@ -633,9 +789,11 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	showPane="false"
 	headerHiding="false"
-	headerVisible="true">
+	headerVisible="true"
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<content></content> <!-- sap.ui.core.Control -->
@@ -650,6 +808,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
@@ -657,6 +816,9 @@
 	search: undefined, // sap.ui.core.Control
 	shell: undefined, // sap.ui.unified.ShellLayout
 	ariaLabelledBy: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	closed: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this]
@@ -667,8 +829,10 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	shell=""
 	ariaLabelledBy=""
+	validateFieldGroup=""
 	closed="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -683,6 +847,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	showSecondaryContent: undefined, // boolean
 	secondaryContentSize: "250px", // sap.ui.core.CSSSize
 	secondaryContentWidth: "250px", // sap.ui.core.CSSSize
@@ -691,7 +856,10 @@
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	content: [], // sap.ui.core.Control
-	secondaryContent: [] // sap.ui.core.Control
+	secondaryContent: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<SplitContainer xmlns="sap.ui.unified"
@@ -699,10 +867,12 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	showSecondaryContent=""
 	secondaryContentSize="250px"
 	secondaryContentWidth="250px"
-	orientation="Horizontal">
+	orientation="Horizontal"
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<content></content> <!-- sap.ui.core.Control -->
@@ -716,6 +886,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	date: undefined, // object
 	intervalSelection: false, // boolean
 	singleSelection: true, // boolean
@@ -730,6 +901,9 @@
 	selectedDates: [], // sap.ui.unified.DateRange
 	specialDates: [], // sap.ui.unified.DateTypeRange
 	ariaLabelledBy: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	select: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -743,6 +917,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	date=""
 	intervalSelection="false"
 	singleSelection="true"
@@ -752,6 +927,7 @@
 	startDate=""
 	days="7"
 	ariaLabelledBy=""
+	validateFieldGroup=""
 	select=""
 	focus="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -767,21 +943,33 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
+	textButton0: undefined, // string, since 1.32.0
+	ariaLabelButton0: undefined, // string, since 1.32.0
+	visibleButton0: false, // boolean, since 1.32.0
 	textButton1: undefined, // string
 	ariaLabelButton1: undefined, // string
+	visibleButton1: true, // boolean, since 1.32.0
 	textButton2: undefined, // string
 	ariaLabelButton2: undefined, // string
+	visibleButton2: true, // boolean, since 1.32.0
 	enabledPrevious: true, // boolean
 	enabledNext: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	pressPrevious: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
 	pressNext: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
+	pressButton0: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this], // since 1.32.0
 	pressButton1: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -795,14 +983,22 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
+	textButton0=""
+	ariaLabelButton0=""
+	visibleButton0="false"
 	textButton1=""
 	ariaLabelButton1=""
+	visibleButton1="true"
 	textButton2=""
 	ariaLabelButton2=""
+	visibleButton2="true"
 	enabledPrevious="true"
 	enabledNext="true"
+	validateFieldGroup=""
 	pressPrevious=""
 	pressNext=""
+	pressButton0=""
 	pressButton1=""
 	pressButton2="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -816,6 +1012,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	date: undefined, // object
 	intervalSelection: false, // boolean
 	singleSelection: true, // boolean
@@ -828,6 +1025,9 @@
 	selectedDates: [], // sap.ui.unified.DateRange
 	specialDates: [], // sap.ui.unified.DateTypeRange
 	ariaLabelledBy: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	select: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -841,6 +1041,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	date=""
 	intervalSelection="false"
 	singleSelection="true"
@@ -848,6 +1049,7 @@
 	firstDayOfWeek="-1"
 	nonWorkingDays=""
 	ariaLabelledBy=""
+	validateFieldGroup=""
 	select=""
 	focus="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -863,12 +1065,16 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	month: 0, // int
 	months: 12, // int, since 1.30.0
 	columns: 3, // int, since 1.30.0
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	select: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this]
@@ -879,13 +1085,123 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	month="0"
 	months="12"
 	columns="3"
+	validateFieldGroup=""
 	select="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 </calendar/MonthPicker>
+]]></xmlTemplate>
+</Template>
+<Template name="sap.ui.unified.calendar.MonthsRow" alias="MonthsRow,Row">
+	<jsTemplate><![CDATA[new sap.ui.unified.calendar.MonthsRow({
+	id: "${id}", // sap.ui.core.ID
+	busy: false, // boolean
+	busyIndicatorDelay: 1000, // int
+	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
+	date: undefined, // object
+	startDate: undefined, // object
+	months: 12, // int
+	intervalSelection: false, // boolean
+	singleSelection: true, // boolean
+	showHeader: false, // boolean
+	tooltip: undefined, // sap.ui.core.TooltipBase
+	customData: [], // sap.ui.core.CustomData
+	dependents: [], // sap.ui.core.Control, since 1.19
+	selectedDates: [], // sap.ui.unified.DateRange
+	specialDates: [], // sap.ui.unified.DateTypeRange
+	ariaLabelledBy: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
+	select: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
+	focus: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
+})
+]]></jsTemplate>
+	<xmlTemplate><![CDATA[<calendar/MonthsRow xmlns="sap.ui.unified"
+	id="${id}"
+	busy="false"
+	busyIndicatorDelay="1000"
+	visible="true"
+	fieldGroupIds=""
+	date=""
+	startDate=""
+	months="12"
+	intervalSelection="false"
+	singleSelection="true"
+	showHeader="false"
+	ariaLabelledBy=""
+	validateFieldGroup=""
+	select=""
+	focus="">
+		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
+		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
+		<selectedDates></selectedDates> <!-- sap.ui.unified.DateRange -->
+		<specialDates></specialDates> <!-- sap.ui.unified.DateTypeRange -->
+</calendar/MonthsRow>
+]]></xmlTemplate>
+</Template>
+<Template name="sap.ui.unified.calendar.TimesRow" alias="TimesRow,Row">
+	<jsTemplate><![CDATA[new sap.ui.unified.calendar.TimesRow({
+	id: "${id}", // sap.ui.core.ID
+	busy: false, // boolean
+	busyIndicatorDelay: 1000, // int
+	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
+	date: undefined, // object
+	startDate: undefined, // object
+	items: 12, // int
+	intervalMinutes: 60, // int
+	intervalSelection: false, // boolean
+	singleSelection: true, // boolean
+	showHeader: false, // boolean
+	tooltip: undefined, // sap.ui.core.TooltipBase
+	customData: [], // sap.ui.core.CustomData
+	dependents: [], // sap.ui.core.Control, since 1.19
+	selectedDates: [], // sap.ui.unified.DateRange
+	specialDates: [], // sap.ui.unified.DateTypeRange
+	ariaLabelledBy: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
+	select: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
+	focus: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
+})
+]]></jsTemplate>
+	<xmlTemplate><![CDATA[<calendar/TimesRow xmlns="sap.ui.unified"
+	id="${id}"
+	busy="false"
+	busyIndicatorDelay="1000"
+	visible="true"
+	fieldGroupIds=""
+	date=""
+	startDate=""
+	items="12"
+	intervalMinutes="60"
+	intervalSelection="false"
+	singleSelection="true"
+	showHeader="false"
+	ariaLabelledBy=""
+	validateFieldGroup=""
+	select=""
+	focus="">
+		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
+		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
+		<selectedDates></selectedDates> <!-- sap.ui.unified.DateRange -->
+		<specialDates></specialDates> <!-- sap.ui.unified.DateTypeRange -->
+</calendar/TimesRow>
 ]]></xmlTemplate>
 </Template>
 <Template name="sap.ui.unified.calendar.YearPicker" alias="YearPicker,Picker">
@@ -894,12 +1210,16 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	year: 2000, // int
 	years: 20, // int, since 1.30.0
 	columns: 4, // int, since 1.30.0
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	select: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this]
@@ -910,9 +1230,11 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	year="2000"
 	years="20"
 	columns="4"
+	validateFieldGroup=""
 	select="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->

@@ -197,10 +197,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 			
 		}());
 	}
-
+	
 	if (!jQuery.sap.disableTouchToMouseHandling) {
-		jQuery.sap.disableTouchToMouseHandling = function(){};
-        }
+		jQuery.sap.disableTouchToMouseHandling = function() {};
+	}
 
 	/**
 	 * List of DOM events that a UIArea automatically takes care of.
@@ -986,10 +986,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 				var fnCreateNewEvent = function(oEvent, oConfig, oMappedEvent) {
 					var oNewEvent = jQuery.event.fix(oEvent.originalEvent || oEvent);
 					oNewEvent.type = oConfig.sapEventName;
-					//reset the _sapui_handledByUIArea flag
-					if (oNewEvent.isMarked("firstUIArea")) {
-						oNewEvent.setMark("handledByUIArea", false);
-					}
 
 					delete oNewEvent.touches;
 					delete oNewEvent.changedTouches;
@@ -1019,6 +1015,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 				 * @param {object} oConfig Additional configuration passed from createSimulatedEvent function
 				 */
 				var fnTouchMoveToMouseHandler = function(oEvent, oConfig) {
+					if (oEvent.isMarked("handledByTouchToMouse")) {
+						return;
+					}
+					oEvent.setMarked("handledByTouchToMouse");
+					
 					if (!bFingerIsMoved) {
 						var oTouch = oEvent.originalEvent.touches[0];
 						bFingerIsMoved = (Math.abs(oTouch.pageX - iStartX) > iMoveThreshold ||
@@ -1034,14 +1035,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 					}
 
 					var oNewEvent = fnCreateNewEvent(oEvent, oConfig, oEvent.touches[0]);
-					function simulateTouchMove() {
+					jQuery.sap.delayedCall(0, this, function(){
+						oNewEvent.setMark("handledByUIArea", false);
 						oConfig.eventHandle.handler.call(oConfig.domRef, oNewEvent);
-					}
-					if (Device.os.blackberry) {
-						jQuery.sap.delayedCall(0, this, simulateTouchMove);
-					} else {
-						simulateTouchMove();
-					}
+					});
 				};
 
 				/**
@@ -1054,24 +1051,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 				 * @param {object} oConfig Additional configuration passed from createSimulatedEvent function
 				 */
 				var fnTouchToMouseHandler = function(oEvent, oConfig) {
+					if (oEvent.isMarked("handledByTouchToMouse")) {
+						return;
+					}
+					oEvent.setMarked("handledByTouchToMouse");
 
 					var oNewStartEvent, oNewEndEvent, bSimulateClick;
-
-					function simulateTouchStart() {
-						oConfig.eventHandle.handler.call(oConfig.domRef, oNewStartEvent);
-					}
-
-					function simulateTouchEnd() {
-						oConfig.eventHandle.handler.call(oConfig.domRef, oNewEndEvent);
-						if (bSimulateClick) {
-							// also call the onclick event handler when touchend event is received and the movement is within threshold
-							oNewEndEvent.type = "click";
-							oNewEndEvent.setMark("handledByUIArea", false);
-							oNewEndEvent.offsetX = iOffsetX; // use offset from touchstart
-							oNewEndEvent.offsetY = iOffsetY; // use offset from touchstart
-							oConfig.eventHandle.handler.call(oConfig.domRef, oNewEndEvent);
-						}
-					}
 
 					function createNewEvent() {
 						return fnCreateNewEvent(oEvent, oConfig, oConfig.eventName === "mouseup" ? oEvent.changedTouches[0] : oEvent.touches[0]);
@@ -1088,21 +1073,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 						iOffsetY = Math.round(oTouch.pageY - jQuery(oEvent.target).offset().top);
 
 						oNewStartEvent = createNewEvent();
-						if (Device.os.blackberry) {
-							jQuery.sap.delayedCall(0, this, simulateTouchStart);
-						} else {
-							simulateTouchStart();
-						}
+						jQuery.sap.delayedCall(0, this, function(){
+							oNewStartEvent.setMark("handledByUIArea", false);
+							oConfig.eventHandle.handler.call(oConfig.domRef, oNewStartEvent);
+						});
 					} else if (oEvent.type === "touchend") {
 
 						oNewEndEvent = createNewEvent();
-						bSimulateClick = !oEvent.isMarked("handledByUIArea") && !bFingerIsMoved;
+						bSimulateClick = !bFingerIsMoved;
 
-						if (Device.os.blackberry) {
-							jQuery.sap.delayedCall(0, this, simulateTouchEnd);
-						} else {
-							simulateTouchEnd();
-						}
+						jQuery.sap.delayedCall(0, this, function(){
+							oNewEndEvent.setMark("handledByUIArea", false);
+							oConfig.eventHandle.handler.call(oConfig.domRef, oNewEndEvent);
+							if (bSimulateClick) {
+								// also call the onclick event handler when touchend event is received and the movement is within threshold
+								oNewEndEvent.type = "click";
+								oNewEndEvent.getPseudoTypes = jQuery.Event.prototype.getPseudoTypes; //Reset the pseudo types due to type change
+								oNewEndEvent.setMark("handledByUIArea", false);
+								oNewEndEvent.offsetX = iOffsetX; // use offset from touchstart
+								oNewEndEvent.offsetY = iOffsetY; // use offset from touchstart
+								oConfig.eventHandle.handler.call(oConfig.domRef, oNewEndEvent);
+							}
+						});
 					}
 				};
 

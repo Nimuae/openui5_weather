@@ -118,6 +118,12 @@
 			"name": "ResponsiveFlowLayoutRenderer.js"
 		},
 		{
+			"name": "SideContentFallDown.type"
+		},
+		{
+			"name": "SideContentVisibility.type"
+		},
+		{
 			"name": "Splitter-dbg.js",
 			"isDebug":true
 		},

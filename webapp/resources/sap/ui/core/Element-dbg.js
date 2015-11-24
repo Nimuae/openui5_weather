@@ -5,7 +5,7 @@
  */
 
 // Provides the base class for all controls and UI elements.
-sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', 'jquery.sap.strings'],
+sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', 'jquery.sap.strings', 'jquery.sap.trace'],
 	function(jQuery, BaseObject, ManagedObject, ElementMetadata/* , jQuerySap */) {
 	"use strict";
 
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -550,7 +550,11 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
 
 		// remove this control from DOM, e.g. if there is no parent (e.g. Dialog or already removed control) or this.sParentAggregationName is not properly set
-		this.$().remove();
+		if (bSuppressInvalidate !== "KeepDom") {
+			this.$().remove();
+		} else {
+			jQuery.sap.log.debug("DOM is not removed on destroy of " + this);
+		}
 	};
 
 
@@ -564,6 +568,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @protected
 	 */
 	Element.prototype.fireEvent = function(sEventId, mParameters) {
+		if (this.hasListeners(sEventId)) {
+			jQuery.sap.interaction.notifyStepStart(this);
+		}
 		// clone 'arguments' and modify clone to be strict mode compatible
 		var aArgs = Array.prototype.slice.apply(arguments);
 		// TODO 'id' is somewhat redundant to getSource(), but it is commonly used - fade out with next major release?
@@ -751,13 +758,13 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * If a new tooltip is set, any previously set tooltip is deactivated.
 	 *
-	 * @param {string|sap.ui.core.TooltipBase} oTooltip
+	 * @param {string|sap.ui.core.TooltipBase} vTooltip
 	 * @public
 	 */
-	Element.prototype.setTooltip = function(oTooltip) {
+	Element.prototype.setTooltip = function(vTooltip) {
 
-		this._refreshTooltipBaseDelegate(oTooltip);
-		this.setAggregation("tooltip", oTooltip);
+		this._refreshTooltipBaseDelegate(vTooltip);
+		this.setAggregation("tooltip", vTooltip);
 
 		return this;
 	};
@@ -1042,8 +1049,12 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * to resolve bound properties or aggregations of the object itself and all of its children
 	 * relatively to the given path.
 	 * If a relative binding path is used, this will be applied whenever the parent context changes.
-	 * @param {string} sPath the binding path
-	 * @param {object} [mParameters] map of additional parameters for this binding
+	 * @param {string|object} vPath the binding path or an object with more detailed binding options
+	 * @param {string} vPath.path the binding path
+	 * @param {object} [vPath.parameters] map of additional parameters for this binding
+	 * @param {string} [vPath.model] name of the model
+	 * @param {object} [vPath.events] map of event listeners for the binding events
+	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string)
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public

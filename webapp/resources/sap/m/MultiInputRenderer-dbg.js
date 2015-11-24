@@ -14,9 +14,26 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 	 */
 	var MultiInputRenderer = Renderer.extend(InputRenderer);
 	
+	MultiInputRenderer.getAriaDescribedBy = function(oControl) {
+
+		var sAriaDescribedBy = InputRenderer.getAriaDescribedBy.apply(this, arguments);
+
+		if (oControl.getTokens().length > 0) {
+			if (sAriaDescribedBy) {
+				sAriaDescribedBy = sAriaDescribedBy + " " + oControl._sAriaMultiInputContainTokenId;
+			} else {
+				sAriaDescribedBy = oControl._sAriaMultiInputContainTokenId;
+			}
+		}
+
+		return sAriaDescribedBy;
+
+	};
+	
+	
 	MultiInputRenderer.openInputTag = function(oRm, oControl) {
 		
-		if (oControl.getEnableMultiLineMode()){
+		if (oControl.getEnableMultiLineMode() || oControl._bUseDialog){
 			
 			oControl._isMultiLineMode = true;
 			
@@ -28,9 +45,6 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 				
 				//render the single line
 				oRm.write("<div id=\"" + oControl.getId() + "-border\" class=\"sapMMultiInputBorder\">");
-				setTimeout(function() {
-					oControl._setContainerSizes();
-				}, 0);
 			}
 
 		} else {
@@ -48,10 +62,10 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 	
 	MultiInputRenderer._renderInput = function(oRm, oControl) {
 		
-		if ( oControl.getEnableMultiLineMode() && oControl._bShowIndicator === false ) {
+		if ( oControl._isMultiLineMode && oControl._bShowIndicator === false ) {
 			oRm.write("<div class=\"sapMMultiInputInputContainer sapMMultiInputMultiModeInputContainer\">");
 		} else {
-			if ( oControl.getEnableMultiLineMode() && oControl._bShowIndicator === true) {
+			if ( oControl._isMultiLineMode && oControl._bShowIndicator === true) {
 				var iTokens = oControl.getTokens().length;
 				oRm.write("<span class=\"sapMMultiInputIndicator\">");
 				if (iTokens > 1) {

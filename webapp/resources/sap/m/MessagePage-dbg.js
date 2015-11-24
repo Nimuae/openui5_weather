@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *		- The application is loading
 		 *	The layout is unchanged but the text varies depending on the use case.
 		 * @extends sap.ui.core.Control
-		 * @version 1.30.8
+		 * @version 1.32.7
 		 *
 		 * @constructor
 		 * @public
@@ -36,31 +36,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			library : "sap.m",
 			properties : {
 				/**
-				 * Determines the main text displayed on the MessagePage
+				 * Determines the main text displayed on the MessagePage.
 				 */
 				text : {type : "string", group : "Misc", defaultValue : "No matching items found."},
 				/**
-				 * Determines the detailed description that shows additional information on the MessagePage
+				 * Determines the detailed description that shows additional information on the MessagePage.
 				 */
 				description : {type : "string", group : "Misc", defaultValue : "Check the filter settings."},
 				/**
-				 * Determines the title in the header of MessagePage
+				 * Determines the title in the header of MessagePage.
 				 */
 				title : { type : "string", group : "Misc", defaultValue : null },
 				/**
-				 * Determines whether the header of the MessagePage is rendered when it's embedded in another page.
+				 * Determines the visibility of the MessagePage header.
+				 * Can be used to hide the header of the MessagePage when it's embedded in another page.
 				 */
 				showHeader : { type : "boolean", group : "Appearance", defaultValue : true },
 				/**
-				 * If this property is set to true, a navigation button will be rendered in the header.
+				 * Determines the visibility of the navigation button in MessagePage header.
 				 */
 				showNavButton : {type : "boolean", group : "Appearance", defaultValue : false},
 				/**
-				 * Determines the icon displayed on the MessagePage
+				 * Determines the icon displayed on the MessagePage.
 				 */
-				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : "sap-icon://documents" },
+				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : IconPool.getIconURI("documents") },
 				/**
-				 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * Determines the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 */
 				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 			},
@@ -78,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 */
 				customDescription : {type : "sap.m.Link", multiple : false},
 				/**
-				 * A Page control which is managed internally by the MessagePage control
+				 * A Page control which is managed internally by the MessagePage control.
 				 */
 				_page : {type : "sap.m.Page", multiple : false, visibility : "hidden"}
 			},
@@ -96,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			},
 			events : {
 				/**
-				 * this event is fired when Nav Button is pressed
+				 * This event is fired when Nav Button is pressed.
 				 * @since 1.28.1
 				 */
 				navButtonPress : {}
@@ -226,7 +227,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				id: this.getId() + "-pageIcon",
 				src: this.getIcon(),
 				height: "8rem",
-				useIconTooltip: false
+				useIconTooltip: true,
+				decorative: false
 			}, sap.m.Image).addStyleClass("sapMMessagePageIcon");
 
 			return this._oIconControl;
@@ -238,7 +240,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 * @returns {sap.m.IBar}
 		 */
-		MessagePage.prototype._getAnyHeader = function() {
+		MessagePage.prototype._getAnyHeader = function() {
 			return this._getInternalHeader();
 		};
 
@@ -248,8 +250,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 
-		MessagePage.prototype._getInternalHeader = function() {
-			return this.getAggregation("_page").getAggregation("_internalHeader");
+		MessagePage.prototype._getInternalHeader = function() {
+			return this.getAggregation("_page").getAggregation("_internalHeader");
 		};
 
 

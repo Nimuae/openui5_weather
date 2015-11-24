@@ -20,15 +20,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @namespace
 	 * @name sap.ui.commons
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.commons",
-		version: "1.30.8",
-		dependencies : ["sap.ui.core","sap.ui.layout"],
+		version: "1.32.7",
+		dependencies : ["sap.ui.core","sap.ui.layout","sap.ui.unified"],
 		types: [
 			"sap.ui.commons.ButtonStyle",
 			"sap.ui.commons.HorizontalDividerHeight",
@@ -1197,21 +1197,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	}
 
 	//implement FileUploader helper factory with commons controls
-	jQuery.sap.setObject("sap.ui.unified.FileUploaderHelper", {
-		createTextField: function(sId){
-			var oTextField = new sap.ui.commons.TextField(sId);
-			return oTextField;
-		},
-		setTextFieldContent: function(oTextField, sWidth){
-			oTextField.setWidth(sWidth);
-		},
-		createButton: function(){
-			var oButton = new sap.ui.commons.Button();
-			return oButton;
-		},
-		addFormClass: function(){ return null; },
-		bFinal: false /* to allow mobile to overwrite  */
-	});
+	if (!sap.ui.unified.FileUploaderHelper || !sap.ui.unified.FileUploaderHelper.bFinal) {
+		sap.ui.unified.FileUploaderHelper = {
+			createTextField: function(sId){
+				var oTextField = new sap.ui.commons.TextField(sId);
+				return oTextField;
+			},
+			setTextFieldContent: function(oTextField, sWidth){
+				oTextField.setWidth(sWidth);
+			},
+			createButton: function(){
+				var oButton = new sap.ui.commons.Button();
+				return oButton;
+			},
+			addFormClass: function(){ return null; },
+			bFinal: false /* to allow mobile to overwrite  */
+		};
+	}
 
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.

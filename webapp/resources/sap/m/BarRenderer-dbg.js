@@ -23,8 +23,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @protected
-	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered.
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	BarRenderer.render = BarInPageEnabler.prototype.render;
 
@@ -33,10 +33,10 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 	/////////////////
 
 	/**
-	 * Add classes attributes and styles to the root tag
+	 * Adds classes attributes and styles to the root tag
 	 *
-	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	BarRenderer.decorateRootElement = function (oRM, oControl) {
 		oRM.addClass("sapMBar");
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 	};
 
 	/**
-	 * Determines, if the IBarContext classes should be added to the control
+	 * Determines if the IBarContext classes should be added to the control.
 	 * @private
 	 */
 	BarRenderer.shouldAddIBarContext = function () {
@@ -63,8 +63,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	BarRenderer.renderBarContent = function(oRM, oControl) {
 		var sClosingDiv = "</div>";
@@ -123,10 +123,10 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 	};
 
 	/**
-	 * Makes the render manager renderAllControls in an array
-	 * @param {sap.ui.core.Control} aControls the Controls to be rendered
-	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.m.Bar} oBar an object representation of the control that should be rendered
+	 * Makes the RenderManager render all controls in an array.
+	 * @param {sap.ui.core.Control} aControls The Controls to be rendered
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.m.Bar} oBar An object representation of the control that should be rendered
 	 */
 	BarRenderer.renderAllControls = function (aControls, oRM, oBar) {
 		aControls.forEach(function (oControl) {
@@ -144,10 +144,10 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 	};
 
 	/**
-	 * Determines wich tag or context class the bar should have.
+	 * Determines which tag or context class the Bar should have.
 	 * @protected
-	 * @param {sap.m.BarBase} oControl the Bar control.
-	 * @returns {string} the context class
+	 * @param {sap.m.BarBase} oControl The Bar control
+	 * @returns {string} The context class
 	 */
 	BarRenderer.getContext = function(oControl) {
 		var sDesign = oControl.getDesign(),

@@ -55,7 +55,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @alias sap.ui.model.odata.type.Guid
 	 * @param {object} [oFormatOptions]
@@ -69,9 +69,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @public
 	 * @since 1.27.0
 	 */
-	var EdmGuid = ODataType.extend("sap.ui.model.odata.type.Guid",
-			/** @lends sap.ui.model.odata.type.Guid.prototype */
-			{
+	var EdmGuid = ODataType.extend("sap.ui.model.odata.type.Guid", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					setConstraints(this, oConstraints);

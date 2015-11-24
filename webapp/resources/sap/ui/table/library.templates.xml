@@ -79,6 +79,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	enabled: true, // boolean
 	ariaDescription: undefined, // string
 	maxVisibleItems: 0, // int
@@ -88,6 +89,9 @@
 	dependents: [], // sap.ui.core.Control, since 1.19
 	items: [], // sap.ui.unified.MenuItemBase
 	ariaLabelledBy: [], // sap.ui.core.Control, since 1.26.3
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	itemSelect: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this]
@@ -98,11 +102,13 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	enabled="true"
 	ariaDescription=""
 	maxVisibleItems="0"
 	pageSize="5"
 	ariaLabelledBy=""
+	validateFieldGroup=""
 	itemSelect="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -116,6 +122,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "auto", // sap.ui.core.CSSSize
 	rowHeight: undefined, // int
 	columnHeaderHeight: undefined, // int
@@ -125,7 +132,6 @@
 	selectionMode: sap.ui.table.SelectionMode.Multi, // sap.ui.table.SelectionMode
 	selectionBehavior: sap.ui.table.SelectionBehavior.RowSelector, // sap.ui.table.SelectionBehavior
 	selectedIndex: -1, // int
-	allowColumnReordering: true, // boolean
 	editable: true, // boolean
 	navigationMode: sap.ui.table.NavigationMode.Scrollbar, // sap.ui.table.NavigationMode
 	threshold: 100, // int
@@ -134,17 +140,18 @@
 	showColumnVisibilityMenu: false, // boolean
 	showNoData: true, // boolean
 	visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed, // sap.ui.table.VisibleRowCountMode, since 1.9.2
+	minAutoRowCount: 5, // int
 	fixedColumnCount: 0, // int
 	fixedRowCount: 0, // int
-	minAutoRowCount: 5, // int
 	fixedBottomRowCount: 0, // int, since 1.18.7
 	enableColumnFreeze: false, // boolean, since 1.21.0
 	enableCellFilter: false, // boolean, since 1.21.0
-	noDataText: undefined, // string, since 1.21.0
 	showOverlay: false, // boolean, since 1.21.2
 	enableSelectAll: true, // boolean, since 1.23.0
 	enableCustomFilter: false, // boolean, since 1.23.0
 	enableBusyIndicator: false, // boolean, since 1.27.0
+	allowColumnReordering: true, // boolean
+	noDataText: undefined, // string, since 1.21.0
 	sumOnTop: false, // boolean
 	numberOfExpandedLevels: 0, // int
 	autoExpandMode: "Bundled", // string
@@ -162,6 +169,9 @@
 	rows: [], // sap.ui.table.Row
 	noData: undefined, // sap.ui.core.Control
 	groupBy: undefined, // sap.ui.table.Column
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	rowSelectionChange: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -205,6 +215,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="auto"
 	rowHeight=""
 	columnHeaderHeight=""
@@ -214,7 +225,6 @@
 	selectionMode="Multi"
 	selectionBehavior="RowSelector"
 	selectedIndex="-1"
-	allowColumnReordering="true"
 	editable="true"
 	navigationMode="Scrollbar"
 	threshold="100"
@@ -223,17 +233,18 @@
 	showColumnVisibilityMenu="false"
 	showNoData="true"
 	visibleRowCountMode="Fixed"
+	minAutoRowCount="5"
 	fixedColumnCount="0"
 	fixedRowCount="0"
-	minAutoRowCount="5"
 	fixedBottomRowCount="0"
 	enableColumnFreeze="false"
 	enableCellFilter="false"
-	noDataText=""
 	showOverlay="false"
 	enableSelectAll="true"
 	enableCustomFilter="false"
 	enableBusyIndicator="false"
+	allowColumnReordering="true"
+	noDataText=""
 	sumOnTop="false"
 	numberOfExpandedLevels="0"
 	autoExpandMode="Bundled"
@@ -241,6 +252,7 @@
 	collapseRecursive="true"
 	dirty=""
 	groupBy=""
+	validateFieldGroup=""
 	rowSelectionChange=""
 	columnSelect=""
 	columnResize=""
@@ -334,6 +346,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	enabled: true, // boolean
 	ariaDescription: undefined, // string
 	maxVisibleItems: 0, // int
@@ -343,6 +356,9 @@
 	dependents: [], // sap.ui.core.Control, since 1.19
 	items: [], // sap.ui.unified.MenuItemBase
 	ariaLabelledBy: [], // sap.ui.core.Control, since 1.26.3
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	itemSelect: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this]
@@ -353,11 +369,13 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	enabled="true"
 	ariaDescription=""
 	maxVisibleItems="0"
 	pageSize="5"
 	ariaLabelledBy=""
+	validateFieldGroup=""
 	itemSelect="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -371,6 +389,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "auto", // sap.ui.core.CSSSize
 	rowHeight: undefined, // int
 	columnHeaderHeight: undefined, // int
@@ -380,7 +399,6 @@
 	selectionMode: sap.ui.table.SelectionMode.Multi, // sap.ui.table.SelectionMode
 	selectionBehavior: sap.ui.table.SelectionBehavior.RowSelector, // sap.ui.table.SelectionBehavior
 	selectedIndex: -1, // int
-	allowColumnReordering: true, // boolean
 	editable: true, // boolean
 	navigationMode: sap.ui.table.NavigationMode.Scrollbar, // sap.ui.table.NavigationMode
 	threshold: 100, // int
@@ -389,17 +407,18 @@
 	showColumnVisibilityMenu: false, // boolean
 	showNoData: true, // boolean
 	visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed, // sap.ui.table.VisibleRowCountMode, since 1.9.2
+	minAutoRowCount: 5, // int
 	fixedColumnCount: 0, // int
 	fixedRowCount: 0, // int
-	minAutoRowCount: 5, // int
 	fixedBottomRowCount: 0, // int, since 1.18.7
 	enableColumnFreeze: false, // boolean, since 1.21.0
 	enableCellFilter: false, // boolean, since 1.21.0
-	noDataText: undefined, // string, since 1.21.0
 	showOverlay: false, // boolean, since 1.21.2
 	enableSelectAll: true, // boolean, since 1.23.0
 	enableCustomFilter: false, // boolean, since 1.23.0
 	enableBusyIndicator: false, // boolean, since 1.27.0
+	allowColumnReordering: true, // boolean
+	noDataText: undefined, // string, since 1.21.0
 	expandFirstLevel: false, // boolean
 	useGroupMode: false, // boolean
 	groupHeaderProperty: undefined, // string
@@ -419,6 +438,9 @@
 	rows: [], // sap.ui.table.Row
 	noData: undefined, // sap.ui.core.Control
 	groupBy: undefined, // sap.ui.table.Column
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	rowSelectionChange: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -468,6 +490,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="auto"
 	rowHeight=""
 	columnHeaderHeight=""
@@ -477,7 +500,6 @@
 	selectionMode="Multi"
 	selectionBehavior="RowSelector"
 	selectedIndex="-1"
-	allowColumnReordering="true"
 	editable="true"
 	navigationMode="Scrollbar"
 	threshold="100"
@@ -486,17 +508,18 @@
 	showColumnVisibilityMenu="false"
 	showNoData="true"
 	visibleRowCountMode="Fixed"
+	minAutoRowCount="5"
 	fixedColumnCount="0"
 	fixedRowCount="0"
-	minAutoRowCount="5"
 	fixedBottomRowCount="0"
 	enableColumnFreeze="false"
 	enableCellFilter="false"
-	noDataText=""
 	showOverlay="false"
 	enableSelectAll="true"
 	enableCustomFilter="false"
 	enableBusyIndicator="false"
+	allowColumnReordering="true"
+	noDataText=""
 	expandFirstLevel="false"
 	useGroupMode="false"
 	groupHeaderProperty=""
@@ -506,6 +529,7 @@
 	expanded="false"
 	hierarchical="false"
 	groupBy=""
+	validateFieldGroup=""
 	rowSelectionChange=""
 	columnSelect=""
 	columnResize=""
@@ -555,6 +579,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "auto", // sap.ui.core.CSSSize
 	rowHeight: undefined, // int
 	columnHeaderHeight: undefined, // int
@@ -564,7 +589,6 @@
 	selectionMode: sap.ui.table.SelectionMode.Multi, // sap.ui.table.SelectionMode
 	selectionBehavior: sap.ui.table.SelectionBehavior.RowSelector, // sap.ui.table.SelectionBehavior
 	selectedIndex: -1, // int
-	allowColumnReordering: true, // boolean
 	editable: true, // boolean
 	navigationMode: sap.ui.table.NavigationMode.Scrollbar, // sap.ui.table.NavigationMode
 	threshold: 100, // int
@@ -573,17 +597,18 @@
 	showColumnVisibilityMenu: false, // boolean
 	showNoData: true, // boolean
 	visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed, // sap.ui.table.VisibleRowCountMode, since 1.9.2
+	minAutoRowCount: 5, // int
 	fixedColumnCount: 0, // int
 	fixedRowCount: 0, // int
-	minAutoRowCount: 5, // int
 	fixedBottomRowCount: 0, // int, since 1.18.7
 	enableColumnFreeze: false, // boolean, since 1.21.0
 	enableCellFilter: false, // boolean, since 1.21.0
-	noDataText: undefined, // string, since 1.21.0
 	showOverlay: false, // boolean, since 1.21.2
 	enableSelectAll: true, // boolean, since 1.23.0
 	enableCustomFilter: false, // boolean, since 1.23.0
 	enableBusyIndicator: false, // boolean, since 1.27.0
+	allowColumnReordering: true, // boolean
+	noDataText: undefined, // string, since 1.21.0
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
@@ -595,6 +620,9 @@
 	rows: [], // sap.ui.table.Row
 	noData: undefined, // sap.ui.core.Control
 	groupBy: undefined, // sap.ui.table.Column
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	rowSelectionChange: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -638,6 +666,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="auto"
 	rowHeight=""
 	columnHeaderHeight=""
@@ -647,7 +676,6 @@
 	selectionMode="Multi"
 	selectionBehavior="RowSelector"
 	selectedIndex="-1"
-	allowColumnReordering="true"
 	editable="true"
 	navigationMode="Scrollbar"
 	threshold="100"
@@ -656,18 +684,20 @@
 	showColumnVisibilityMenu="false"
 	showNoData="true"
 	visibleRowCountMode="Fixed"
+	minAutoRowCount="5"
 	fixedColumnCount="0"
 	fixedRowCount="0"
-	minAutoRowCount="5"
 	fixedBottomRowCount="0"
 	enableColumnFreeze="false"
 	enableCellFilter="false"
-	noDataText=""
 	showOverlay="false"
 	enableSelectAll="true"
 	enableCustomFilter="false"
 	enableBusyIndicator="false"
+	allowColumnReordering="true"
+	noDataText=""
 	groupBy=""
+	validateFieldGroup=""
 	rowSelectionChange=""
 	columnSelect=""
 	columnResize=""
@@ -698,6 +728,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "auto", // sap.ui.core.CSSSize
 	rowHeight: undefined, // int
 	columnHeaderHeight: undefined, // int
@@ -707,7 +738,6 @@
 	selectionMode: sap.ui.table.SelectionMode.Multi, // sap.ui.table.SelectionMode
 	selectionBehavior: sap.ui.table.SelectionBehavior.RowSelector, // sap.ui.table.SelectionBehavior
 	selectedIndex: -1, // int
-	allowColumnReordering: true, // boolean
 	editable: true, // boolean
 	navigationMode: sap.ui.table.NavigationMode.Scrollbar, // sap.ui.table.NavigationMode
 	threshold: 100, // int
@@ -716,17 +746,18 @@
 	showColumnVisibilityMenu: false, // boolean
 	showNoData: true, // boolean
 	visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed, // sap.ui.table.VisibleRowCountMode, since 1.9.2
+	minAutoRowCount: 5, // int
 	fixedColumnCount: 0, // int
 	fixedRowCount: 0, // int
-	minAutoRowCount: 5, // int
 	fixedBottomRowCount: 0, // int, since 1.18.7
 	enableColumnFreeze: false, // boolean, since 1.21.0
 	enableCellFilter: false, // boolean, since 1.21.0
-	noDataText: undefined, // string, since 1.21.0
 	showOverlay: false, // boolean, since 1.21.2
 	enableSelectAll: true, // boolean, since 1.23.0
 	enableCustomFilter: false, // boolean, since 1.23.0
 	enableBusyIndicator: false, // boolean, since 1.27.0
+	allowColumnReordering: true, // boolean
+	noDataText: undefined, // string, since 1.21.0
 	expandFirstLevel: false, // boolean
 	useGroupMode: false, // boolean
 	groupHeaderProperty: undefined, // string
@@ -743,6 +774,9 @@
 	rows: [], // sap.ui.table.Row
 	noData: undefined, // sap.ui.core.Control
 	groupBy: undefined, // sap.ui.table.Column
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	rowSelectionChange: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -789,6 +823,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="auto"
 	rowHeight=""
 	columnHeaderHeight=""
@@ -798,7 +833,6 @@
 	selectionMode="Multi"
 	selectionBehavior="RowSelector"
 	selectedIndex="-1"
-	allowColumnReordering="true"
 	editable="true"
 	navigationMode="Scrollbar"
 	threshold="100"
@@ -807,23 +841,25 @@
 	showColumnVisibilityMenu="false"
 	showNoData="true"
 	visibleRowCountMode="Fixed"
+	minAutoRowCount="5"
 	fixedColumnCount="0"
 	fixedRowCount="0"
-	minAutoRowCount="5"
 	fixedBottomRowCount="0"
 	enableColumnFreeze="false"
 	enableCellFilter="false"
-	noDataText=""
 	showOverlay="false"
 	enableSelectAll="true"
 	enableCustomFilter="false"
 	enableBusyIndicator="false"
+	allowColumnReordering="true"
+	noDataText=""
 	expandFirstLevel="false"
 	useGroupMode="false"
 	groupHeaderProperty=""
 	collapseRecursive="true"
 	rootLevel="0"
 	groupBy=""
+	validateFieldGroup=""
 	rowSelectionChange=""
 	columnSelect=""
 	columnResize=""

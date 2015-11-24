@@ -13,7 +13,7 @@
             <core:Icon
                 src="sap-icon://action-settings"
                 class="CustomizeBtn"
-                press="navigateToCustomizing" />
+                press="openSettingsPane" />
             <VBox
                 fitContainer="true"
                 justifyContent="Center">
