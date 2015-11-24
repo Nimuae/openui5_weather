@@ -948,9 +948,10 @@
       // ##### BEGIN: MODIFIED BY SAP
       // Original line: 
       //    if (P && Object.prototype.toString.call(P.resolve()) === '[object Promise]' && !P.cast) {
-      // This lead to the polyfill replacing the native promise object in Chrome, where "[object Object]" is returned
-      // instead of '[object Promise]'
-      if (P && Object.prototype.toString.call(P.resolve()).indexOf('[object ') === 0 && !P.cast) {
+      // This lead to the polyfill replacing the native promise object in 
+      // - Chrome, where "[object Object]" is returned instead of '[object Promise]'
+      // - Safari, where native promise contains a definition for Promise.cast
+      if (P && Object.prototype.toString.call(P.resolve()).indexOf('[object ') === 0) {
       // ##### END: MODIFIED BY SAP
         return;
       }
@@ -987,9 +988,13 @@
  */
 
 /**
- * Device and Feature Detection API of the SAP UI5 Library.
+ * Device and Feature Detection API: Provides information about the used browser / device and cross platform support for certain events
+ * like media queries, orientation change or resizing.
  *
- * @version 1.30.8
+ * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
+ * dynamically depending on the capabilities of the browser or device.
+ *
+ * @version 1.32.7
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -1014,7 +1019,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.30.8";
+		var apiVersion = "1.32.7";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -1072,7 +1077,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.30.8";
+		var v = "1.32.7";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -1138,69 +1143,73 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * The name of the operating system.
 	 *
-	 * @see sap.ui.Device.os#OS
+	 * @see sap.ui.Device.os.OS
 	 * @name sap.ui.Device.os#name
 	 * @type String
 	 * @public
 	 */
 	/**
-	 * The version as string. Might be empty if no version can be determined.
+	 * The version of the operating system as <code>string</code>.
+	 *
+	 * Might be empty if no version can be determined.
 	 *
 	 * @name sap.ui.Device.os#versionStr
 	 * @type String
 	 * @public
 	 */
 	/**
-	 * The version as float. Might be -1 if no version can be determined.
+	 * The version of the operating system as <code>float</code>.
+	 *
+	 * Might be <code>-1</code> if no version can be determined.
 	 *
 	 * @name sap.ui.Device.os#version
 	 * @type float
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Windows operating system.
+	 * If this flag is set to <code>true</code>, a Windows operating system is used.
 	 *
 	 * @name sap.ui.Device.os#windows
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Linux operating system.
+	 * If this flag is set to <code>true</code>, a Linux operating system is used.
 	 *
 	 * @name sap.ui.Device.os#linux
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating the MAC operating system.
+	 * If this flag is set to <code>true</code>, a Mac operating system is used.
 	 *
 	 * @name sap.ui.Device.os#macintosh
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating the iOS operating system.
+	 * If this flag is set to <code>true</code>, an iOS operating system is used.
 	 *
 	 * @name sap.ui.Device.os#ios
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Android operating system.
+	 * If this flag is set to <code>true</code>, an Android operating system is used.
 	 *
 	 * @name sap.ui.Device.os#android
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Blackberry operating system.
+	 * If this flag is set to <code>true</code>, a Blackberry operating system is used.
 	 *
 	 * @name sap.ui.Device.os#blackberry
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Windows Phone operating system.
+	 * If this flag is set to <code>true</code>, a Windows Phone operating system is used.
 	 *
 	 * @name sap.ui.Device.os#windows_phone
 	 * @type boolean
@@ -1337,6 +1346,13 @@ if (typeof window.sap.ui !== "object") {
 				return ({"name": OS.BLACKBERRY, "versionStr": result[4]});
 			}
 		}
+		
+		//Firefox on Android
+		platform = /\((Android)[\s]?([\d][.\d]*)?;.*Firefox\/[\d][.\d]*/;
+		result = userAgent.match(platform);
+		if (result) {
+			return ({"name": OS.ANDROID, "versionStr": result.length == 3 ? result[2] : ""});
+		}
 
 		// Desktop
 		return getDesktopOS();
@@ -1382,42 +1398,48 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * The name of the browser.
 	 *
-	 * @see sap.ui.Device.browser#BROWSER
+	 * @see sap.ui.Device.browser.BROWSER
 	 * @name sap.ui.Device.browser#name
 	 * @type String
 	 * @public
 	 */
 	/**
-	 * The version as string. Might be empty if no version can be determined.
+	 * The version of the browser as <code>string</code>.
+	 *
+	 * Might be empty if no version can be determined.
 	 *
 	 * @name sap.ui.Device.browser#versionStr
 	 * @type String
 	 * @public
 	 */
 	/**
-	 * The version as float. Might be -1 if no version can be determined.
+	 * The version of the browser as <code>float</code>.
+	 *
+	 * Might be <code>-1</code> if no version can be determined.
 	 *
 	 * @name sap.ui.Device.browser#version
 	 * @type float
 	 * @public
 	 */
 	/**
-	 * Flag indicating whether the mobile variant of the browser is used.
+	 * If this flag is set to <code>true</code>, the mobile variant of the browser is used.
+	 *
+	 * <b>Note:</b> This information might not be available for all browsers.
 	 *
 	 * @name sap.ui.Device.browser#mobile
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Internet Explorer browser.
+	 * If this flag is set to <code>true</code>, the Microsoft Internet Explorer browser is used.
 	 *
 	 * @name sap.ui.Device.browser#internet_explorer
 	 * @type boolean
-	 * @deprecated since 1.20: use sap.ui.Device.browser.msie
+	 * @deprecated since 1.20, use {@link sap.ui.Device.browser.msie} instead.
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Internet Explorer browser.
+	 * If this flag is set to <code>true</code>, the Microsoft Internet Explorer browser is used.
 	 *
 	 * @name sap.ui.Device.browser#msie
 	 * @type boolean
@@ -1425,36 +1447,40 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Edge browser.
+	 * If this flag is set to <code>true</code>, the Microsoft Edge browser is used.
 	 *
 	 * @name sap.ui.Device.browser#edge
 	 * @type boolean
-	 * @since 1.28.0
+	 * @since 1.30.0
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Firefox browser.
+	 * If this flag is set to <code>true</code>, the Mozilla Firefox browser is used.
 	 *
 	 * @name sap.ui.Device.browser#firefox
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Chrome browser.
+	 * If this flag is set to <code>true</code>, the Google Chrome browser is used.
 	 *
 	 * @name sap.ui.Device.browser#chrome
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating the Safari browser.
+	 * If this flag is set to <code>true</code>, the Apple Safari browser is used.
+	 *
+	 * <b>Note:</b>
+	 * This flag is also <code>true</code> when the standalone (fullscreen) mode or webview is used on iOS devices.
+	 * Please also note the flags {@link sap.ui.Device.browser#fullscreen} and {@link sap.ui.Device.browser#webview}.
 	 *
 	 * @name sap.ui.Device.browser#safari
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating a Webkit browser.
+	 * If this flag is set to <code>true</code>, a browser featuring a Webkit engine is used.
 	 *
 	 * @name sap.ui.Device.browser#webkit
 	 * @type boolean
@@ -1462,7 +1488,47 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * Flag indicating a Mozilla browser.
+	 * If this flag is set to <code>true</code>, the Safari browser runs in standalone fullscreen mode on iOS.
+	 *
+	 * <b>Note:</b> This flag is only available if the Safari browser was detected. Furthermore, if this mode is detected,
+	 * technically not a standard Safari is used. There might be slight differences in behavior and detection, e.g.
+	 * the availability of {@link sap.ui.Device.browser#version}.
+	 *
+	 * @name sap.ui.Device.browser#fullscreen
+	 * @type boolean
+	 * @since 1.31.0
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the Safari browser runs in webview mode on iOS.
+	 *
+	 * <b>Note:</b> This flag is only available if the Safari browser was detected. Furthermore, if this mode is detected,
+	 * technically not a standard Safari is used. There might be slight differences in behavior and detection, e.g.
+	 * the availability of {@link sap.ui.Device.browser#version}.
+	 *
+	 * @name sap.ui.Device.browser#webview
+	 * @type boolean
+	 * @since 1.31.0
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the Phantom JS browser is used.
+	 *
+	 * @name sap.ui.Device.browser#phantomJS
+	 * @type boolean
+	 * @private
+	 */
+	/**
+	 * The version of the used Webkit engine, if available.
+	 *
+	 * @see sap.ui.Device.browser#webkit
+	 * @name sap.ui.Device.browser#webkitVersion
+	 * @type String
+	 * @since 1.20.0
+	 * @private
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, a browser featuring a Mozilla engine is used.
 	 *
 	 * @name sap.ui.Device.browser#mozilla
 	 * @type boolean
@@ -1474,6 +1540,14 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @see sap.ui.Device.browser#name
 	 * @name sap.ui.Device.browser.BROWSER#INTERNET_EXPLORER
+	 * @public
+	 */
+	/**
+	 * Edge browser name.
+	 *
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#EDGE
+	 * @since 1.28.0
 	 * @public
 	 */
 	/**
@@ -1555,9 +1629,10 @@ if (typeof window.sap.ui !== "object") {
 		return res;
 	}
 
-	function getBrowser(customUa) {
+	function getBrowser(customUa, customNav) {
 		var b = calcBrowser(customUa);
 		var _ua = customUa || ua;
+		var _navigator = customNav || window.navigator;
 
 		// jQuery checks for user agent strings. We differentiate between browsers
 		var oExpMobile;
@@ -1576,7 +1651,8 @@ if (typeof window.sap.ui !== "object") {
 				// unknown mozilla browser
 				return {
 					mobile: oExpMobile.test(_ua),
-					mozilla: true
+					mozilla: true,
+					version: -1
 				};
 			}
 		} else if ( b.webkit ) {
@@ -1597,6 +1673,16 @@ if (typeof window.sap.ui !== "object") {
 					webkit: true,
 					webkitVersion: webkitVersion
 				};
+			} else if ( _ua.match(/FxiOS\/(\d+\.\d+)/)) {
+				var version = parseFloat(RegExp.$1);
+				return {
+					name: BROWSER.FIREFOX,
+					versionStr: "" + version,
+					version: version,
+					mobile: true,
+					webkit: true,
+					webkitVersion: webkitVersion
+				};
 			} else if ( _ua.match(/Android .+ Version\/(\d+\.\d+)/) ) {
 				var version = parseFloat(RegExp.$1);
 				return {
@@ -1609,24 +1695,38 @@ if (typeof window.sap.ui !== "object") {
 				};
 			} else { // Safari might have an issue with _ua.match(...); thus changing
 				var oExp = /(Version|PhantomJS)\/(\d+\.\d+).*Safari/;
+				var bStandalone = _navigator.standalone;
 				if (oExp.test(_ua)) {
 					var aParts = oExp.exec(_ua);
 					var version = parseFloat(aParts[2]);
 					return {
 						name: BROWSER.SAFARI,
 						versionStr: "" + version,
+						fullscreen: false,
+						webview: false,
 						version: version,
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
 						webkitVersion: webkitVersion,
 						phantomJS: aParts[1] === "PhantomJS"
 					};
-				} else {
-					// unknown webkit browser
+				} else if (/iPhone|iPad|iPod/.test(_ua) && !(/CriOS/.test(_ua)) && !(/FxiOS/.test(_ua)) && (bStandalone === true || bStandalone === false)) {
+					//WebView or Standalone mode on iOS
 					return {
+						name: BROWSER.SAFARI,
+						version: -1,
+						fullscreen: bStandalone,
+						webview: !bStandalone,
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
 						webkitVersion: webkitVersion
+					};
+				} else { // other webkit based browser
+					return {
+						mobile: oExpMobile.test(_ua),
+						webkit: true,
+						webkitVersion: webkitVersion,
+						version: -1
 					};
 				}
 			}
@@ -1695,56 +1795,65 @@ if (typeof window.sap.ui !== "object") {
 	 */
 
 	/**
-	 * Flag indicating whether touch events are supported.
+	 * If this flag is set to <code>true</code>, the used browser supports touch events.
+	 *
+	 * <b>Note:</b> This flag indicates whether the used browser supports touch events or not.
+	 * This does not necessarily mean that the used device has a touchable screen.
 	 *
 	 * @name sap.ui.Device.support#touch
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating whether pointer events are supported.
+	 * If this flag is set to <code>true</code>, the used browser supports pointer events.
 	 *
 	 * @name sap.ui.Device.support#pointer
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating whether media queries via JavaScript are supported.
+	 * If this flag is set to <code>true</code>, the used browser natively supports media queries via JavaScript.
+	 *
+	 * <b>Note:</b> The {@link sap.ui.Device.media media queries API} of the device API can also be used when there is no native support.
 	 *
 	 * @name sap.ui.Device.support#matchmedia
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating whether events on JavaScript media queries are supported.
+	 * If this flag is set to <code>true</code>, the used browser natively supports events of media queries via JavaScript.
+	 *
+	 * <b>Note:</b> The {@link sap.ui.Device.media media queries API} of the device API can also be used when there is no native support.
 	 *
 	 * @name sap.ui.Device.support#matchmedialistener
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating whether the native orientationchange event is supported.
+	 * If this flag is set to <code>true</code>, the used browser natively supports the <code>orientationchange</code> event.
+	 *
+	 * <b>Note:</b> The {@link sap.ui.Device.orientation orientation event} of the device API can also be used when there is no native support.
 	 *
 	 * @name sap.ui.Device.support#orientation
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating whether the device has a Retina display.
+	 * If this flag is set to <code>true</code>, the device has a display with a high resolution.
 	 *
 	 * @name sap.ui.Device.support#retina
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating whether WebSockets are supported.
+	 * If this flag is set to <code>true</code>, the used browser supports web sockets.
 	 *
 	 * @name sap.ui.Device.support#websocket
 	 * @type boolean
 	 * @public
 	 */
 	/**
-	 * Flag indicating whether placeholder on input tags are supported.
+	 * If this flag is set to <code>true</code>, the used browser supports the <code>placeholder</code> attribute on <code>input</code> elements.
 	 *
 	 * @name sap.ui.Device.support#input.placeholder
 	 * @type boolean
@@ -1768,7 +1877,7 @@ if (typeof window.sap.ui !== "object") {
 	device.support.matchmedia = !!window.matchMedia;
 	var m = device.support.matchmedia ? window.matchMedia("all and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
 	device.support.matchmedialistener = !!(m && m.addListener);
-	if (device.browser.safari && device.browser.version < 6) {
+	if (device.browser.safari && device.browser.version < 6 && !device.browser.fullscreen && !device.browser.webview) {
 		//Safari seems to have addListener but no events are fired ?!
 		device.support.matchmedialistener = false;
 	}
@@ -1785,7 +1894,37 @@ if (typeof window.sap.ui !== "object") {
 //******** Match Media ********
 
 	/**
-	 * Event API for Screen width media queries.
+	 * Event API for screen width changes.
+	 *
+	 * This API is based on media queries but can also be used if media queries are not natively supported by the used browser.
+	 * In this case, the behavior of media queries is simulated by this API.
+	 *
+	 * There are several predefined {@link sap.ui.Device.media.RANGESETS range sets} available. Each of them defines a
+	 * set of intervals for the screen width (from small to large). Whenever the screen width changes and the current screen width is in
+	 * a different interval to the one before the change, the registered event handlers for the range set are called.
+	 *
+	 * If needed, it is also possible to define a custom set of intervals.
+	 *
+	 * The following example shows a typical use case:
+	 * <pre>
+	 * function sizeChanged(mParams) {
+	 *     switch(mParams.name) {
+	 *         case "Phone":
+	 *             // Do what is needed for a little screen
+	 *             break;
+	 *         case "Tablet":
+	 *             // Do what is needed for a medium sized screen
+	 *             break;
+	 *         case "Desktop":
+	 *             // Do what is needed for a large screen
+	 *     }
+	 * }
+	 *
+	 * // Register an event handler to changes of the screen size
+	 * sap.ui.Device.media.attachHandler(sizeChanged, null, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+	 * // Do some initialization work based on the current size
+	 * sizeChanged(sap.ui.Device.media.getCurrentRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD));
+	 * </pre>
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.media
@@ -1794,7 +1933,7 @@ if (typeof window.sap.ui !== "object") {
 	device.media = {};
 
 	/**
-	 * Enumeration containing the names of predefined Screen width media query range sets.
+	 * Enumeration containing the names and settings of predefined screen width media query range sets.
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.media.RANGESETS
@@ -1802,55 +1941,108 @@ if (typeof window.sap.ui !== "object") {
 	 */
 
 	/**
-	 * A 3 step range set (S-L).
+	 * A 3-step range set (S-L).
+	 *
+	 * The ranges of this set are:
+	 * <ul>
+	 * <li><code>"S"</code>: For screens smaller than 520 pixels.</li>
+	 * <li><code>"M"</code>: For screens greater than or equal to 520 pixels and smaller than 960 pixels.</li>
+	 * <li><code>"L"</code>: For screens greater than or equal to 960 pixels.</li>
+	 * </ul>
+	 *
+	 * To use this range set, you must initialize it explicitly ({@link sap.ui.Device.media.html#initRangeSet}).
+	 *
+	 * If this range set is initialized, a CSS class is added to the page root (<code>html</code> tag) which indicates the current
+	 * screen width range: <code>sapUiMedia-3Step-<i>NAME_OF_THE_INTERVAL</i></code>.
 	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_3STEPS
 	 * @public
 	 */
 	/**
-	 * A 4 step range set (S-XL).
+	 * A 4-step range set (S-XL).
+	 *
+	 * The ranges of this set are:
+	 * <ul>
+	 * <li><code>"S"</code>: For screens smaller than 520 pixels.</li>
+	 * <li><code>"M"</code>: For screens greater than or equal to 520 pixels and smaller than 760 pixels.</li>
+	 * <li><code>"L"</code>: For screens greater than or equal to 760 pixels and smaller than 960 pixels.</li>
+	 * <li><code>"XL"</code>: For screens greater than or equal to 960 pixels.</li>
+	 * </ul>
+	 *
+	 * To use this range set, you must initialize it explicitly ({@link sap.ui.Device.media.html#initRangeSet}).
+	 *
+	 * If this range set is initialized, a CSS class is added to the page root (<code>html</code> tag) which indicates the current
+	 * screen width range: <code>sapUiMedia-4Step-<i>NAME_OF_THE_INTERVAL</i></code>.
 	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_4STEPS
 	 * @public
 	 */
 	/**
-	 * A 6 step range set (XS-XXL).
+	 * A 6-step range set (XS-XXL).
+	 *
+	 * The ranges of this set are:
+	 * <ul>
+	 * <li><code>"XS"</code>: For screens smaller than 241 pixels.</li>
+	 * <li><code>"S"</code>: For screens greater than or equal to 241 pixels and smaller than 400 pixels.</li>
+	 * <li><code>"M"</code>: For screens greater than or equal to 400 pixels and smaller than 541 pixels.</li>
+	 * <li><code>"L"</code>: For screens greater than or equal to 541 pixels and smaller than 768 pixels.</li>
+	 * <li><code>"XL"</code>: For screens greater than or equal to 768 pixels and smaller than 960 pixels.</li>
+	 * <li><code>"XXL"</code>: For screens greater than or equal to 960 pixels.</li>
+	 * </ul>
+	 *
+	 * To use this range set, you must initialize it explicitly ({@link sap.ui.Device.media.html#initRangeSet}).
+	 *
+	 * If this range set is initialized, a CSS class is added to the page root (<code>html</code> tag) which indicates the current
+	 * screen width range: <code>sapUiMedia-6Step-<i>NAME_OF_THE_INTERVAL</i></code>.
 	 *
 	 * @name sap.ui.Device.media.RANGESETS#SAP_6STEPS
 	 * @public
 	 */
 	/**
-	 * A 3 step range set (Phone, Tablet, Desktop). <br/>
-	 * <br/>
-	 * This range set is initialized by default.<br/>
-	 * Phone is < 600px<br/>
-	 * Tablet is 600px >= Tablet < 1024<br/>
-	 * Desktop is > 1024px<br/>
-	 * <br/>
-	 * There are 5 css classes to hide elements based on the width of the screen:
+	 * A 3-step range set (Phone, Tablet, Desktop).
+	 *
+	 * The ranges of this set are:
 	 * <ul>
-	 * 	<li>sapUiHideOnPhone - will be hidden if the screen has 600px or more</li>
-	 * 	<li>sapUiHideOnTablet - will be hidden if the screen has less than 600px or more than 1023px</li>
-	 * 	<li>sapUiHideOnDesktop - will be hidden if the screen is smaller than 1024px</li>
-	 * 	<li>sapUiVisibleOnlyOnPhone - will be visible if the screen has less than 600px</li>
-	 * 	<li>sapUiVisibleOnlyOnTablet - will be visible if the screen has 600px or more but less than 1024px</li>
-	 * 	<li>sapUiVisibleOnlyOnDesktop - will be visible if the screen has 1024px or more</li>
+	 * <li><code>"Phone"</code>: For screens smaller than 600 pixels.</li>
+	 * <li><code>"Tablet"</code>: For screens greater than or equal to 600 pixels and smaller than 1024 pixels.</li>
+	 * <li><code>"Desktop"</code>: For screens greater than or equal to 1024 pixels.</li>
 	 * </ul>
-	 * @alias sap.ui.Device.media.RANGESETS#SAP_STANDARD
+	 *
+	 * This range set is initialized by default. An initialization via {@link sap.ui.Device.media.html#initRangeSet} is not needed.
+	 *
+	 * A CSS class is added to the page root (<code>html</code> tag) which indicates the current
+	 * screen width range: <code>sapUiMedia-Std-<i>NAME_OF_THE_INTERVAL</i></code>.
+	 * Furthermore there are 5 additional CSS classes to hide elements based on the width of the screen:
+	 * <ul>
+	 * <li><code>sapUiHideOnPhone</code>: Will be hidden if the screen has 600px or more</li>
+	 * <li><code>sapUiHideOnTablet</code>: Will be hidden if the screen has less than 600px or more than 1023px</li>
+	 * <li><code>sapUiHideOnDesktop</code>: Will be hidden if the screen is smaller than 1024px</li>
+	 * <li><code>sapUiVisibleOnlyOnPhone</code>: Will be visible if the screen has less than 600px</li>
+	 * <li><code>sapUiVisibleOnlyOnTablet</code>: Will be visible if the screen has 600px or more but less than 1024px</li>
+	 * <li><code>sapUiVisibleOnlyOnDesktop</code>: Will be visible if the screen has 1024px or more</li>
+	 * </ul>
+	 *
+	 * @name sap.ui.Device.media.RANGESETS#SAP_STANDARD
 	 * @public
 	 */
 
 	/**
-	 * A 4 step range set (Phone, Tablet, Desktop, LargeDesktop). <br/>
-	 * <br/>
-	 * This range set is initialized by default. <br/>
-	 * It is similar to the range set SAP_STANDARD but with an additional breakpoint for large desktop screens. <br/>
-	 * Phone is < 600px<br/>
-	 * Tablet is 600px >= Tablet < 1024px <br/>
-	 * Desktop is 1024px >= Desktop < 1440px <br/>
-	 * LargeDesktop is > 1440px <br/>
-	 * <br/>
-	 * @alias sap.ui.Device.media.RANGESETS#SAP_STANDARD_EXTENDED
+	 * A 4-step range set (Phone, Tablet, Desktop, LargeDesktop).
+	 *
+	 * The ranges of this set are:
+	 * <ul>
+	 * <li><code>"Phone"</code>: For screens smaller than 600 pixels.</li>
+	 * <li><code>"Tablet"</code>: For screens greater than or equal to 600 pixels and smaller than 1024 pixels.</li>
+	 * <li><code>"Desktop"</code>: For screens greater than or equal to 1024 pixels and smaller than 1440 pixels.</li>
+	 * <li><code>"LargeDesktop"</code>: For screens greater than or equal to 1440 pixels.</li>
+	 * </ul>
+	 *
+	 * This range set is initialized by default. An initialization via {@link sap.ui.Device.media.html#initRangeSet} is not needed.
+	 *
+	 * A CSS class is added to the page root (<code>html</code> tag) which indicates the current
+	 * screen width range: <code>sapUiMedia-StdExt-<i>NAME_OF_THE_INTERVAL</i></code>.
+	 *
+	 * @name sap.ui.Device.media.RANGESETS#SAP_STANDARD_EXTENDED
 	 * @public
 	 */
 
@@ -1999,19 +2191,32 @@ if (typeof window.sap.ui !== "object") {
 	device.media.matches = device.support.matchmedia ? match : match_legacy;
 
 	/**
-	 * Registers the given handler to the range change event, which is fired when a new range of the set is entered.
+	 * Registers the given event handler to change events of the screen width based on the range set with the specified name.
 	 *
-	 * The handler has one map parameter <code>mParams</code>:
+	 * The event is fired whenever the screen width changes and the current screen width is in
+	 * a different interval of the given range set than before the width change.
+	 *
+	 * The event handler is called with a single argument: a map <code>mParams</code> which provides the following information
+	 * about the entered interval:
 	 * <ul>
-	 * <li>mParams.from: the range start value</li>
-	 * <li>mParams.to: the range end value, not defined for the last range (INFINITY)</li>
-	 * <li>mParams.unit: the used unit, e.g. px</li>
-	 * <li>mParams.name: the range name if defined</li>
+	 * <li><code>mParams.from</code>: The start value (inclusive) of the entered interval as a number</li>
+	 * <li><code>mParams.to</code>: The end value (exclusive) range of the entered interval as a number or undefined for the last interval (infinity)</li>
+	 * <li><code>mParams.unit</code>: The unit used for the values above, e.g. <code>"px"</code></li>
+	 * <li><code>mParams.name</code>: The name of the entered interval, if available</li>
 	 * </ul>
 	 *
-	 * @param {Function} fnFunction The function to call, when the range change event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
-	 * @param {String} sName The name of the range set to listen to.
+	 * @param {function}
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the <code>window</code> instance. A map with information
+	 *                       about the entered range set is provided as a single argument to the handler (see details above).
+	 * @param {object}
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
+	 * @param {String}
+	 *            sName The name of the range set to listen to. The range set must be initialized beforehand
+	 *                  ({@link sap.ui.Device.media.html#initRangeSet}). If no name is provided, the
+	 *                  {@link sap.ui.Device.media.RANGESETS.SAP_STANDARD default range set} is used.
+	 *
 	 * @name sap.ui.Device.media#attachHandler
 	 * @function
 	 * @public
@@ -2022,11 +2227,18 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Deregisters a previously registered handler from the range change event.
+	 * Removes a previously attached event handler from the change events of the screen width.
 	 *
-	 * @param {Function} fnFunction The function to call, when the range change event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
-	 * @param {String} sName The name of the range set to listen to.
+	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
+	 *
+	 * @param {function}
+	 *            fnFunction The handler function to detach from the event
+	 * @param {object}
+	 *            [oListener] The object that wanted to be notified when the event occurred
+	 * @param {String}
+	 *             sName The name of the range set to listen to. If no name is provided, the
+	 *                   {@link sap.ui.Device.media.RANGESETS.SAP_STANDARD default range set} is used.
+	 *
 	 * @name sap.ui.Device.media#detachHandler
 	 * @function
 	 * @public
@@ -2037,27 +2249,47 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Initializes a Screen width media query range set.
+	 * Initializes a screen width media query range set.
 	 *
-	 * This function can either be called only with the name parameter to initialize a predefined range set,
-	 * e.g. <code>sap.ui.Device.media.initRangeSet(sap.ui.Device.media.RANGESETS.SAP_3STEPS)</code>.
+	 * This initialization step makes the range set ready to be used for one of the other functions in namespace <code>sap.ui.Device.media</code>.
+	 * The most important {@link sap.ui.Device.media.RANGESETS predefined range sets} are initialized automatically.
 	 *
-	 * Or it is possible to define a custom range set as in the following example:
-	 * <code>sap.ui.Device.media.initRangeSet("MyRangeSet", [200, 400], "px", ["Small", "Medium", "Large"])</code> defines 3 ranges:
+	 * To make a not yet initialized {@link sap.ui.Device.media.RANGESETS predefined range set} ready to be used, call this function with the
+	 * name of the range set to be initialized:
+	 * <pre>
+	 * sap.ui.Device.media.initRangeSet(sap.ui.Device.media.RANGESETS.SAP_3STEPS);
+	 * </pre>
+	 *
+	 * Alternatively it is possible to define custom range sets as shown in the following example:
+	 * <pre>
+	 * sap.ui.Device.media.initRangeSet("MyRangeSet", [200, 400], "px", ["Small", "Medium", "Large"]);
+	 * </pre>
+	 * This example defines the following named ranges:
 	 * <ul>
-	 * <li>0px-199.999px with name "Small"</li>
-	 * <li>200px-399.999px with name "Medium"</li>
-	 * <li>400px-INFINITY with name "Large"</li>
+	 * <li><code>"Small"</code>: For screens smaller than 200 pixels.</li>
+	 * <li><code>"Medium"</code>: For screens greater than or equal to 200 pixels and smaller than 400 pixels.</li>
+	 * <li><code>"Large"</code>: For screens greater than or equal to 400 pixels.</li>
 	 * </ul>
+	 * The range names are optional. If they are specified a CSS class (e.g. <code>sapUiMedia-MyRangeSet-Small</code>) is also
+	 * added to the document root depending on the current active range. This can be suppressed via parameter <code>bSuppressClasses</code>.
 	 *
-	 * The range names are optional. If they are specified also a CSS class (e.g. sapUiMedia-MyRangeSet-Small) is added to the document root
-	 * depending on the current active range. This can be suppressed via parameter <code>bSuppressClasses</code>.
+	 * @param {String}
+	 *             sName The name of the range set to be initialized - either a {@link sap.ui.Device.media.RANGESETS predefined} or custom one.
+	 *                   The name must be a valid id and consist only of letters and numeric digits.
+	 * @param {int[]}
+	 *             [aRangeBorders] The range borders
+	 * @param {String}
+	 *             [sUnit] The unit which should be used for the values given in <code>aRangeBorders</code>.
+	 *                     The allowed values are <code>"px"</code> (default), <code>"em"</code> or <code>"rem"</code>
+	 * @param {String[]}
+	 *             [aRangeNames] The names of the ranges. The names must be a valid id and consist only of letters and digits. If names
+	 *             are specified, CSS classes are also added to the document root as described above. This behavior can be
+	 *             switched off explicitly by using <code>bSuppressClasses</code>. <b>Note:</b> <code>aRangeBorders</code> with <code>n</code> entries
+	 *             define <code>n+1</code> ranges. Therefore <code>n+1</code> names must be provided.
+	 * @param {boolean}
+	 *             [bSuppressClasses] Whether or not writing of CSS classes to the document root should be suppressed when
+	 *             <code>aRangeNames</code> are provided
 	 *
-	 * @param {String} sName The name of the range set. Either a predefined or custom one. The name must be a valid id (consist of letters and digits).
-	 * @param {int[]} aRangeBorders The range borders
-	 * @param {String} [sUnit] The unit which should be used. Allowed values are px (default), em or rem.
-	 * @param {String[]} [aRangeNames] The names of the ranges. The names must be a valid id (consist of letters and digits).
-	 * @param {boolean} [bSuppressClasses] Whether writing CSS classes to the document root should be suppressed
 	 * @name sap.ui.Device.media#initRangeSet
 	 * @function
 	 * @public
@@ -2127,9 +2359,10 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * Returns information about the current active range of the range set with the given name.
 	 *
-	 * @param {String} sName The name of the range set.
+	 * @param {String} sName The name of the range set. The range set must be initialized beforehand ({@link sap.ui.Device.media.html#initRangeSet})
+	 *
 	 * @name sap.ui.Device.media#getCurrentRange
-	 * @return {Map} the information about the current active range (same structure like the handler parameters (@see sap.ui.Device.media#attachHandler))
+	 * @return {map} Information about the current active interval of the range set. The returned map has the same structure as the argument of the event handlers ({link sap.ui.Device.media#attachHandler})
 	 * @function
 	 * @public
 	 */
@@ -2141,11 +2374,12 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Returns whether a range set with the given name is initialized.
+	 * Returns <code>true</code> if a range set with the given name is already initialized.
 	 *
 	 * @param {String} sName The name of the range set.
+	 *
 	 * @name sap.ui.Device.media#hasRangeSet
-	 * @return {boolean}
+	 * @return {boolean} Returns <code>true</code> if a range set with the given name is already initialized
 	 * @function
 	 * @public
 	 */
@@ -2156,9 +2390,11 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * Removes a previously initialized range set and detaches all registered handlers.
 	 *
-	 * Initialized predefined range sets (@see sap.ui.Device.media#RANGESETS) cannot be removed.
+	 * Only custom range sets can be removed via this function. Initialized predefined range sets
+	 * ({@link sap.ui.Device.media#RANGESETS}) cannot be removed.
 	 *
-	 * @param {String} sName The name of the range set.
+	 * @param {String} sName The name of the range set which should be removed.
+	 *
 	 * @name sap.ui.Device.media#removeRangeSet
 	 * @function
 	 * @protected
@@ -2199,10 +2435,54 @@ if (typeof window.sap.ui !== "object") {
 //******** System Detection ********
 
 	/**
-	 * Contains information about the system.
+	 * Provides a basic categorization of the used device based on various indicators.
+	 *
+	 * These indicators are for example the support of touch events, the screen size, the used operation system or
+	 * the user agent of the browser.
+	 *
+	 * <b>Note:</b> Depending on the capabilities of the device it is also possible that multiple flags are set to <code>true</code>.
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.system
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the device is recognized as a tablet.
+	 *
+	 * Furthermore, a CSS class <code>sap-tablet</code> is added to the document root element.
+	 *
+	 * @name sap.ui.Device.system#tablet
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the device is recognized as a phone.
+	 *
+	 * Furthermore, a CSS class <code>sap-phone</code> is added to the document root element.
+	 *
+	 * @name sap.ui.Device.system#phone
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the device is recognized as a desktop system.
+	 *
+	 * Furthermore, a CSS class <code>sap-desktop</code> is added to the document root element.
+	 *
+	 * @name sap.ui.Device.system#desktop
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the device is recognized as a combination of a desktop system and tablet.
+	 *
+	 * Furthermore, a CSS class <code>sap-combi</code> is added to the document root element.
+	 *
+	 * <b>Note:</b> This property is mainly for Microsoft Windows 8 (and following) devices where the mouse and touch event may be supported
+	 * natively by the browser being used. This property is set to <code>true</code> only when both mouse and touch event are natively supported.
+	 *
+	 * @alias sap.ui.Device.system#combi
+	 * @type boolean
 	 * @public
 	 */
 	/**
@@ -2210,40 +2490,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.system.SYSTEMTYPE
-	 * @public
-	 */
-	/**
-	 * Flag indicating if the device is a tablet.
-	 *
-	 * @name sap.ui.Device.system#tablet
-	 * @type boolean
-	 * @public
-	 */
-	/**
-	 * Flag indicating if the device is a phone.
-	 *
-	 * @name sap.ui.Device.system#phone
-	 * @type boolean
-	 * @public
-	 */
-	/**
-	 * Flag indicating if the device is a desktop.
-	 *
-	 * @name sap.ui.Device.system#desktop
-	 * @type boolean
-	 * @public
-	 */
-	/**
-	 * Flag indicating if the device is a combination of desktop and tablet.
-	 *
-	 * This property is mainly targeting the windows 8 devices where the mouse and touch event may supported
-	 * natively by the browser.
-	 *
-	 * This property is set to true only when both mouse and touch event are natively supported.
-	 *
-	 * @alias sap.ui.Device.system#combi
-	 * @type boolean
-	 * @public
+	 * @private
 	 */
 
 	var SYSTEMTYPE = {
@@ -2261,10 +2508,10 @@ if (typeof window.sap.ui !== "object") {
 		var isWin7 = device.os.windows && device.os.version === 7;
 
 		var s = {};
-		s.tablet = ((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t;
-		s.phone = device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t;
-		s.desktop = (!s.tablet && !s.phone) || isWin8Upwards || isWin7;
-		s.combi = (s.desktop && s.tablet);
+		s.tablet = !!(((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t);
+		s.phone = !!(device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t);
+		s.desktop = !!((!s.tablet && !s.phone) || isWin8Upwards || isWin7);
+		s.combi = !!(s.desktop && s.tablet);
 		s.SYSTEMTYPE = SYSTEMTYPE;
 
 		for (var type in SYSTEMTYPE) {
@@ -2347,34 +2594,75 @@ if (typeof window.sap.ui !== "object") {
 //******** Orientation Detection ********
 
 	/**
-	 * Orientation Change Event API.
+	 * Common API for orientation change notifications across all platforms.
+	 *
+	 * For browsers or devices that do not provide native support for orientation change events
+	 * the API simulates them based on the ratio of the document's width and height.
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.orientation
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the screen is currently in portrait mode (the height is greater than the width).
+	 *
+	 * @name sap.ui.Device.orientation#portrait
+	 * @type boolean
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the screen is currently in landscape mode (the width is greater than the height).
+	 *
+	 * @name sap.ui.Device.orientation#landscape
+	 * @type boolean
 	 * @public
 	 */
 
 	device.orientation = {};
 
 	/**
-	 * Resize Event API.
+	 * Common API for document window size change notifications across all platforms.
 	 *
 	 * @namespace
 	 * @name sap.ui.Device.resize
 	 * @public
 	 */
+	/**
+	 * The current height of the document's window in pixels.
+	 *
+	 * @name sap.ui.Device.resize#height
+	 * @type integer
+	 * @public
+	 */
+	/**
+	 * The current width of the document's window in pixels.
+	 *
+	 * @name sap.ui.Device.resize#width
+	 * @type integer
+	 * @public
+	 */
+
 	device.resize = {};
 
 	/**
-	 * Registers the given handler to the orientation change event.
+	 * Registers the given event handler to orientation change events of the document's window.
 	 *
-	 * The handler has one map parameter <code>mParams</code>:
+	 * The event is fired whenever the screen orientation changes and the width of the document's window
+	 * becomes greater than its height or the other way round.
+	 *
+	 * The event handler is called with a single argument: a map <code>mParams</code> which provides the following information:
 	 * <ul>
-	 * <li>mParams.landscape: whether the orientation is currently landscape</li>
+	 * <li><code>mParams.landscape</code>: If this flag is set to <code>true</code>, the screen is currently in landscape mode, otherwise in portrait mode.</li>
 	 * </ul>
 	 *
-	 * @param {Function} fnFunction The function to call, when the orientation change event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @param {function}
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the <code>window</code> instance. A map with information
+	 *                       about the orientation is provided as a single argument to the handler (see details above).
+	 * @param {object}
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
+	 *
 	 * @name sap.ui.Device.orientation#attachHandler
 	 * @function
 	 * @public
@@ -2384,16 +2672,24 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Registers the given handler to the resize event.
+	 * Registers the given event handler to resize change events of the document's window.
 	 *
-	 * The handler has one map parameter <code>mParams</code>:
+	 * The event is fired whenever the document's window size changes.
+	 *
+	 * The event handler is called with a single argument: a map <code>mParams</code> which provides the following information:
 	 * <ul>
-	 * <li>mParams.height: new height of the window</li>
-	 * <li>mParams.width: new width of the window</li>
+	 * <li><code>mParams.height</code>: The height of the document's window in pixels.</li>
+	 * <li><code>mParams.width</code>: The width of the document's window in pixels.</li>
 	 * </ul>
 	 *
-	 * @param {Function} fnFunction The function to call, when the resize event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * @param {function}
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the <code>window</code> instance. A map with information
+	 *                       about the size is provided as a single argument to the handler (see details above).
+	 * @param {object}
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
+	 *
 	 * @name sap.ui.Device.resize#attachHandler
 	 * @function
 	 * @public
@@ -2403,9 +2699,15 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Deregisters a previously registered handler from the orientation change event.
-	 * @param {Function} fnFunction The function to call, when the orientation change event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * Removes a previously attached event handler from the orientation change events.
+	 *
+	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
+	 *
+	 * @param {function}
+	 *            fnFunction The handler function to detach from the event
+	 * @param {object}
+	 *            [oListener] The object that wanted to be notified when the event occurred
+	 *
 	 * @name sap.ui.Device.orientation#detachHandler
 	 * @function
 	 * @public
@@ -2415,9 +2717,15 @@ if (typeof window.sap.ui !== "object") {
 	};
 
 	/**
-	 * Deregisters a previously registered handler from the resize event.
-	 * @param {Function} fnFunction The function to call, when the resize event occurs.
-	 * @param {Object} [oListener] The 'this' context of the handler function.
+	 * Removes a previously attached event handler from the resize events.
+	 *
+	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
+	 *
+	 * @param {function}
+	 *            fnFunction The handler function to detach from the event
+	 * @param {object}
+	 *            [oListener] The object that wanted to be notified when the event occurred
+	 *
 	 * @name sap.ui.Device.resize#detachHandler
 	 * @function
 	 * @public
@@ -15384,7 +15692,7 @@ $.ui.position = {
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-/*global URI, Promise, ES6Promise, alert, confirm, console, XMLHttpRequest */
+/*global URI, Promise, ES6Promise, alert, confirm, console, XMLHttpRequest*/
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -15468,7 +15776,7 @@ $.ui.position = {
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -15650,19 +15958,44 @@ $.ui.position = {
 		}(window.navigator.userAgent));
 	}
 
-	// Fixes the CORS issue (introduced by jQuery 1.7) when loading resources
-	// (e.g. SAPUI5 script) from other domains for IE browsers.
-	// The CORS check in jQuery filters out such browsers who do not have the
-	// property "withCredentials" which is the IE and Opera and prevents those
-	// browsers to request data from other domains with jQuery.ajax. The CORS
-	// requests are simply forbidden nevertheless if it works. In our case we
-	// simply load our script resources from another domain when using the CDN
-	// variant of SAPUI5. The following fix is also recommended by jQuery:
+	// XHR overrides for IE
 	if (!!sap.ui.Device.browser.internet_explorer) {
+
+		// Fixes the CORS issue (introduced by jQuery 1.7) when loading resources
+		// (e.g. SAPUI5 script) from other domains for IE browsers.
+		// The CORS check in jQuery filters out such browsers who do not have the
+		// property "withCredentials" which is the IE and Opera and prevents those
+		// browsers to request data from other domains with jQuery.ajax. The CORS
+		// requests are simply forbidden nevertheless if it works. In our case we
+		// simply load our script resources from another domain when using the CDN
+		// variant of SAPUI5. The following fix is also recommended by jQuery:
 		jQuery.support = jQuery.support || {};
 		jQuery.support.cors = true;
-	}
 
+		// Fixes XHR factory issue (introduced by jQuery 1.11). In case of IE
+		// it uses by mistake the ActiveXObject XHR. In the list of XHR supported
+		// HTTP methods PATCH and MERGE are missing which are required for OData.
+		// The related ticket is: #2068 (no downported to jQuery 1.x planned)
+		var oJQV = Version(jQuery.fn.jquery);
+		// the fix will only be applied to jQuery >= 1.11.0 (only for jQuery 1.x)
+		if (window.ActiveXObject !== undefined && oJQV.getMajor() == 1 && oJQV.getMinor() >= 11) {
+			var fnCreateStandardXHR = function() {
+				try {
+					return new window.XMLHttpRequest();
+				} catch (e) { /* ignore */ }
+			};
+			var fnCreateActiveXHR = function() {
+				try {
+					return new window.ActiveXObject("Microsoft.XMLHTTP");
+				} catch (e) { /* ignore */ }
+			};
+			jQuery.ajaxSettings = jQuery.ajaxSettings || {};
+			jQuery.ajaxSettings.xhr = function() {
+				return !this.isLocal ? fnCreateStandardXHR() : fnCreateActiveXHR();
+			};
+		}
+
+	}
 
 	/**
 	 * Find the script URL where the SAPUI5 is loaded from and return an object which
@@ -15718,7 +16051,7 @@ $.ui.position = {
 			/*eslint-disable no-debugger */
 			debugger;
 		}
-		
+
 		// Check local storage for booting a different core
 		var sRebootUrl;
 		try { // Necessary for FF when Cookies are disabled
@@ -15742,13 +16075,13 @@ $.ui.position = {
 				});
 				sScript += "></script>";
 				oScript.parentNode.removeChild(oScript);
-	
+
 				// clean up cachebuster stuff
 				jQuery("#sap-ui-bootstrap-cachebusted").remove();
 				window["sap-ui-config"] && window["sap-ui-config"].resourceRoots && (window["sap-ui-config"].resourceRoots[""] = undefined);
-	
+
 				document.write(sScript);
-				
+
 				// now this core commits suicide to enable clean loading of the other core
 				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and rebooting from: " + sRebootUrl);
 				oRestart.name = "Restart";
@@ -15891,7 +16224,7 @@ $.ui.position = {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @namespace
 	 * @public
 	 * @static
@@ -15902,8 +16235,22 @@ $.ui.position = {
 
 	jQuery.sap.Version = Version;
 
-	// -------------------------- DEBUG LOCAL STORAGE -------------------------------------
+	// -------------------------- PERFORMANCE NOW -------------------------------------
+	/**
+	 * Returns a high resolution timestamp for measurements.
+	 * The timestamp is based on 01/01/1970 00:00:00 as float with microsecond precision or
+	 * with millisecond precision, if high resolution timestamps are not available.
+	 * The fractional part of the timestamp represents microseconds.
+	 * Converting to a <code>Date</code> is possible using <code>new Date(jQuery.sap.now())</code>
+	 *
+	 * @public
+	 * @returns {float} high resolution timestamp for measurements
+	 */
+	jQuery.sap.now = !(window.performance && window.performance.now && window.performance.timing) ? Date.now : function() {
+		return window.performance.timing.navigationStart + window.performance.now();
+	};
 
+	// -------------------------- DEBUG LOCAL STORAGE -------------------------------------
 	jQuery.sap.debug = function(bEnable) {
 		if (!window.localStorage) {
 			return null;
@@ -15929,10 +16276,10 @@ $.ui.position = {
 	/**
 	 * Sets the URL to reboot this app from, the next time it is started. Only works with localStorage API available
 	 * (and depending on the browser, if cookies are enabled, even though cookies are not used).
-	 * 
+	 *
 	 * @param sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
-	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared 
-	 * 
+	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared
+	 *
 	 * @private
 	 */
 	jQuery.sap.setReboot = function(sRebootUrl) { // null-ish clears the reboot request
@@ -15944,11 +16291,11 @@ $.ui.position = {
 		try {
 			if (sRebootUrl) {
 				window.localStorage.setItem("sap-ui-reboot-URL", sRebootUrl); // remember URL to reboot from
-				
+
 				/*eslint-disable no-alert */
 				alert("Next time this app is launched (only once), it will load UI5 from:\n" + sRebootUrl + ".\nPlease reload the application page now.");
 				/*eslint-enable no-alert */
-				
+
 			} else {
 				window.localStorage.removeItem("sap-ui-reboot-URL"); // clear reboot URL, so app will start normally
 			}
@@ -16064,11 +16411,13 @@ $.ui.position = {
 		 */
 		function log(iLevel, sMessage, sDetails, sComponent) {
 			if (iLevel <= level(sComponent) ) {
-				var oNow = new Date(),
+				var fNow =  jQuery.sap.now(),
+					oNow = new Date(fNow),
+					iMicroSeconds = Math.floor((fNow - Math.floor(fNow)) * 1000),
 					oLogEntry = {
-						time     : pad0(oNow.getHours(),2) + ":" + pad0(oNow.getMinutes(),2) + ":" + pad0(oNow.getSeconds(),2),
+						time     : pad0(oNow.getHours(),2) + ":" + pad0(oNow.getMinutes(),2) + ":" + pad0(oNow.getSeconds(),2) + "." + pad0(oNow.getMilliseconds(),3) + pad0(iMicroSeconds,3),
 						date     : pad0(oNow.getFullYear(),4) + "-" + pad0(oNow.getMonth() + 1,2) + "-" + pad0(oNow.getDate(),2),
-						timestamp: oNow.getTime(),
+						timestamp: fNow,
 						level    : iLevel,
 						message  : String(sMessage || ""),
 						details  : String(sDetails || ""),
@@ -16488,6 +16837,800 @@ $.ui.position = {
 		 */
 		jQuery.sap.log.getLog = jQuery.sap.log.getLogEntries;
 
+		// *** Performance measure ***
+		function PerfMeasurement(){
+
+			function Measurement( sId, sInfo, iStart, iEnd, aCategories){
+				this.id = sId;
+				this.info = sInfo;
+				this.start = iStart;
+				this.end = iEnd;
+				this.pause = 0;
+				this.resume = 0;
+				this.duration = 0; // used time
+				this.time = 0; // time from start to end
+				this.categories = aCategories;
+				this.average = false; //average duration enabled
+				this.count = 0; //average count
+				this.completeDuration = 0; //complete duration
+			}
+
+			function matchCategories(aCategories) {
+				if (!aRestrictedCategories) {
+					return true;
+				}
+				if (!aCategories) {
+					return aRestrictedCategories === null;
+				}
+				//check whether active categories and current categories match
+				for (var i = 0; i < aRestrictedCategories.length; i++) {
+					if (aCategories.indexOf(aRestrictedCategories[i]) > -1) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			function checkCategories(aCategories) {
+				if (!aCategories) {
+					aCategories = ["javascript"];
+				}
+				aCategories = typeof aCategories === "string" ? aCategories.split(",") : aCategories;
+				if (!matchCategories(aCategories)) {
+					return null;
+				}
+				return aCategories;
+			}
+
+			var bActive = false,
+				fnAjax = jQuery.ajax,
+				aRestrictedCategories = null,
+				aAverageMethods = [],
+				aOriginalMethods = [],
+				aMethods = ["start", "end", "pause", "resume", "add", "remove", "clear", "average"];
+
+			/**
+			 * Gets the current state of the perfomance measurement functionality
+			 *
+			 * @return {boolean} current state of the perfomance measurement functionality
+			 * @name jQuery.sap.measure#getActive
+			 * @function
+			 * @public
+			 */
+			this.getActive = function(){
+				return bActive;
+			};
+
+			/**
+			 * Activates or deactivates the performance measure functionality
+			 * Optionally a category or list of categories can be passed to restrict measurements to certain categories
+			 * like "javascript", "require", "xmlhttprequest", "render"
+			 * @param {boolean} bOn state of the perfomance measurement functionality to set
+			 * @param {string | string[]}  An optional list of categories that should be measured
+			 *
+			 * @return {boolean} current state of the perfomance measurement functionality
+			 * @name jQuery.sap.measure#setActive
+			 * @function
+			 * @public
+			 */
+			this.setActive = function(bOn, aCategories){
+				//set restricted categories
+				if (!aCategories) {
+					aCategories = null;
+				} else if (typeof aCategories === "string") {
+					aCategories = aCategories.split(",");
+				}
+				aRestrictedCategories = aCategories;
+
+				if (bActive === bOn) {
+					return;
+				}
+				bActive = bOn;
+				if (bActive) {
+
+					//activate method implementations once
+					for (var i = 0; i < aMethods.length; i++) {
+						this[aMethods[i]] = this["_" + aMethods[i]];
+
+					}
+					aMethods = [];
+					// wrap and instrument jQuery.ajax
+					jQuery.ajax = function(url, options) {
+
+						if ( typeof url === 'object' ) {
+							options = url;
+							url = undefined;
+						}
+						options = options || {};
+
+						var sMeasureId = new URI(url || options.url).absoluteTo(document.location.origin + document.location.pathname).href();
+						jQuery.sap.measure.start(sMeasureId, "Request for " + sMeasureId, "xmlhttprequest");
+						var fnComplete = options.complete;
+						options.complete = function() {
+							jQuery.sap.measure.end(sMeasureId);
+							if (fnComplete) {
+								fnComplete.call(this, arguments);
+							}
+						};
+
+						// strict mode: we potentially modified 'options', so we must not use 'arguments'
+						return fnAjax.call(this, url, options);
+					};
+				} else if (fnAjax) {
+					jQuery.ajax = fnAjax;
+				}
+
+				return bActive;
+			};
+
+			this.mMeasurements = {};
+
+
+			/**
+			 * Starts a performance measure.
+			 * Optionally a category or list of categories can be passed to allow filtering of measurements.
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @param {string} sInfo Info for the measurement
+			 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
+			 *
+			 * @return {object} current measurement containing id, info and start-timestamp (false if error)
+			 * @name jQuery.sap.measure#start
+			 * @function
+			 * @public
+			 */
+			this._start = function( sId, sInfo, aCategories){
+				if (!bActive) {
+					return;
+				}
+
+				aCategories = checkCategories(aCategories);
+				if (!aCategories) {
+					return;
+				}
+
+				var iTime = jQuery.sap.now(),
+					oMeasurement = new Measurement( sId, sInfo, iTime, 0, aCategories);
+	//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
+
+				if (oMeasurement) {
+					this.mMeasurements[sId] = oMeasurement;
+					return this.getMeasurement(oMeasurement.id);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Pauses a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @return {object} current measurement containing id, info and start-timestamp, pause-timestamp (false if error)
+			 * @name jQuery.sap.measure#pause
+			 * @function
+			 * @public
+			 */
+			this._pause = function( sId ){
+				if (!bActive) {
+					return;
+				}
+
+				var iTime = jQuery.sap.now();
+				var oMeasurement = this.mMeasurements[sId];
+				if (oMeasurement && oMeasurement.end > 0) {
+					// already ended -> no pause possible
+					return false;
+				}
+
+				if (oMeasurement && oMeasurement.pause == 0) {
+					// not already paused
+					oMeasurement.pause = iTime;
+					if (oMeasurement.pause >= oMeasurement.resume && oMeasurement.resume > 0) {
+						oMeasurement.duration = oMeasurement.duration + oMeasurement.pause - oMeasurement.resume;
+						oMeasurement.resume = 0;
+					} else if (oMeasurement.pause >= oMeasurement.start) {
+						oMeasurement.duration = oMeasurement.pause - oMeasurement.start;
+					}
+				}
+	//			jQuery.sap.log.info("Performance measurement pause: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
+
+				if (oMeasurement) {
+					return this.getMeasurement(oMeasurement.id);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Resumes a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @return {object} current measurement containing id, info and start-timestamp, resume-timestamp (false if error)
+			 * @name jQuery.sap.measure#resume
+			 * @function
+			 * @public
+			 */
+			this._resume = function( sId ){
+				if (!bActive) {
+					return;
+				}
+
+				var iTime = jQuery.sap.now();
+				var oMeasurement = this.mMeasurements[sId];
+	//			jQuery.sap.log.info("Performance measurement resume: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
+
+				if (oMeasurement && oMeasurement.pause > 0) {
+					// already paused
+					oMeasurement.pause = 0;
+					oMeasurement.resume = iTime;
+				}
+
+				if (oMeasurement) {
+					return this.getMeasurement(oMeasurement.id);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Ends a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
+			 * @name jQuery.sap.measure#end
+			 * @function
+			 * @public
+			 */
+			this._end = function( sId ){
+				if (!bActive) {
+					return;
+				}
+
+				var iTime = jQuery.sap.now();
+				var oMeasurement = this.mMeasurements[sId];
+	//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
+
+				if (oMeasurement && !oMeasurement.end) {
+					oMeasurement.end = iTime;
+					if (oMeasurement.end >= oMeasurement.resume && oMeasurement.resume > 0) {
+						oMeasurement.duration = oMeasurement.duration + oMeasurement.end - oMeasurement.resume;
+						oMeasurement.resume = 0;
+					} else if (oMeasurement.pause > 0) {
+						// duration already calculated
+						oMeasurement.pause = 0;
+					} else if (oMeasurement.end >= oMeasurement.start) {
+						if (oMeasurement.average) {
+							oMeasurement.completeDuration += (oMeasurement.end - oMeasurement.start);
+							oMeasurement.count++;
+							oMeasurement.duration = oMeasurement.completeDuration / oMeasurement.count;
+							oMeasurement.start = iTime;
+						} else {
+							oMeasurement.duration = oMeasurement.end - oMeasurement.start;
+						}
+					}
+					if (oMeasurement.end >= oMeasurement.start) {
+						oMeasurement.time = oMeasurement.end - oMeasurement.start;
+					}
+				}
+
+				if (oMeasurement) {
+					return this.getMeasurement(sId);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Clears all performance measurements
+			 *
+			 * @name jQuery.sap.measure#clear
+			 * @function
+			 * @public
+			 */
+			this._clear = function( ){
+				this.mMeasurements = {};
+			};
+
+			/**
+			 * Removes a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @name jQuery.sap.measure#remove
+			 * @function
+			 * @public
+			 */
+			this._remove = function( sId ){
+				delete this.mMeasurements[sId];
+			};
+			/**
+			 * Adds a performance measurement with all data
+			 * This is usefull to add external measurements (e.g. from a backend) to the common measurement UI
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @param {string} sInfo Info for the measurement
+			 * @param {int} iStart start timestamp
+			 * @param {int} iEnd end timestamp
+			 * @param {int} iTime time in milliseconds
+			 * @param {int} iDuration effective time in milliseconds
+			 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
+			 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
+			 * @name jQuery.sap.measure#add
+			 * @function
+			 * @public
+			 */
+			this._add = function( sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories ){
+				if (!bActive) {
+					return;
+				}
+				aCategories = checkCategories(aCategories);
+				if (!aCategories) {
+					return false;
+				}
+				var oMeasurement = new Measurement( sId, sInfo, iStart, iEnd, aCategories);
+				oMeasurement.time = iTime;
+				oMeasurement.duration = iDuration;
+
+				if (oMeasurement) {
+					this.mMeasurements[sId] = oMeasurement;
+					return this.getMeasurement(oMeasurement.id);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Starts an average performance measure.
+			 * The duration of this measure is an avarage of durations measured for each call.
+			 * Optionally a category or list of categories can be passed to allow filtering of measurements.
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @param {string} sInfo Info for the measurement
+			 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
+			 * @return {object} current measurement containing id, info and start-timestamp (false if error)
+			 * @name jQuery.sap.measure#average
+			 * @function
+			 * @public
+			 */
+			this._average = function( sId, sInfo, aCategories){
+				if (!bActive) {
+					return;
+				}
+				aCategories = checkCategories(aCategories);
+				if (!aCategories) {
+					return;
+				}
+
+				var oMeasurement = this.mMeasurements[sId],
+					iTime = jQuery.sap.now();
+				if (!oMeasurement || !oMeasurement.average) {
+					this.start(sId, sInfo, aCategories);
+					oMeasurement = this.mMeasurements[sId];
+					oMeasurement.average = true;
+				} else {
+					if (!oMeasurement.end) {
+						oMeasurement.completeDuration += (iTime - oMeasurement.start);
+						oMeasurement.count++;
+					}
+					oMeasurement.start = iTime;
+					oMeasurement.end = 0;
+				}
+				return this.getMeasurement(oMeasurement.id);
+			};
+
+			/**
+			 * Gets a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
+			 * @name jQuery.sap.measure#getMeasurement
+			 * @function
+			 * @public
+			 */
+			this.getMeasurement = function( sId ){
+
+				var oMeasurement = this.mMeasurements[sId];
+
+				if (oMeasurement) {
+					return {id: oMeasurement.id,
+							info: oMeasurement.info,
+							start: oMeasurement.start,
+							end: oMeasurement.end,
+							pause: oMeasurement.pause,
+							resume: oMeasurement.resume,
+							time: oMeasurement.time,
+							duration: oMeasurement.duration,
+							completeDuration: oMeasurement.completeDuration,
+							count: oMeasurement.count,
+							average: oMeasurement.average,
+							categories: oMeasurement.categories};
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Gets all performance measurements
+			 *
+			 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
+			 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories
+			 * @name jQuery.sap.measure#getAllMeasurements
+			 * @function
+			 * @public
+			 */
+			this.getAllMeasurements = function(bCompleted){
+				return this.filterMeasurements(function(oMeasurement) {
+					return oMeasurement;
+				}, bCompleted);
+			};
+
+			/**
+			 * Gets all performance measurements where a provided filter function returns true.
+			 * The filter function is called for every measurement and should return the measurement to be added.
+			 * If no filter function is provided an empty array is returned.
+			 * To filter for certain categories of measurements a fnFilter can be implemented like this
+			 * <code>
+			 * function(oMeasurement) {
+			 *     return oMeasurement.categories.indexOf("rendering") > -1 ? oMeasurement : null
+			 * }</code>
+			 *
+			 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
+			 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
+			 *
+			 * @return {object} [] current measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
+			 * @name jQuery.sap.measure#filterMeasurements
+			 * @function
+			 * @public
+			 * @since 1.34.0
+		 	 */
+			this.filterMeasurements = function(fnFilter, bCompleted) {
+				var aMeasurements = [],
+					that = this;
+				jQuery.each(this.mMeasurements, function(sId){
+					var oMeasurement = that.getMeasurement(sId);
+					if (fnFilter) {
+						var oResult = fnFilter(oMeasurement);
+						if (oResult && ((bCompleted === false && oResult.end === 0) || (bCompleted !== false && (!bCompleted || oResult.end)))) {
+							aMeasurements.push(oResult);
+						}
+					}
+				});
+				return aMeasurements;
+			};
+
+			/**
+			 * Registers an average measurement for a given objects method
+			 *
+			 * @param {string} sId the id of the measurement
+			 * @param {object} oObject the object of the method
+			 * @param {string} sMethod the name of the method
+			 * @param {string[]} [aCategories = ["javascript"]] An optional categories list for the measurement
+			 *
+			 * @returns {boolean} true if the registration was successful
+			 * @name jQuery.sap.measure#registerMethod
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.registerMethod = function(sId, oObject, sMethod, aCategories) {
+				var fnMethod = oObject[sMethod];
+				if (fnMethod && typeof fnMethod === "function") {
+					var bFound = aAverageMethods.indexOf(fnMethod) > -1;
+					if (!bFound) {
+						aOriginalMethods.push({func : fnMethod, obj: oObject, method: sMethod, id: sId});
+						oObject[sMethod] = function() {
+							jQuery.sap.measure.average(sId, sId + " method average", aCategories);
+							var result = fnMethod.apply(this, arguments);
+							jQuery.sap.measure.end(sId);
+							return result;
+						};
+						aAverageMethods.push(oObject[sMethod]);
+						return true;
+					}
+				} else {
+					jQuery.sap.log.debug(sMethod + " in not a function. jQuery.sap.measure.register failed");
+				}
+				return false;
+			};
+
+			/**
+			 * Unregisters an average measurement for a given objects method
+			 *
+			 * @param {string} sId the id of the measurement
+			 * @param {object} oObject the object of the method
+			 * @param {string} sMethod the name of the method
+			 *
+			 * @returns {boolean} true if the unregistration was successful
+			 * @name jQuery.sap.measure#unregisterMethod
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.unregisterMethod = function(sId, oObject, sMethod) {
+				var fnFunction = oObject[sMethod],
+					iIndex = aAverageMethods.indexOf(fnFunction);
+				if (fnFunction && iIndex > -1) {
+					oObject[sMethod] = aOriginalMethods[iIndex].func;
+					aAverageMethods.splice(iIndex, 1);
+					aOriginalMethods.splice(iIndex, 1);
+					return true;
+				}
+				return false;
+			};
+
+			/**
+			 * Unregisters all average measurements
+			 * @name jQuery.sap.measure#unregisterAllMethods
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.unregisterAllMethods = function() {
+				while (aOriginalMethods.length > 0) {
+					var oOrig = aOriginalMethods[0];
+					this.unregisterMethod(oOrig.id, oOrig.obj, oOrig.method);
+				}
+			};
+
+			// ** Interaction measure **
+			var aInteractions = [];
+			var oPendingInteraction;
+
+			/**
+			 * Gets all interaction measurements
+			 * @return {object[]} all interaction measurements
+			 * @name jQuery.sap.measure#getAllInteractionMeasurements
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.getAllInteractionMeasurements = function() {
+				return aInteractions;
+			};
+
+			/**
+			 * Gets the incomplete pending interaction
+			 * @return {object} interaction measurement
+			 * @name jQuery.sap.measure#getInteractionMeasurement
+			 * @function
+			 * @private
+			 * @since 1.34.0
+			 */
+			this.getPendingInteractionMeasurement = function() {
+				return oPendingInteraction;
+			};
+
+			/**
+			 * Clears all interaction measurements
+			 * @name jQuery.sap.measure#getLastInteractionMeasurement
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.clearInteractionMeasurements = function() {
+				aInteractions = [];
+			};
+
+			function finalizeInteraction(iTime) {
+				if (oPendingInteraction) {
+					oPendingInteraction.end = iTime;
+					oPendingInteraction.duration = oPendingInteraction.processing;
+					oPendingInteraction.requests = jQuery.sap.measure.getRequestTimings();
+					oPendingInteraction.measurements = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
+						return (oMeasurement.start > oPendingInteraction.start && oMeasurement.end < oPendingInteraction.end) ? oMeasurement : null;
+					}, true);
+					if (oPendingInteraction.requests.length > 0) {
+						// determine Performance API timestamp for latestly completed request
+						var iEnd = oPendingInteraction.requests[0].startTime,
+							iNavLo = oPendingInteraction.requests[0].startTime,
+							iNavHi = oPendingInteraction.requests[0].requestStart,
+							iRtLo = oPendingInteraction.requests[0].requestStart,
+							iRtHi = oPendingInteraction.requests[0].responseEnd;
+						oPendingInteraction.requests.forEach(function(oRequest) {
+							iEnd = oRequest.responseEnd > iEnd ? oRequest.responseEnd : iEnd;
+							oPendingInteraction.requestTime += (oRequest.responseEnd - oRequest.startTime);
+							// summarize navigation and roundtrip with respect to requests overlapping and times w/o requests
+							if (iRtHi < oRequest.startTime) {
+								oPendingInteraction.navigation += (iNavHi - iNavLo);
+								oPendingInteraction.roundtrip += (iRtHi - iRtLo);
+								iNavLo =  oRequest.startTime;
+								iRtLo =  oRequest.requestStart;
+							}
+							if (oRequest.responseEnd > iRtHi) {
+								iNavHi = oRequest.requestStart;
+								iRtHi = oRequest.responseEnd;
+							}
+						});
+						oPendingInteraction.navigation += iNavHi - iNavLo;
+						oPendingInteraction.roundtrip += iRtHi - iRtLo;
+						// calculate average network time per request
+						oPendingInteraction.networkTime = oPendingInteraction.networkTime ? ((oPendingInteraction.requestTime - oPendingInteraction.networkTime) / oPendingInteraction.requests.length) : 0;
+						// in case processing is not determined, which means no re-rendering occured, take start to iEnd
+						if (oPendingInteraction.duration === 0) {
+							oPendingInteraction.duration = oPendingInteraction.navigation + oPendingInteraction.roundtrip;
+						}
+					}
+					// calculate real processing time if any processing took place, cannot be negative as then requests took longer than processing
+					if (oPendingInteraction.processing !== 0) {
+						var iProcessing = oPendingInteraction.processing - oPendingInteraction.navigation - oPendingInteraction.roundtrip;
+						oPendingInteraction.processing = iProcessing > 0 ? iProcessing : 0;
+					}
+					aInteractions.push(oPendingInteraction);
+					jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length);
+					oPendingInteraction = null;
+				}
+			}
+
+			/**
+			 * Start an interaction measurements
+			 *
+			 * @param {string} sType type of the event which triggered the interaction
+			 * @param {object} oSrcControl the control on which the interaction was triggered
+			 *
+			 * @name jQuery.sap.measure#startInteraction
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.startInteraction = function(sType, oSrcControl) {
+				// component determination - heuristic
+				function identifyOwnerComponent(oSrcControl) {
+					if (oSrcControl) {
+						var Component, oComponent;
+						Component = sap.ui.require("sap/ui/core/Component");
+						while (Component && oSrcControl && oSrcControl.getParent) {
+							oComponent = Component.getOwnerComponentFor(oSrcControl);
+							if (oComponent || oSrcControl instanceof Component) {
+								oComponent = oComponent || oSrcControl;
+								var oApp = oComponent.getMetadata().getManifestEntry("sap.app");
+								// get app id or module name for FESR
+								return oApp && oApp.id || oComponent.getMetadata().getName();
+							}
+							oSrcControl = oSrcControl.getParent();
+						}
+					}
+					return "undetermined";
+				}
+
+				var iTime = jQuery.sap.now();
+
+				if (oPendingInteraction) {
+					finalizeInteraction(iTime);
+				}
+
+				// clear request timings for new interaction
+				this.clearRequestTimings();
+
+				// setup new pending interaction
+				oPendingInteraction = {
+					event: sType, // event which triggered interaction
+					trigger: oSrcControl && oSrcControl.getId ? oSrcControl.getId() : "undetermined", // control which triggered interaction
+					component: identifyOwnerComponent(oSrcControl), // component or app identifier
+					start : iTime, // interaction start
+					end: 0, // interaction end
+					navigation: 0, // sum over all navigation times
+					roundtrip: 0, // time from first request sent to last received response end
+					processing: 0, // client processing time
+					duration: 0, // interaction duration
+					requests: [], // Performance API requests during interaction
+					measurements: [], // jQuery.sap.measure Measurements
+					sapStatistics: [], // SAP Statistics for OData, added by jQuery.sap.trace
+					requestTime: 0, // summ over all requests in the interaction (oPendingInteraction.requests[0].responseEnd-oPendingInteraction.requests[0].requestStart)
+					networkTime: 0, // request time minus server time from the header, added by jQuery.sap.trace
+					bytesSent: 0, // sum over all requests bytes, added by jQuery.sap.trace
+					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
+					requestCompression: undefined // true if all responses have been sent gzipped
+				};
+				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event);
+			};
+
+			/**
+			 * End an interaction measurements
+			 *
+			 * @param {boolean} bForce forces end of interaction now and ignores further re-renderings
+			 *
+			 * @name jQuery.sap.measure#endInteraction
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.endInteraction = function(bForce) {
+				if (oPendingInteraction) {
+					// set provisionary processing time from start to end and calculate later
+					if (!bForce) {
+						oPendingInteraction.processing = jQuery.sap.now() - oPendingInteraction.start;
+					} else {
+						finalizeInteraction(jQuery.sap.now());
+					}
+				}
+			};
+
+			/**
+			 * Sets the request buffer size for the interaction measurement
+			 *
+			 * @param {integer} iSize size of the buffer
+			 *
+			 * @name jQuery.sap.measure#setRequestBufferSize
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.setRequestBufferSize = function(iSize) {
+				if (!window.performance) {
+					return;
+				}
+				if (window.performance.webkitSetResourceTimingBufferSize) {
+					window.performance.webkitSetResourceTimingBufferSize(iSize);
+				} else if (window.performance.setResourceTimingBufferSize){
+					window.performance.setResourceTimingBufferSize(iSize);
+				}
+			};
+
+			/**
+			 * Gets the request timings for the interaction measurement
+			 *
+			 * @return {object[]} iSize size of the buffer
+			 * @name jQuery.sap.measure#getRequestTimings
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.getRequestTimings = function() {
+				if (window.performance && window.performance.getEntriesByType) {
+					return jQuery.extend(window.performance.getEntriesByType("resource"),{});
+				}
+				return [];
+			};
+
+			 /**
+ 			 * Clears all request timings
+ 			 *
+ 			 * @name jQuery.sap.measure#clearRequestTimings
+ 			 * @function
+ 			 * @public
+ 			 * @since 1.34.0
+ 			 */
+			this.clearRequestTimings = function() {
+				if (!window.performance) {
+					return;
+				}
+				if (window.performance.webkitClearResourceTimings) {
+					window.performance.webkitClearResourceTimings();
+				} else if (window.performance.clearResourceTimings){
+					window.performance.clearResourceTimings();
+				}
+			};
+
+			this.setRequestBufferSize(1000);
+
+			var aMatch = location.search.match(/sap-ui-measure=([^\&]*)/);
+			if (aMatch && aMatch[1]) {
+				if (aMatch[1] === "true" || aMatch[1] === "x" || aMatch[1] === "X") {
+					this.setActive(true);
+				} else {
+					this.setActive(true, aMatch[1]);
+				}
+			} else {
+				var fnInactive = function() {
+					//measure not active
+					return null;
+				};
+				//deactivate methods implementations
+				for (var i = 0; i < aMethods.length; i++) {
+					this[aMethods[i]] = fnInactive;
+				}
+			}
+		}
+
+		/**
+		 * Namespace for the jQuery performance measurement plug-in provided by SAP SE.
+		 *
+		 * @namespace
+		 * @name jQuery.sap.measure
+		 * @public
+		 * @static
+		 */
+		jQuery.sap.measure = new PerfMeasurement();
+
 		/**
 		 * A simple assertion mechanism that logs a message when a given condition is not met.
 		 *
@@ -16496,14 +17639,15 @@ $.ui.position = {
 		 *              of this method.
 		 *
 		 * @param {boolean} bResult result of the checked assertion
-		 * @param {string} sMessage message that will be raised when the result is <code>false</code>
+		 * @param {string|function} vMessage message that will be raised when the result is <code>false</code>. In case this is a function, the return value of the function will be displayed. This can be used to execute complex code only if the assertion fails.
 		 *
 		 * @public
 		 * @static
 		 * @SecSink {1|SECRET} Could expose secret data in logs
 		 */
-		jQuery.sap.assert = function(bResult, sMessage) {
+		jQuery.sap.assert = function(bResult, vMessage) {
 			if ( !bResult ) {
+				var sMessage = typeof vMessage === "function" ? vMessage() : vMessage;
 				/*eslint-disable no-console */
 				if ( window.console && console.assert ) {
 					console.assert(bResult, sWindowName + sMessage);
@@ -16829,13 +17973,13 @@ $.ui.position = {
 
 			mPreloadModules = {},
 
-		/* for future use 
+		/* for future use
 		/**
 		 * Mapping from default AMD names to UI5 AMD names.
-		 * 
-		 * For simpler usage in requireModule, the names are already converted to 
+		 *
+		 * For simpler usage in requireModule, the names are already converted to
 		 * normalized resource names.
-		 *     
+		 *
 		 * /
 			mAMDAliases = {
 				'blanket.js': 'sap/ui/thirdparty/blanket.js',
@@ -16860,14 +18004,14 @@ $.ui.position = {
 
 		/**
 		 * Information about third party modules that are delivered with the sap.ui.core library.
-		 * 
-		 * The information maps the name of the module (including extension '.js') to an info object with the 
-		 * following properties: 
-		 * 
+		 *
+		 * The information maps the name of the module (including extension '.js') to an info object with the
+		 * following properties:
+		 *
 		 * <ul>
-		 * <li>amd:boolean : whether the module uses an AMD loader if present. UI5 will disable the AMD loader while loading 
+		 * <li>amd:boolean : whether the module uses an AMD loader if present. UI5 will disable the AMD loader while loading
 		 *              such modules to force the modules to expose their content via global names.</li>
-		 * <li>exports:string[]|string : global name (or names) that are exported by the module. If one ore multiple names are defined, 
+		 * <li>exports:string[]|string : global name (or names) that are exported by the module. If one ore multiple names are defined,
 		 *              the first one will be read from the global object and will be used as value of the module.</li>
 		 * <li>deps:string[] : list of modules that the module depends on. The modules will be loaded first before loading the module itself.</li>
 		 * </ul>
@@ -16899,7 +18043,7 @@ $.ui.position = {
 					amd: true,
 					exports: 'OData' // 'datajs'
 				},
-				'sap/ui/thirdparty/es6-promise.js' : { 
+				'sap/ui/thirdparty/es6-promise.js' : {
 					amd: true,
 					exports: 'ES6Promise'
 				},
@@ -16988,7 +18132,7 @@ $.ui.position = {
 					exports: 'UNorm', // really 'UNorm'! module extends UNorm
 					deps: ['sap/ui/thirdparty/unorm.js']
 				},
-				'sap/ui/thirdparty/URI.js' : { 
+				'sap/ui/thirdparty/URI.js' : {
 					amd: true,
 					exports: 'URI'
 				},
@@ -17004,7 +18148,7 @@ $.ui.position = {
 					exports: 'Scroller' // 'requestAnimationFrame', 'cancelRequestAnimationFrame', 'core'
 				},
 				'sap/ui/demokit/js/esprima.js' : {
-					amd: true, 
+					amd: true,
 					exports: 'esprima'
 				}
 			},
@@ -17167,10 +18311,10 @@ $.ui.position = {
 		 * Resolves relative module names that contain <code>./</code> or <code>../</code> segments to absolute names.
 		 * E.g.: A name <code>../common/validation.js</code> defined in <code>sap/myapp/controller/mycontroller.controller.js</code>
 		 * may resolve to <code>sap/myapp/common/validation.js</code>.
-		 * 
-		 * When sBaseName is <code>null</code>, relative names are not allowed (e.g. for a <code>sap.ui.require</code> call) 
+		 *
+		 * When sBaseName is <code>null</code>, relative names are not allowed (e.g. for a <code>sap.ui.require</code> call)
 		 * and their usage results in an error being thrown.
-		 * 
+		 *
 		 * @param {string|null} sBaseName name of a reference module
 		 * @param {string} sModuleName the name to resolve
 		 * @returns {string} resolved name
@@ -17182,23 +18326,23 @@ $.ui.position = {
 				aSegments,
 				sSegment,
 				i,j,l;
-			
+
 			// check whether the name needs to be resolved at all - if not, just return the sModuleName as it is.
 			if ( !m ) {
 				return sModuleName;
 			}
-			
+
 			// if the name starts with a relative segments then there must be a base name (a global sap.ui.require doesn't support relative names)
 			if ( m.index === 0 && sBaseName == null ) {
 				throw new Error("relative name not supported ('" + sModuleName + "'");
 			}
-			
+
 			// if relative name starts with a dot segment, then prefix it with the base path
 			aSegments = (m.index === 0 ? sBaseName + sModuleName : sModuleName).split('/');
-			
+
 			// process path segments
 			for (i = 0, j = 0, l = aSegments.length; i < l; i++) {
-				
+
 				var sSegment = aSegments[i];
 
 				if ( rDotSegment.test(sSegment) ) {
@@ -17258,10 +18402,10 @@ $.ui.position = {
 		}
 
 		function requireModule(sModuleName) {
-			
+
 			// TODO enable when preload has been adapted:
 			// sModuleName = mAMDAliases[sModuleName] || sModuleName;
-			
+
 			var m = rJSSubtypes.exec(sModuleName),
 				oShim = mAMDShim[sModuleName],
 				sBaseName, sType, oModule, aExtensions, i;
@@ -17283,7 +18427,7 @@ $.ui.position = {
 					requireModule(oShim.deps[i]);
 				}
 			}
-			
+
 			// in case of having a type specified ignore the type for the module path creation and add it as file extension
 			sBaseName = sModuleName.slice(0, m.index);
 			sType = m[0]; // must be a normalized resource name of type .js sType can be empty or one of view|controller|fragment
@@ -17635,6 +18779,19 @@ $.ui.position = {
 				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
 			} else {
 				vUrlPrefix.url = String(vUrlPrefix.url);
+
+				// remove query parameters
+				var iQueryIndex = vUrlPrefix.url.indexOf("?");
+				if (iQueryIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iQueryIndex);
+				}
+
+				// remove hash
+				var iHashIndex = vUrlPrefix.url.indexOf("#");
+				if (iHashIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iHashIndex);
+				}
+
 				// ensure that the prefix ends with a '/'
 				if ( vUrlPrefix.url.slice(-1) != '/' ) {
 					vUrlPrefix.url += '/';
@@ -17793,7 +18950,9 @@ $.ui.position = {
 				vModuleName = ui5ToRJS(vModuleName) + ".js";
 			}
 
+			jQuery.sap.measure.start(vModuleName,"Require module " + vModuleName, ["require"]);
 			requireModule(vModuleName);
+			jQuery.sap.measure.end(vModuleName);
 
 			return this; // TODO
 		};
@@ -17857,16 +19016,16 @@ $.ui.position = {
 		 *
 		 *   });
 		 * </pre>
-		 * 
+		 *
 		 * In another module or in an application HTML page, the {@link sap.ui.require} API can be used
 		 * to load the Something module and to work with it:
-		 * 
+		 *
 		 * <pre>
 		 * sap.ui.require(['sap/mylib/Something'], function(Something) {
-		 * 
-		 *   // instantiate a Something and call foo() on it 
+		 *
+		 *   // instantiate a Something and call foo() on it
 		 *   new Something().foo();
-		 *   
+		 *
 		 * });
 		 * </pre>
 		 *
@@ -18027,7 +19186,7 @@ $.ui.position = {
 		 *     The exact details of how this works might be changed in future implementations and are not
 		 *     yet part of the API contract</li>
 		 * </ul>
-		 * @param {string} [sModuleName] name of the module in simplified resource name syntax. 
+		 * @param {string} [sModuleName] name of the module in simplified resource name syntax.
 		 *        When omitted, the loader determines the name from the request.
 		 * @param {string[]} [aDependencies] list of dependencies of the module
 		 * @param {function|any} vFactory the module value or a function that calculates the value
@@ -18051,13 +19210,13 @@ $.ui.position = {
 				aDependencies = sModuleName;
 				sResourceName = _execStack[_execStack.length - 1];
 			}
-			
+
 			// convert module name to UI5 module name syntax (might fail!)
 			sModuleName = urnToUI5(sResourceName);
-			
-			// calculate the base name for relative module names 
+
+			// calculate the base name for relative module names
 			sBaseName = sResourceName.slice(0, sResourceName.lastIndexOf('/') + 1);
-			
+
 			// optional array of dependencies
 			if ( !jQuery.isArray(aDependencies) ) {
 				// shift parameters
@@ -18082,7 +19241,7 @@ $.ui.position = {
 
 				if ( bExport ) {
 					// ensure parent namespace
-					var sPackage = sResourceName.split('/').slice(0,-1).join('.'); 
+					var sPackage = sResourceName.split('/').slice(0,-1).join('.');
 					if ( sPackage ) {
 						jQuery.sap.getObject(sPackage, 0);
 					}
@@ -18472,11 +19631,11 @@ $.ui.position = {
 			if ( mOptions.async ) {
 				return Promise.resolve(oDeferred);
 			}
-			
+
 			if ( oError != null && mOptions.failOnError ) {
 				throw oError;
 			}
-			
+
 			return oData;
 		};
 
@@ -18827,10 +19986,8 @@ $.ui.position = {
 		});
 	}
 
-	// *********** Include E2E-Trace Scripts *************
-	if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
-		jQuery.sap.require("sap.ui.core.support.trace.E2eTraceLib" + "" /* Make dynamic dependency */);
-	}
+	// ************** Include Traces *****************
+	jQuery.sap.require("jquery.sap.trace" + "" /* Make dynamic dependency */);
 
 	// *********** feature detection, enriching jQuery.support *************
 	// this might go into its own file once there is more stuff added
@@ -18956,6 +20113,14 @@ $.ui.position = {
 	preserveOrTestCssPropWithPrefixes("flexBoxLayout", "boxFlex");
 
 	/**
+	 * Whether the current browser supports the NEW CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * @type {boolean}
+	 * @public
+	 * @name jQuery.support.newFlexBoxLayout
+	 */
+	preserveOrTestCssPropWithPrefixes("newFlexBoxLayout", "flexGrow");	// Use a new property that IE10 doesn't support
+
+	/**
 	 * Whether the current browser supports the IE10 CSS3 Flexible Box Layout directly or via vendor prefixes
 	 * @type {boolean}
 	 * @public
@@ -18963,17 +20128,11 @@ $.ui.position = {
 	 * @since 1.12.0
 	 */
 	// Just using one of the IE10 properties that's not in the new FlexBox spec
-	if (oStyle.msFlexOrder !== undefined) {
+	if (!jQuery.support.newFlexBoxLayout && oStyle.msFlexOrder !== undefined) {
 		jQuery.support.ie10FlexBoxLayout = true;
+	} else {
+		jQuery.support.ie10FlexBoxLayout = false;
 	}
-
-	/**
-	 * Whether the current browser supports the NEW CSS3 Flexible Box Layout directly or via vendor prefixes
-	 * @type {boolean}
-	 * @public
-	 * @name jQuery.support.newFlexBoxLayout
-	 */
-	preserveOrTestCssPropWithPrefixes("newFlexBoxLayout", "flexGrow");	// Use a new property that IE10 doesn't support
 
 	/**
 	 * Whether the current browser supports any kind of Flexible Box Layout directly or via vendor prefixes
@@ -18987,361 +20146,6 @@ $.ui.position = {
 		jQuery.support.hasFlexBoxSupport = false;
 	}
 
-	// *********** fixes for (pending) jQuery bugs **********
-	if ( jQuery.support.opacity === false ) { // TODO check wether this can be removed for all jquery versions now (assumption: only needed in IE8)
-		(function() {
-			// jQuery cssHook for setOpacity[IE8] doesn't properly cleanup the CSS filter property
-			var oldSet = jQuery.cssHooks.opacity.set;
-			jQuery.cssHooks.opacity.set = function( elem, value ) {
-				oldSet.apply(this, arguments);
-				if ( !jQuery.trim(elem.style.filter) ) {
-					elem.style.removeAttribute("filter");
-				}
-			};
-		}());
-	}
-
-	// *** Performance measure ***
-	function PerfMeasurement(){
-
-		function Measurement( sId, sInfo, iStart, iEnd ){
-			this.id = sId;
-			this.info = sInfo;
-			this.start = iStart;
-			this.end = iEnd;
-			this.pause = 0;
-			this.resume = 0;
-			this.duration = 0; // used time
-			this.time = 0; // time from start to end
-		}
-
-		var bActive = false;
-		var fnAjax = jQuery.ajax;
-
-		/**
-		 * Gets the current state of the perfomance measurement functionality
-		 *
-		 * @return {boolean} current state of the perfomance measurement functionality
-		 * @name jQuery.sap.measure#getActive
-		 * @function
-		 * @public
-		 */
-		this.getActive = function(){
-			return bActive;
-		};
-
-		/**
-		 * Activates or deactivates the performance measure functionality
-		 *
-		 * @param {boolean} bOn state of the perfomance measurement functionality to set
-		 * @return {boolean} current state of the perfomance measurement functionality
-		 * @name jQuery.sap.measure#setActive
-		 * @function
-		 * @public
-		 */
-		this.setActive = function( bOn ){
-
-			if (bActive == bOn) {
-				return bActive;
-			}
-
-			bActive = bOn;
-
-			if (bActive) {
-				// redefine AJAX call
-				jQuery.ajax = function( url, options ){
-					jQuery.sap.measure.start(url.url, "Request for " + url.url);
-					fnAjax.apply(this,arguments);
-					jQuery.sap.measure.end(url.url);
-				};
-			} else if (fnAjax) {
-				jQuery.ajax = fnAjax;
-			}
-
-			return bActive;
-
-		};
-
-		this.setActive(/sap-ui-measure=(true|x|X)/.test(location.search));
-
-		this.mMeasurements = {};
-
-		/**
-		 * Starts a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @param {string} sInfo Info for the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp (false if error)
-		 * @name jQuery.sap.measure#start
-		 * @function
-		 * @public
-		 */
-		this.start = function( sId, sInfo ){
-			if (!bActive) {
-				return;
-			}
-
-			var iTime = new Date().getTime();
-			var oMeasurement = new Measurement( sId, sInfo, iTime, 0);
-//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
-
-			if (oMeasurement) {
-				this.mMeasurements[sId] = oMeasurement;
-				return ({id: oMeasurement.id, info: oMeasurement.info, start: oMeasurement.start });
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Pauses a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, pause-timestamp (false if error)
-		 * @name jQuery.sap.measure#pause
-		 * @function
-		 * @public
-		 */
-		this.pause = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			var iTime = new Date().getTime();
-			var oMeasurement = this.mMeasurements[sId];
-			if (oMeasurement && oMeasurement.end > 0) {
-				// already ended -> no pause possible
-				return false;
-			}
-
-			if (oMeasurement && oMeasurement.pause == 0) {
-				// not already paused
-				oMeasurement.pause = iTime;
-				if (oMeasurement.pause >= oMeasurement.resume && oMeasurement.resume > 0) {
-					oMeasurement.duration = oMeasurement.duration + oMeasurement.pause - oMeasurement.resume;
-					oMeasurement.resume = 0;
-				} else if (oMeasurement.pause >= oMeasurement.start) {
-					oMeasurement.duration = oMeasurement.pause - oMeasurement.start;
-				}
-			}
-//			jQuery.sap.log.info("Performance measurement pause: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
-
-			if (oMeasurement) {
-				return ({id: oMeasurement.id, info: oMeasurement.info, start: oMeasurement.start, pause: oMeasurement.pause });
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Resumes a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, resume-timestamp (false if error)
-		 * @name jQuery.sap.measure#resume
-		 * @function
-		 * @public
-		 */
-		this.resume = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			var iTime = new Date().getTime();
-			var oMeasurement = this.mMeasurements[sId];
-//			jQuery.sap.log.info("Performance measurement resume: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
-
-			if (oMeasurement && oMeasurement.pause > 0) {
-				// already paused
-				oMeasurement.pause = 0;
-				oMeasurement.resume = iTime;
-			}
-
-			if (oMeasurement) {
-				return ({id: oMeasurement.id, info: oMeasurement.info, start: oMeasurement.start, resume: oMeasurement.resume });
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Ends a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#end
-		 * @function
-		 * @public
-		 */
-		this.end = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			var iTime = new Date().getTime();
-			var oMeasurement = this.mMeasurements[sId];
-//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
-
-			if (oMeasurement && !oMeasurement.end) {
-				oMeasurement.end = iTime;
-				if (oMeasurement.end >= oMeasurement.resume && oMeasurement.resume > 0) {
-					oMeasurement.duration = oMeasurement.duration + oMeasurement.end - oMeasurement.resume;
-					oMeasurement.resume = 0;
-				} else if (oMeasurement.pause > 0) {
-					// duration already calculated
-					oMeasurement.pause = 0;
-				} else if (oMeasurement.end >= oMeasurement.start) {
-					oMeasurement.duration = oMeasurement.end - oMeasurement.start;
-				}
-				if (oMeasurement.end >= oMeasurement.start) {
-					oMeasurement.time = oMeasurement.end - oMeasurement.start;
-				}
-			}
-
-			if (oMeasurement) {
-				return ({id: oMeasurement.id,
-						info: oMeasurement.info,
-						start: oMeasurement.start,
-						end: oMeasurement.end,
-						time: oMeasurement.time,
-						duration: oMeasurement.duration});
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Gets a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#getMeasurement
-		 * @function
-		 * @public
-		 */
-		this.getMeasurement = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			var oMeasurement = this.mMeasurements[sId];
-
-			if (oMeasurement) {
-				return ({id: oMeasurement.id,
-						info: oMeasurement.info,
-						start: oMeasurement.start,
-						end: oMeasurement.end,
-						time: oMeasurement.time,
-						duration: oMeasurement.duration});
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Clears all performance measurements
-		 *
-		 * @name jQuery.sap.measure#clear
-		 * @function
-		 * @public
-		 */
-		this.clear = function( ){
-			if (!bActive) {
-				return;
-			}
-
-			this.mMeasurements = {};
-		};
-
-		/**
-		 * Removes a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @name jQuery.sap.measure#remove
-		 * @function
-		 * @public
-		 */
-		this.remove = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			delete this.mMeasurements[sId];
-		};
-
-		/**
-		 * Gets all performance measurements
-		 *
-		 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#getAllMeasurements
-		 * @function
-		 * @public
-		 */
-		this.getAllMeasurements = function( ){
-			if (!bActive) {
-				return;
-			}
-
-			var aMeasurements = [];
-
-			jQuery.each(this.mMeasurements, function(sId, oMeasurement){
-				aMeasurements.push({id: oMeasurement.id,
-									info: oMeasurement.info,
-									start: oMeasurement.start,
-									end: oMeasurement.end,
-									duration: oMeasurement.duration,
-									time: oMeasurement.time});
-			});
-			return aMeasurements;
-		};
-
-		/**
-		 * Adds a performance measurement with all data
-		 * This is usefull to add external measurements (e.g. from a backend) to the common measurement UI
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @param {string} sInfo Info for the measurement
-		 * @param {int} iStart start timestamp
-		 * @param {int} iEnd end timestamp
-		 * @param {int} iTime time in milliseconds
-		 * @param {int} iDuration effective time in milliseconds
-		 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#add
-		 * @function
-		 * @public
-		 */
-		this.add = function( sId, sInfo, iStart, iEnd, iTime, iDuration ){
-			if (!bActive) {
-				return;
-			}
-
-			var oMeasurement = new Measurement( sId, sInfo, iStart, iEnd);
-			oMeasurement.time = iTime;
-			oMeasurement.duration = iDuration;
-
-			if (oMeasurement) {
-				this.mMeasurements[sId] = oMeasurement;
-				return ({id: oMeasurement.id,
-						info: oMeasurement.info,
-						start: oMeasurement.start,
-						end: oMeasurement.end,
-						time: oMeasurement.time,
-						duration: oMeasurement.duration});
-			} else {
-				return false;
-			}
-		};
-	}
-
-	/**
-	 * Namespace for the jQuery performance measurement plug-in provided by SAP SE.
-	 *
-	 * @namespace
-	 * @name jQuery.sap.measure
-	 * @public
-	 * @static
-	 */
-	jQuery.sap.measure = new PerfMeasurement();
 
 	/**
 	 * FrameOptions class
@@ -19408,7 +20212,7 @@ $.ui.position = {
 					if (bOk) {
 						this._applyState(true, true);
 					}
-				} catch(e) {
+				} catch (e) {
 					// access to the top window is not possible
 					this._sendRequireMessage();
 				}

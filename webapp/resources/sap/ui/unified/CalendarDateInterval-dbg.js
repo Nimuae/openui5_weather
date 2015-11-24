@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @class
 	 * Calendar with dates displayed in one line.
 	 * @extends sap.ui.unified.Calendar
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -138,15 +138,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (this.getDomRef()) {
 				if (iDays > this._iDaysLarge) {
-					this.$().addClass("sapUiCalDateIntLarge");
+					this.$().addClass("sapUiCalIntLarge");
 				}else {
-					this.$().removeClass("sapUiCalDateIntLarge");
+					this.$().removeClass("sapUiCalIntLarge");
 				}
 
 				if (iDays > this._iDaysMonthHead) {
-					this.$().addClass("sapUiCalDateIntMonthHead");
+					this.$().addClass("sapUiCalIntHead");
 				}else {
-					this.$().removeClass("sapUiCalDateIntMonthHead");
+					this.$().removeClass("sapUiCalIntHead");
 				}
 			}
 

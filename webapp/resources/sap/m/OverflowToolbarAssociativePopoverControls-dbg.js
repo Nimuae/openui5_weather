@@ -124,7 +124,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 			}
 		};
 
-
 		/******************************   STATIC properties and methods   ****************************/
 
 		/**
@@ -168,7 +167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 			"sap.m.SearchField": {
 				canOverflow: true,
 				listenForEvents: ["search"],
-				noInvalidationProps: ["enabled", "value"]
+				noInvalidationProps: ["enabled", "value", "selectOnFocus"]
 			},
 			"sap.m.SegmentedButton": {
 				canOverflow: true,

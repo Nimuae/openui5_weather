@@ -182,11 +182,14 @@
 			"name": "plugin/MouseSelection.js"
 		},
 		{
-			"name": "themes/base/.theming",
-			"theme":"base"
+			"name": "plugin/Rename-dbg.js",
+			"isDebug":true
 		},
 		{
-			"name": "themes/base/AggregationOverlay.less",
+			"name": "plugin/Rename.js"
+		},
+		{
+			"name": "themes/base/.theming",
 			"theme":"base"
 		},
 		{

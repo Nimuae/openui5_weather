@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -175,7 +175,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		this._media.triggered = true;
 		this._media.matches = !!oMedia.from;
 	
-		// wait all events to come
+		// inform parent delayed
 		jQuery.sap.delayedCall(0, this, function() {
 			var parent = this.getParent();
 			this.fireEvent("media", this);
@@ -186,6 +186,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	};
 	
 	Column.prototype._validateMinWidth = function(sWidth) {
+		if (!sWidth) {
+			return;
+		}
 		if (Object.prototype.toString.call(sWidth) != "[object String]") {
 			throw new Error('expected string for property "minScreenWidth" of ' + this);
 		}
@@ -290,7 +293,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		} else if (this._media && !this._media.matches) {
 			cls += " sapMListTblNone";
 		}
-		return cls;
+		return cls.trim();
 	};
 	
 	
@@ -520,7 +523,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	
 	
 	/**
-	 * Checks the column will be shown as pop-in
+	 * Determines whether the column will be shown as pop-in or not
 	 *
 	 * @protected
 	 */
@@ -535,7 +538,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	};
 	
 	/**
-	 * Checks the column will be hidden
+	 * Determines whether the column will be hidden via media queries or not
 	 *
 	 * @protected
 	 */

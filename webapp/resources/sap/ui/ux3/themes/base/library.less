@@ -721,12 +721,17 @@ button.sapUiBtnS.sapUiBtnNorm.sapUiUx3EditCollectionButton.sapUiBtnStd:hover {
 	position: absolute;
 	bottom: 0;
 	top: @sapUiUx3ExactLstHeaderHeight;
-	left: 0;
+	begin: 0;
 	width: 168px;
 	border: 1px solid @sapUiMediumBorder;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
+}
+
+html[data-sap-ui-browser^="ed"] .sapUiUx3ExactLstLst,
+html[data-sap-ui-browser^="ie"] .sapUiUx3ExactLstLst {
+	left: 0;
 }
 
 .sapUiUx3ExactLstLst.sapUiUx3ExactLstExpandedBL {
@@ -3697,6 +3702,7 @@ html[dir=rtl] .sapUiUx3TPBtnRow {
 .sapUiUx3TPContent.sapUiUx3TPLargeContent {
 	bottom: 0px;
 	overflow-y: scroll;
+	height: 100%;
 }
 
 /* Control Adaptations */
@@ -3723,5 +3729,6 @@ html[dir=rtl] .sapUiUx3TPBtnRow {
 .sapUiUx3TPButtonRowHidden{
 	display: none;
 }
+
 /* END "ToolPopup.less" */
 

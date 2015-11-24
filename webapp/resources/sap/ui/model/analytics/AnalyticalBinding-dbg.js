@@ -1,5 +1,7 @@
 /*!
- * @copyright@
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 // Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)), valid-jsdoc (not completed yet), no-warning-comments (some TODOs are left)
@@ -75,6 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.bProvideGrandTotals = (mParameters && mParameters.provideGrandTotals === false) ? false : true;
 			this.bReloadSingleUnitMeasures = (mParameters && mParameters.reloadSingleUnitMeasures === false) ? false : true;
 			this.bUseAcceleratedAutoExpand = (mParameters && mParameters.useAcceleratedAutoExpand === false) ? false : true;
+			this.bNoPaging = (mParameters && mParameters.noPaging === true) ? true : false;
 
 			// attribute members for maintaining loaded data; mapping from groupId to related information
 			this.iTotalSize = -1;
@@ -168,7 +171,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			//initialize the list of sorted dimension names
 			this.aAllDimensionSortedByName = this.oAnalyticalQueryResult.getAllDimensionNames().concat([]).sort();
 			
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 		return this;
 	};
@@ -1387,7 +1390,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			jQuery.sap.log.fatal("unhandled case: load 0 entities of sub group");
 		}
 		var oKeyIndexMapping = this._getKeyIndexMapping(sGroupId, iStartIndex);
-		oAnalyticalQueryRequest.setResultPageBoundaries(oKeyIndexMapping.iServiceKeyIndex + 1, oKeyIndexMapping.iServiceKeyIndex + iLength);
+		if (!this.bNoPaging) {
+			oAnalyticalQueryRequest.setResultPageBoundaries(oKeyIndexMapping.iServiceKeyIndex + 1, oKeyIndexMapping.iServiceKeyIndex + iLength);
+		}
 
 		// (8) request result entity count
 		oAnalyticalQueryRequest.setRequestOptions(null, !this.mFinalLength[sGroupId]);
@@ -1430,8 +1435,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			oFilterExpression.addUI5FilterConditions(this.aControlFilter);
 		}
 
-		// (2) fetch almost no data
-		oAnalyticalQueryRequest.setResultPageBoundaries(1, 1);
+		// (2) fetch no data
+		oAnalyticalQueryRequest.setRequestOptions(null, null, true);
 
 		// (3) request result entity count
 		oAnalyticalQueryRequest.setRequestOptions(null, true);
@@ -1708,7 +1713,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				iEffectiveStartIndex = Math.max(iEffectiveStartIndex, iServiceLengthForGroupIdMissing);
 			}
 
-			oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1, iLength);
+			if (!that.bNoPaging) {
+				oAnalyticalQueryRequest.setResultPageBoundaries(iEffectiveStartIndex + 1, iLength);
+			}
 			
 			return {
 				iRequestType : iRequestType,
@@ -1916,7 +1923,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		try {
 			oAnalyticalQueryRequest.getFilterExpression().checkValidity(); // fails if false
-		} catch(e){
+		} catch (e) {
 			jQuery.sap.log.fatal("filter expression is not valid", e.toString());
 			return undefined;
 		}
@@ -1934,22 +1941,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		// construct OData request option parameters
 		var aParam = [];
-		if (sSelect) {
+		if (sSelect !== null) {
 			aParam.push("$select=" + sSelect);
 		}
-		if (sFilter) {
+		if (sFilter !== null) {
 			aParam.push("$filter=" + sFilter);
 		}
-		if (sOrderBy) {
+		if (sOrderBy !== null) {
 			aParam.push("$orderby=" + sOrderBy);
 		}
-		if (sSkip) {
+		if (sSkip !== null) {
 			aParam.push("$skip=" + sSkip);
 		}
-		if (sTop) {
+		if (sTop !== null) {
 			aParam.push("$top=" + sTop);
 		}
-		if (sInlineCount) {
+		if (sInlineCount !== null) {
 			aParam.push("$inlinecount=" + sInlineCount);
 		}
 
@@ -2002,10 +2009,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				this.mServiceFinalLength[sGroupId] = true;
 				this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
 				this.bNeedsUpdate = true;
-				// simulate the async behavior for the root context in case of having no sums (TODO: reconsider!)
-				if (aRequestDetails.length == 1) { // since no other request will be issued, send the received event at this point
-					setTimeout(triggerDataReceived);
-				}
+				// simulate the async behavior, dataRequested and dataReceived have to be fired in pairs
+				setTimeout(triggerDataReceived);
+				
 				this.bArtificalRootContext = true;
 				// return immediately - no need to load data...
 				continue;
@@ -2015,9 +2021,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			//ensure absolute path if no context is set
 			if (!this.oContext && sPath[0] !== "/") {
 				sPath = "/" + sPath;
-			} else if (this.oContext && sPath[0] === "/") {
-				sPath = sPath.substring(1);
 			}
+			/*
+			 * This might be needed, as soon as the AnalyticalBinding can handle relative binding
+			 * @see odata4analytics -> getRequestURi... and _getResourcePath -> enforces always an absolute path
+			 * else if (this.oContext && sPath[0] === "/") {
+				sPath = sPath.substring(1);
+			}*/
 			if (!this._isRequestPending(oRequestDetails.sRequestId)) {
 				/* side note: the check for a pending request is repeated at this point (first check occurs in _getContextsForParentGroupId),
 				   because the logic executed for a call to the binding API may yield to identical OData requests in a single batch.
@@ -2816,8 +2826,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 // 			this._trace_debug_if(oReloadedEntry[aMeasureName[i]] === undefined || oReloadedEntry[aMeasureName[i]] == "", "no value for reloaded measure property");
 			oMultiUnitEntry[aMeasureName[i]] = oReloadedEntry[aMeasureName[i]];
 		}
-		// Deleting an entry in the model is not possible and will lead to an exception
-		// BCP: 1570789694
 // 		this._trace_leave("ReqExec", "_processReloadMeasurePropertiesQueryResponse", "measures=" + oMultiUnitRepresentative.aReloadMeasurePropertyName.join()); // DISABLED FOR PRODUCTION
 	};
 
@@ -4010,7 +4018,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.refresh = function(bForceUpdate) {
-		this._refresh(bForceUpdate);
+		// apply is used here to be compatible to ODataModel v1, where the signature is like the private _refresh()
+		AnalyticalBinding.prototype._refresh.apply(this, arguments);
 	};
 	
 	/**
@@ -4047,7 +4056,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this._abortAllPendingRequests();
 			this.resetData();
 			this.bNeedsUpdate = false;
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 	};
 
@@ -4080,7 +4089,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 		if (bForceUpdate || bChangeDetected) {
 			this.bNeedsUpdate = false;
-			this._fireChange();
+			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
 

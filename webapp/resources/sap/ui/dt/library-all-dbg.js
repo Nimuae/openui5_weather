@@ -30,7 +30,7 @@ function(jQuery, ManagedObject) {
 	 * @extends sap.ui.core.ManagedObject
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -196,12 +196,12 @@ function(jQuery) {
 
 	/**
 	 * Class for ElementUtil.
-	 * 
+	 *
 	 * @class
 	 * Utility functionality to work with élements, e.g. iterate through aggregations, find parents, ...
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @private
 	 * @static
@@ -213,7 +213,7 @@ function(jQuery) {
 	var ElementUtil = {};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.iterateOverAllPublicAggregations = function(oElement, fnCallback) {
 		var mAggregations = oElement.getMetadata().getAllAggregations();
@@ -229,7 +229,7 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.getElementInstance = function(vElement) {
 		if (typeof vElement === "string") {
@@ -240,7 +240,7 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.hasAncestor = function(oElement, oAncestor) {
 		var oParent = oElement;
@@ -252,7 +252,7 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.findAllPublicElements = function(oElement) {
 		var aFoundElements = [];
@@ -291,10 +291,10 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.getDomRef = function(oElement) {
-		if (oElement) { 
+		if (oElement) {
 			var oDomRef;
 			if (oElement.getDomRef) {
 				oDomRef = oElement.getDomRef();
@@ -307,7 +307,7 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.findAllPublicChildren = function(oElement) {
 		var aFoundElements = this.findAllPublicElements(oElement);
@@ -320,7 +320,7 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.isElementFiltered = function(oControl, aType) {
 		var that = this;
@@ -339,7 +339,7 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.findClosestControlInDom = function(oNode) {
 		if (oNode && oNode.getAttribute("data-sap-ui")) {
@@ -354,7 +354,7 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.getAggregationMutators = function(oElement, sAggregationName) {
 		var oMetadata = oElement.getMetadata();
@@ -369,7 +369,7 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.getAggregation = function(oElement, sAggregationName) {
 		var sGetMutator = this.getAggregationMutators(oElement, sAggregationName).get;
@@ -384,17 +384,20 @@ function(jQuery) {
 		/*eslint-enable no-nested-ternary */
 		return oValue;
 	};
-	
+
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.addAggregation = function(oParent, sAggregationName, oElement) {
+		if (this.hasAncestor(oParent, oElement)) {
+			throw new Error("Trying to add an element to itself or its successors");
+		}
 		var sAggregationAddMutator = this.getAggregationMutators(oParent, sAggregationName).add;
 		oParent[sAggregationAddMutator](oElement);
 	};
-	
+
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.removeAggregation = function(oParent, sAggregationName, oElement) {
 		var sAggregationRemoveMutator = this.getAggregationMutators(oParent, sAggregationName).remove;
@@ -402,16 +405,21 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.insertAggregation = function(oParent, sAggregationName, oElement, iIndex) {
+		if (this.hasAncestor(oParent, oElement)) {
+			throw new Error("Trying to add an element to itself or its successors");
+		}
 		if (this.getAggregation(oParent, sAggregationName).indexOf(oElement) !== -1) {
 			// ManagedObject.insertAggregation won't reposition element, if it's already inside of same aggregation
 			// therefore we need to remove the element and then insert it again. To prevent ManagedObjectObserver from firing
 			// setParent event with parent null, private flag is set.
 			oElement.__bSapUiDtSupressParentChangeEvent = true;
 			try {
-				this.removeAggregation(oParent, sAggregationName, oElement);
+				// invalidate should be supressed, because if the controls have some checks and sync on invalidate,
+				// internal structure can be also removed (SimpleForm invalidate destroyed all content temporary)
+				oParent.removeAggregation(sAggregationName, oElement, true);
 			} finally {
 				delete oElement.__bSapUiDtSupressParentChangeEvent;
 			}
@@ -421,9 +429,16 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.isValidForAggregation = function(oParent, sAggregationName, oElement) {
+		// Make sure that the parent is not inside of the element, or is not the element itself,
+		// e.g. insert a layout inside it's content aggregation.
+		// This check needed as UI5 will have a maximum call stack error otherwise.
+		if (this.hasAncestor(oParent, oElement)) {
+			return false;
+		}
+
 		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
 
 		// TODO : test altTypes
@@ -431,7 +446,7 @@ function(jQuery) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.isInstanceOf = function(oElement, sType) {
 		var oInstance = jQuery.sap.getObject(sType);
@@ -440,25 +455,25 @@ function(jQuery) {
 		} else {
 			return false;
 		}
-	};		
+	};
 
 	/**
-	 * 
+	 *
 	 */
 	ElementUtil.getDesignTimeMetadata = function(oElement) {
 		var oDTMetadata = oElement ? oElement.getMetadata().getDesignTime() : {};
 		return oDTMetadata || {};
-	};		
+	};
 
-	
+
 
 	return ElementUtil;
 }, /* bExport= */ true);
 
 }; // end of sap/ui/dt/ElementUtil.js
 if ( !jQuery.sap.isDeclared('sap.ui.dt.ManagedObjectObserver') ) {
-/*!
- * UI development toolkit for HTML5 (OpenUI5)
+/*
+ * ! UI development toolkit for HTML5 (OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -467,100 +482,97 @@ if ( !jQuery.sap.isDeclared('sap.ui.dt.ManagedObjectObserver') ) {
 jQuery.sap.declare('sap.ui.dt.ManagedObjectObserver'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
 jQuery.sap.require('sap.ui.base.ManagedObject'); // unlisted dependency retained
 sap.ui.define("sap/ui/dt/ManagedObjectObserver",[
-	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/ElementUtil'
-],
-function(ManagedObject, ElementUtil) {
+	'sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil'
+], function(ManagedObject, ElementUtil) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a new ManagedObjectObserver.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
-	 *
-	 * @class
-	 * The ManagedObjectObserver observes changes of a ManagedObject and propagates them via events.
+	 * @class The ManagedObjectObserver observes changes of a ManagedObject and propagates them via events.
 	 * @extends sap.ui.base.ManagedObject
-	 *
 	 * @author SAP SE
-	 * @version 1.30.8
-	 *
+	 * @version 1.32.7
 	 * @constructor
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.ManagedObjectObserver
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be modified in future.
 	 */
-	var ManagedObjectObserver = ManagedObject.extend("sap.ui.dt.ManagedObjectObserver", /** @lends sap.ui.dt.ManagedObjectObserver.prototype */ {
-		metadata : {
-			abstract : true,
+	var ManagedObjectObserver = ManagedObject.extend("sap.ui.dt.ManagedObjectObserver", /** @lends sap.ui.dt.ManagedObjectObserver.prototype */
+	{
+		metadata: {
+			"abstract": true,
 			// ---- object ----
 
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				
 			},
-			associations : {
+			associations: {
 				/**
 				 * target ManagedObject to observe
 				 */
-				target : {
-					type : "sap.ui.base.ManagedObject"
+				target: {
+					type: "sap.ui.base.ManagedObject"
 				}
 			},
-			events : {
+			events: {
 				/**
-				 *  Event fired when the observed object is modified
+				 * Event fired when the observed object is modified
 				 */
-				modified : {
-					parameters : {
-						type : "string",
-						value : "any",
-						oldValue : "any",
-						target : "sap.ui.core.Element"
+				modified: {
+					parameters: {
+						type: "string",
+						value: "any",
+						oldValue: "any",
+						target: "sap.ui.core.Element"
 					}
 				},
-				destroyed : {}
+				destroyed: {}
 			}
 		}
 	});
 
 	/**
 	 * Called when the ManagedObjectObserver is created
+	 * 
 	 * @protected
 	 */
-	ManagedObjectObserver.prototype.init = function() {};
+	ManagedObjectObserver.prototype.init = function() {
+	};
 
 	/**
 	 * Called when the ManagedObjectObserver is destroyed
+	 * 
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.exit = function() {
 		var oTarget = this.getTargetInstance();
 		if (oTarget) {
-			this.unobserve(oTarget);	
+			this.unobserve(oTarget);
 		}
 	};
 
 	/**
 	 * Sets a target ManagedObject to observe
+	 * 
 	 * @param {string|sap.ui.base.ManagedObject} vTarget id or managed object to set
 	 * @return {sap.ui.dt.ManagedObjectObserver} returns this
 	 */
 	ManagedObjectObserver.prototype.setTarget = function(vTarget) {
 		var oOldTarget = this.getTargetInstance();
 		if (oOldTarget) {
-			this.unobserve(oOldTarget);	
+			this.unobserve(oOldTarget);
 		}
 
 		this.setAssociation("target", vTarget);
 
 		var oTarget = this.getTargetInstance();
 		if (oTarget) {
-			this.observe(oTarget);	
+			this.observe(oTarget);
 		}
 
 		return this;
@@ -568,6 +580,7 @@ function(ManagedObject, ElementUtil) {
 
 	/**
 	 * Starts observing the target object. Override this method in classes wich extend ManagedObjectObserver.
+	 * 
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to observe
 	 * @protected
 	 */
@@ -584,36 +597,46 @@ function(ManagedObject, ElementUtil) {
 				return;
 			}
 			that.unobserve(oTarget);
-			fnOriginalDestroy.apply(this, arguments);
+			var vOriginalReturn = fnOriginalDestroy.apply(this, arguments);
 			that.fireDestroyed();
+
+			return vOriginalReturn;
 		};
 
 		// Wrapper for the bindProperty method to recognize changes
 		this._fnOriginalBindProperty = oTarget.bindProperty;
 		oTarget.bindProperty = function() {
-			that._fnOriginalBindProperty.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalBindProperty.apply(this, arguments);
 			that.fireModified();
+
+			return vOriginalReturn;
 		};
 
 		// Wrapper for the unbindProperty method to recognize changes
 		this._fnOriginalUnBindProperty = oTarget.unbindProperty;
 		oTarget.unbindProperty = function() {
-			that._fnOriginalUnBindProperty.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalUnBindProperty.apply(this, arguments);
 			that.fireModified();
+
+			return vOriginalReturn;
 		};
 
 		// Wrapper for the bindAggregation method to recognize changes
 		this._fnOriginalBindAggregation = oTarget.bindAggregation;
 		oTarget.bindAggregation = function(sAggregationName) {
-			that._fnOriginalBindAggregation.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalBindAggregation.apply(this, arguments);
 			that.fireModified();
+
+			return vOriginalReturn;
 		};
 
 		// Wrapper for the unbindAggregation method to recognize changes
 		this._fnOriginalUnBindAggregation = oTarget.unbindAggregation;
 		oTarget.unbindAggregation = function(sAggregationName) {
-			that._fnOriginalUnBindAggregation.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalUnBindAggregation.apply(this, arguments);
 			that.fireModified();
+
+			return vOriginalReturn;
 		};
 
 		// We wrap the native setParent method of the control with our logic
@@ -626,128 +649,228 @@ function(ManagedObject, ElementUtil) {
 			}
 
 			var oCurrentParent = this.getParent();
-			that._fnOriginalSetParent.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalSetParent.apply(this, arguments);
 			if (bFireModified && !this.__bSapUiDtSupressParentChangeEvent) {
 				this._bInSetParent = false;
 				if (oCurrentParent !== oParent) {
 					that.fireModified({
-						type : "setParent",
-						value : oParent,
-						oldValue : oCurrentParent,
-						target : this
+						type: "setParent",
+						value: oParent,
+						oldValue: oCurrentParent,
+						target: this
 					});
 				}
 			}
 
-			return this;
+			return vOriginalReturn;
 		};
 
 		// We wrap the native addAggregation method of the control with our logic
 		this._fnOriginalAddAggregation = oTarget.addAggregation;
 		oTarget.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-			that._fnOriginalAddAggregation.apply(this, arguments);
-			that._bAddAggregationCall = true;
+			that._bAddOrSetAggregationCall = true;
+			var vOriginalReturn = that._fnOriginalAddAggregation.apply(this, arguments);
 			that.fireModified({
-				type : "addAggregation",
-				value : oObject,
-				target : this
+				type: "addOrSetAggregation",
+				value: oObject,
+				target: this
 			});
-			return this;
+			return vOriginalReturn;
+		};
+
+		// We wrap the native setAggregation method of the control with our logic
+		this._fnOriginalSetAggregation = oTarget.setAggregation;
+		oTarget.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+			// same mutator as addAggregation for multiple = false aggregations
+			that._bAddOrSetAggregationCall = true;
+			var vOriginalReturn = that._fnOriginalSetAggregation.apply(this, arguments);
+			that.fireModified({
+				type: "addOrSetAggregation",
+				value: oObject,
+				target: this
+			});
+			return vOriginalReturn;
 		};
 
 		// We wrap the native removeAggregation method of the control with our logic
 		this._fnOriginalRemoveAggregation = oTarget.removeAggregation;
 		oTarget.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
-			that._fnOriginalRemoveAggregation.apply(this, arguments);
+			that._bRemoveAggregationCall = true;
+			var vOriginalReturn = that._fnOriginalRemoveAggregation.apply(this, arguments);
 			that.fireModified({
-				type : "removeAggregation",
-				value : vObject,
-				target : this
+				type: "removeAggregation",
+				value: vObject,
+				target: this
 			});
-			return this;
+			return vOriginalReturn;
 		};
 
 		// We wrap the native insertAggregation method of the control with our logic
 		this._fnOriginalInsertAggregation = oTarget.insertAggregation;
 		oTarget.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-			that._fnOriginalInsertAggregation.apply(this, arguments);
 			that._bInsertAggregationCall = true;
+			var vOriginalReturn = that._fnOriginalInsertAggregation.apply(this, arguments);
 			that.fireModified({
-				type : "insertAggregation",
-				value : oObject,
-				target : this
+				type: "insertAggregation",
+				value: oObject,
+				target: this
 			});
-			return this;
+			return vOriginalReturn;
 		};
 
 		// We wrap the native removeAllAggregations method of the control with our logic
-		this._fnOriginalRemoveAllAggregations = oTarget.removeAllAggregations;
-		oTarget.removeAllAggregations = function(sAggregationName, bSuppressInvalidate) {
+		this._fnOriginalRemoveAllAggregation = oTarget.removeAllAggregation;
+		oTarget.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
+			that._bRemoveAllAggregationCall = true;
 			var aRemovedObjects = this.getAggregation(sAggregationName);
-			that._fnOriginalRemoveAllAggregations.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalRemoveAllAggregation.apply(this, arguments);
 			that.fireModified({
-				type : "removeAllAggregations",
-				value : aRemovedObjects,
-				target : this
+				type: "removeAllAggregation",
+				value: aRemovedObjects,
+				target: this
 			});
-			return this;
+			return vOriginalReturn;
 		};
 
 		// We wrap the native destroyAggregation method of the control with our logic
 		this._fnOriginalDestroyAggregation = oTarget.destroyAggregation;
 		oTarget.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
+			that._bDestroyAggregationCall = true;
 			var aRemovedObjects = this.getAggregation(sAggregationName);
-			that._fnOriginalDestroyAggregation.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalDestroyAggregation.apply(this, arguments);
 			that.fireModified({
-				type : "destroyAggregation",
-				value : aRemovedObjects,
-				target : this
+				type: "destroyAggregation",
+				value: aRemovedObjects,
+				target: this
 			});
-			return this;
-		};		
+			return vOriginalReturn;
+		};
 
 		that._aOriginalAddMutators = {};
 		that._aOriginalInsertMutators = {};
+		that._aOriginalRemoveMutators = {};
+		that._aOriginalRemoveAllMutators = {};
+		that._aOriginalDestructors = {};
 		var mAllAggregations = oTarget.getMetadata().getAllAggregations();
 		Object.keys(mAllAggregations).forEach(function(sAggregationName) {
 			var oAggregation = mAllAggregations[sAggregationName];
 			var _fnOriginalAddMutator = oTarget[oAggregation._sMutator];
 			that._aOriginalAddMutators[oAggregation.name] = _fnOriginalAddMutator;
 			oTarget[oAggregation._sMutator] = function(oObject) {
-				that._bAddAggregationCall = false;
-				// if addAggregation method wasn't called directly
-				_fnOriginalAddMutator.apply(this, arguments);
-				if (!that._bAddAggregationCall) {
+				that._bAddOrSetAggregationCall = false;
+				
+				var vOriginalReturn;
+				// if the mutator is overwritten and inside of the mutator control is temporary detached from root control tree,
+				// overlay destruction should be prevented. For instance, if the label is inserted to SimpleForm content,
+				// it will be added to a hidden FormElement, which has no parent (yet) at this moment we should prevent destuction of the overlay
+				// look SimpleFormInDesignTime.qunit for test
+				if (oObject && typeof oObject === 'object') {
+					oObject.__bSapUiDtSupressOverlayDestroy = true;
+				}
+				try {
+					vOriginalReturn = _fnOriginalAddMutator.apply(this, arguments);
+				} finally {
+					if (oObject && typeof oObject === 'object') {
+						delete oObject.__bSapUiDtSupressOverlayDestroy;
+					}
+				}
+
+				//if addAggregation method wasn't called directly
+				if (!that._bAddOrSetAggregationCall) {
 					that.fireModified({
-						type : "addAggregation",
-						value : oObject,
-						target : this
+						type: "addOrSetAggregation",
+						value: oObject,
+						target: this
 					});
 				}
-				return this;
-			};		
+				return vOriginalReturn;
+			};
 
 			var _fnOriginalInsertMutator = oTarget[oAggregation._sInsertMutator];
 			that._aOriginalInsertMutators[oAggregation.name] = _fnOriginalInsertMutator;
 			oTarget[oAggregation._sInsertMutator] = function(oObject, iIndex) {
 				that._bInsertAggregationCall = false;
-				_fnOriginalInsertMutator.apply(this, arguments);
+
+				var vOriginalReturn;
+				if (oObject && typeof oObject === 'object') {
+					oObject.__bSapUiDtSupressOverlayDestroy = true;
+				}
+				try {
+					vOriginalReturn = _fnOriginalInsertMutator.apply(this, arguments);
+				} finally {
+					if (oObject && typeof oObject === 'object') {
+						delete oObject.__bSapUiDtSupressOverlayDestroy;
+					}
+				}
+
+
 				// if insertAggregation method wasn't called directly
 				if (!that._bInsertAggregationCall) {
 					that.fireModified({
-						type : "insertAggregation",
-						value : oObject,
-						target : this
+						type: "insertAggregation",
+						value: oObject,
+						target: this
 					});
 				}
-				return this;
-			};	
+				return vOriginalReturn;
+			};
+
+			var _fnOriginalRemoveMutator = oTarget[oAggregation._sRemoveMutator];
+			that._aOriginalRemoveMutators[oAggregation.name] = _fnOriginalRemoveMutator;
+			oTarget[oAggregation._sRemoveMutator] = function(vObject, bSuppressInvalidate) {
+				that._bRemoveAggregationCall = false;
+				var vOriginalReturn = _fnOriginalRemoveMutator.apply(this, arguments);
+				// if removeAggregation method wasn't called directly
+				if (!that._bRemoveAggregationCall) {
+					that.fireModified({
+						type: "removeAggregation",
+						value: vObject,
+						target: this
+					});
+				}
+				return vOriginalReturn;
+			};
+
+			var _fnOriginalRemoveAllMutator = oTarget[oAggregation._sRemoveAllMutator];
+			that._aOriginalRemoveAllMutators[oAggregation.name] = _fnOriginalRemoveAllMutator;
+			oTarget[oAggregation._sRemoveAllMutator] = function(bSuppressInvalidate) {
+				that._bRemoveAllAggregationCall = false;
+				var aRemovedObjects = this.getAggregation(sAggregationName);
+				var vOriginalReturn = _fnOriginalRemoveAllMutator.apply(this, arguments);
+				// if removeAllAggregation method wasn't called directly
+				if (!that._bRemoveAllAggregationCall) {
+					that.fireModified({
+						type: "removeAllAggregation",
+						value: aRemovedObjects,
+						target: this
+					});
+				}
+				return vOriginalReturn;
+			};
+
+			var _fnOriginalDestructor = oTarget[oAggregation._sDestructor];
+			that._aOriginalDestructors[oAggregation.name] = _fnOriginalDestructor;
+			oTarget[oAggregation._sDestructor] = function(bSuppressInvalidate) {
+				that._bDestroyAggregationCall = false;
+				var aRemovedObjects = this.getAggregation(sAggregationName);
+				var vOriginalReturn = _fnOriginalDestructor.apply(this, arguments);
+				// if destroyAggregation method wasn't called directly
+				if (!that._bDestroyAggregationCall) {
+					that.fireModified({
+						type: "destroyAggregation",
+						value: aRemovedObjects,
+						target: this
+					});
+				}
+				return vOriginalReturn;
+			};
 		});
 
 	};
 
 	/**
 	 * Stops observing the target object. Override this method in classes wich extend ManagedObjectObserver.
+	 * 
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to unobserve
 	 * @protected
 	 */
@@ -773,7 +896,9 @@ function(ManagedObject, ElementUtil) {
 		delete this._fnOriginalRemoveAggregation;
 		oTarget.insertAggregation = this._fnOriginalInsertAggregation;
 		delete this._fnOriginalInsertAggregation;
-		oTarget.removeAllAggregations = this._fnOriginalRemoveAllAggregations;
+		oTarget.setAggregation = this._fnOriginalSetAggregation;
+		delete this._fnOriginalSetAggregation;
+		oTarget.removeAllAggregation = this._fnOriginalRemoveAllAggregation;
 		delete this._fnOriginalRemoveAllAggregations;
 		oTarget.destroyAggregation = this._fnOriginalDestroyAggregation;
 		delete this._fnOriginalDestroyAggregation;
@@ -783,13 +908,18 @@ function(ManagedObject, ElementUtil) {
 			var oAggregation = mAllAggregations[sAggregationName];
 			oTarget[oAggregation._sMutator] = that._aOriginalAddMutators[oAggregation.name];
 			oTarget[oAggregation._sInsertMutator] = that._aOriginalInsertMutators[oAggregation.name];
+			oTarget[oAggregation._sRemoveMutator] = that._aOriginalRemoveMutators[oAggregation.name];
+			oTarget[oAggregation._sRemoveAllMutator] = that._aOriginalRemoveAllMutators[oAggregation.name];
+			oTarget[oAggregation._sDestructor] = that._aOriginalDestructors[oAggregation.name];
 		});
 		delete this._aOriginalAddMutators;
 		delete this._aOriginalInsertMutators;
+		delete this._aOriginalRemoveMutators;
+		delete this._aOriginalRemoveAllMutators;
+		delete this._aOriginalDestructors;
 
 		oTarget.detachEvent("_change", this.fireModified, this);
 	};
-
 
 	/**
 	 * @protected
@@ -800,7 +930,8 @@ function(ManagedObject, ElementUtil) {
 	};
 
 	return ManagedObjectObserver;
-}, /* bExport= */ true);
+}, /* bExport= */true);
+
 }; // end of sap/ui/dt/ManagedObjectObserver.js
 if ( !jQuery.sap.isDeclared('sap.ui.dt.OverlayRegistry') ) {
 /*!
@@ -825,7 +956,7 @@ function(Element) {
 	 * Static registry for Overlays
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @private
 	 * @static
@@ -912,7 +1043,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	 * Utility functionality to work with overlays
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @private
 	 * @static
@@ -1206,7 +1337,7 @@ function(ManagedObject) {
 	 * @extends sap.ui.core.ManagedObject
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -1406,7 +1537,7 @@ function(Element) {
 	 * Preloader for design time metadata.
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @private
 	 * @static
@@ -1511,7 +1642,7 @@ function(jQuery) {
 	 * Utility functionality to work with élements, e.g. iterate through aggregations, find parents, ...
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @private
 	 * @static
@@ -1527,7 +1658,6 @@ function(jQuery) {
 	 */
 	RenderingUtil.renderOverlay = function(oRm, oOverlay, sClassName) {
 		if (oOverlay.getDomRef()) {
-			oOverlay.$().empty();
 			this._triggerOnAfterRenderingWithoutRendering(oRm, oOverlay);
 
 			return;
@@ -1565,6 +1695,7 @@ function(jQuery) {
 	/**
 	 */
 	RenderingUtil._triggerOnAfterRenderingWithoutRendering = function(oRm, oOverlay) {
+		// to trigger after rendering without renfering we need to write something in a renderManager buffer
 		oRm.write("");
 		this._renderChildren(oRm, oOverlay);
 	};
@@ -1600,14 +1731,14 @@ function(jQuery) {
 	 * @namespace
 	 * @name sap.ui.dt
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @private
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.dt",
-		version: "1.30.8",
+		version: "1.32.7",
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.dt.SelectionMode"
@@ -1671,7 +1802,7 @@ function(Plugin) {
 	 * @extends sap.ui.dt.Plugin
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -1732,6 +1863,106 @@ function(Plugin) {
 	return MouseSelection;
 }, /* bExport= */ true);
 }; // end of sap/ui/dt/plugin/MouseSelection.js
+if ( !jQuery.sap.isDeclared('sap.ui.dt.plugin.Rename') ) {
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+// Provides class sap.ui.dt.plugin.Rename.
+jQuery.sap.declare('sap.ui.dt.plugin.Rename'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+sap.ui.define("sap/ui/dt/plugin/Rename",[
+	'sap/ui/dt/Plugin',
+	'sap/ui/dt/ElementUtil'
+],
+function(Plugin, ElementUtil) {
+	"use strict";
+
+	/**
+	 * Constructor for a new Rename.
+	 *
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {object} [mSettings] initial settings for the new object
+	 *
+	 * @class
+	 * The Rename allows to select the Overlays with a mouse click
+	 * @extends sap.ui.dt.Plugin
+	 *
+	 * @author SAP SE
+	 * @version 1.32.7
+	 *
+	 * @constructor
+	 * @private
+	 * @since 1.30
+	 * @alias sap.ui.dt.plugin.Rename
+	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 */
+	var Rename = Plugin.extend("sap.ui.dt.plugin.Rename", /** @lends sap.ui.dt.plugin.Rename.prototype */ {		
+		metadata : {
+			// ---- object ----
+
+			// ---- control specific ----
+			library : "sap.ui.dt",
+			properties : {
+				editableTypes : {
+					type : "string[]",
+					defaultValue : ["sap.ui.core.Element"]
+				}
+			},
+			associations : {
+			},
+			events : {
+			}
+		}
+	});
+
+	/*
+	 * @private
+	 */
+	Rename.prototype.init = function() {
+		Plugin.prototype.init.apply(this, arguments);
+	};
+
+	/**
+	 * @public
+	 */
+	Rename.prototype.isEditableType = function(oElement) {
+		var aEditableTypes = this._getEditableTypes();
+
+		return aEditableTypes.some(function(sType) {
+			return ElementUtil.isInstanceOf(oElement, sType);
+		});
+	};
+	
+	/**
+	 * @private
+	 */
+	Rename.prototype._getEditableTypes = function() {
+		return this.getProperty("editableTypes") || [];
+	};
+	
+	/**
+	 * @protected
+	 */
+	Rename.prototype.checkEditable = function(oOverlay) {
+		return true;
+	};
+	
+	/*
+	 * @override
+	 */
+	Rename.prototype.registerOverlay = function(oOverlay) {
+		var oElement = oOverlay.getElementInstance();
+		if (this.isEditableType(oElement) && this.checkEditable(oOverlay)) {
+			oOverlay.setEditable(true);
+		}
+	};
+
+	
+	return Rename;
+}, /* bExport= */ true);
+}; // end of sap/ui/dt/plugin/Rename.js
 if ( !jQuery.sap.isDeclared('sap.ui.dt.AggregationOverlayRenderer') ) {
 /*!
  * UI development toolkit for HTML5 (OpenUI5)
@@ -1748,7 +1979,7 @@ sap.ui.define("sap/ui/dt/AggregationOverlayRenderer",['sap/ui/dt/RenderingUtil']
 
 	/**
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @namespace
 	 */
 	var AggregationOverlayRenderer = {
@@ -1798,7 +2029,7 @@ function(jQuery, ManagedObjectObserver) {
 	 * @extends sap.ui.dt.ManagedObjectObserver
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -1940,7 +2171,7 @@ function(jQuery, ElementUtil) {
 	 * Utility functionality for DOM
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @private
 	 * @static
@@ -2157,7 +2388,7 @@ sap.ui.define("sap/ui/dt/ElementOverlayRenderer",['sap/ui/dt/RenderingUtil'],
 
 	/**
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @namespace
 	 */
 	var OverlayRenderer = {
@@ -2189,12 +2420,14 @@ if ( !jQuery.sap.isDeclared('sap.ui.dt.Overlay') ) {
 jQuery.sap.declare('sap.ui.dt.Overlay'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
+jQuery.sap.require('jquery.sap.dom'); // unlisted dependency retained
 sap.ui.define("sap/ui/dt/Overlay",[
 	'jquery.sap.global',
 	'sap/ui/core/Control',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/DOMUtil'
+	'sap/ui/dt/DOMUtil',
+	'jquery.sap.dom'
 ],
 function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	"use strict";
@@ -2205,7 +2438,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	/**
 	 * Constructor for an Overlay.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
@@ -2213,7 +2446,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -2231,7 +2464,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			properties : {
 			},
 			associations : {
-				/** 
+				/**
 				 * Element associated with an overlay
 				 */
 				element : {
@@ -2251,28 +2484,28 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		}
 	});
 
-	/** 
+	/**
 	 * Returns children of this overlay
 	 * @return {sap.ui.dt.Overlay[]} overlays that are logical children of this overlay
 	 * @protected
 	 */
 	//Overlay.prototype.getChildren = function() {};
 
-	/** 
+	/**
 	 * Returns if the overlay should be visible
 	 * @return {boolean} if should be visible
 	 * @public
 	 */
 	//Overlay.prototype.isVisible = function() {};
 
-	/** 
+	/**
 	 * Creates and/or returns an overlay container element, where all ElementOverlays should be rendered (initially)
 	 * @return {Element} overlay container
 	 * @static
 	 */
 	Overlay.getOverlayContainer = function() {
 		if (!oOverlayContainer) {
-			oOverlayContainer = jQuery("#" + sOverlayContainerId);
+			oOverlayContainer = jQuery.sap.byId(sOverlayContainerId);
 			if (!oOverlayContainer.length) {
 				oOverlayContainer = jQuery("<div id='" + sOverlayContainerId + "'></div>").appendTo("body");
 			}
@@ -2281,7 +2514,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		return oOverlayContainer.get(0);
 	};
 
-	/** 
+	/**
 	 * Removes an overlay container element from DOM
 	 * @static
 	 */
@@ -2293,16 +2526,25 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		oOverlayContainer = null;
 	};
 
-	/** 
-	 * Called when the Overlay is initialized	
+	/**
+	 * Called when the Overlay is initialized
 	 * @protected
 	 */
 	Overlay.prototype.init = function() {
 		this.attachBrowserEvent("scroll", this._onScroll, this);
 	};
 
-	/** 
-	 * Called when the Overlay is destroyed	
+	/**
+	 * this is needed to prevent UI5 renderManager from removing overlay's node from DOM in a rendering phase
+	 * see RenderManager.js "this._fPutIntoDom" function
+	 * @private
+	 */
+	Overlay.prototype._onChildRerenderedEmpty = function() {
+		return true;
+	};
+
+	/**
+	 * Called when the Overlay is destroyed
 	 * @protected
 	 */
 	Overlay.prototype.exit = function() {
@@ -2322,7 +2564,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		}
 	};
 
-	/** 
+	/**
 	 * Called after Overlay rendering phase
 	 * @protected
 	 */
@@ -2341,13 +2583,13 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 
 	};
 
-	/** 
-	 * @return {Element} The Element's DOM Element sub DOM Element or null	
+	/**
+	 * @return {Element} The Element's DOM Element sub DOM Element or null
 	 * @override
 	 */
 	Overlay.prototype.getDomRef = function() {
 		return this._oDomRef || Control.prototype.getDomRef.apply(this, arguments);
-	};	
+	};
 
 	/**
 	 * Returns an instance of the Element, which is associated with this Overlay
@@ -2358,8 +2600,8 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		return sap.ui.getCore().byId(this.getElement());
 	};
 
-	/** 
-	 * @return {boolean} if the Overlay has focus	
+	/**
+	 * @return {boolean} if the Overlay has focus
 	 * @private
 	 */
 	Overlay.prototype.hasFocus = function() {
@@ -2399,11 +2641,10 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			}
 			var oOverflows = DOMUtil.getOverflows(oGeometry.domRef);
 			if (oOverflows) {
-				// TODO : why overflow hidden shouldn't be copied?
-				if (oOverflows.overflowX /*&& oOverflows.overflowX !== "hidden"*/) {
+				if (oOverflows.overflowX) {
 					$overlay.css("overflow-x", oOverflows.overflowX);
 				}
-				if (oOverflows.overflowY /*&& oOverflows.overflowY !== "hidden"*/) {
+				if (oOverflows.overflowY) {
 					$overlay.css("overflow-y", oOverflows.overflowY);
 				}
 				var iScrollHeight = oGeometry.domRef.scrollHeight;
@@ -2414,7 +2655,6 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				}
 				DOMUtil.syncScroll(oGeometry.domRef, this.getDomRef());
 			}
-	
 
 			this.getChildren().forEach(function(oChild) {
 				oChild.applyStyles();
@@ -2427,12 +2667,12 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		}
 	};
 
-	/** 
+	/**
 	 * Returns an object, which describes the DOM geometry of the element associated with this overlay or null if it can't be found
 	 * The geometry is calculated based on the associated element's DOM reference, if it exists or based on it's public children
 	 * Object may contain following fields: position - absolute position of Element in DOM; size - absolute size of Element in DOM
 	 * Object may contain domRef field, when the associated Element's DOM can be found
-	 * @return {object} geometry object describing the DOM of the Element associated with this Overlay 
+	 * @return {object} geometry object describing the DOM of the Element associated with this Overlay
 	 * @public
 	 */
 	Overlay.prototype.getGeometry = function() {
@@ -2449,9 +2689,9 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		}
 
 		return mGeometry;
-	};	
+	};
 
-	/** 
+	/**
 	 * @private
 	 */
 	Overlay.prototype._updateDom = function() {
@@ -2467,7 +2707,9 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			} else {
 				// instead of adding the created DOM into the UIArea's DOM, we are adding it to overlay-container to avoid clearing of the DOM
 				var oOverlayContainer = Overlay.getOverlayContainer();
-				if (oOverlayContainer !== this.$().parent().get(0)) {
+				var $parent = this.$().parent();
+				var oParentElement = $parent.length ? $parent.get(0) : null;
+				if (oOverlayContainer !== oParentElement) {
 					this.$().appendTo(oOverlayContainer);
 				}
 				this.applyStyles();
@@ -2481,7 +2723,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		}
 	};
 
-	/** 
+	/**
 	 * @private
 	 */
 	Overlay.prototype._onScroll = function() {
@@ -2525,7 +2767,7 @@ function(ManagedObject) {
 	 * @extends sap.ui.dt.ManagedObject
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -2665,7 +2907,7 @@ function(Plugin, DOMUtil) {
 	 * @extends sap.ui.dt.plugin.Plugin
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -2675,7 +2917,7 @@ function(Plugin, DOMUtil) {
 	 */
 	var DragDrop = Plugin.extend("sap.ui.dt.plugin.DragDrop", /** @lends sap.ui.dt.plugin.DragDrop.prototype */ {		
 		metadata : {
-			abstract : true,
+			"abstract" : true,
 			// ---- object ----
 
 			// ---- control specific ----
@@ -3135,7 +3377,7 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 	 * @extends sap.ui.core.Overlay
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -3293,7 +3535,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	/**
 	 * Constructor for an ElementOverlay.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
@@ -3302,7 +3544,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -3318,36 +3560,36 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				/** 
+				/**
 				 * Whether the overlay and it's descendants should be visible on a screen
 				 * We are overriding Control's property to prevent RenderManager from rendering of an invisible placeholder
-				 */	
+				 */
 				visible : {
 					type : "boolean",
 					defaultValue : true
-				},				
-				/** 
+				},
+				/**
 				 * Whether the ElementOverlay is selected
-				 */					
+				 */
 				selected : {
 					type : "boolean",
 					defaultValue : false
 				},
-				/** 
+				/**
 				 * Whether the ElementOverlay is selectable
 				 */
 				selectable : {
 					type : "boolean",
 					defaultValue : false
 				},
-				/** 
+				/**
 				 * Whether the ElementOverlay is draggable
 				 */
 				draggable : {
 					type : "boolean",
 					defaultValue : false
 				},
-				/** 
+				/**
 				 * Whether the ElementOverlay is editable
 				 */
 				editable : {
@@ -3388,7 +3630,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 						draggable : { type : "boolean" }
 					}
 				},
-				/**				
+				/**
 				 * Event fired when the property "Selectable" is changed
 				 */
 				selectableChange : {
@@ -3421,20 +3663,28 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		}
 	});
 
-	/** 
-	 * Called when the ElementOverlay is initialized		
+	/**
+	 * Called when the ElementOverlay is initialized
 	 * @protected
 	 */
 	ElementOverlay.prototype.init = function() {
 		Overlay.prototype.init.apply(this, arguments);
-		
+
 		this._oDefaultDesignTimeMetadata = null;
 		this.placeAt(Overlay.getOverlayContainer());
+
+		// this is needed to prevent UI5 renderManager from removing overlay's node from DOM in a rendering phase
+		// see RenderManager.js "this._fPutIntoDom" function
+		var oUIArea = this.getUIArea();
+		oUIArea._onChildRerenderedEmpty = function() {
+			return true;
+		};
+
 		this._bVisible = null;
 	};
 
-	/** 
-	 * Called when the ElementOverlay is destroyed	
+	/**
+	 * Called when the ElementOverlay is destroyed
 	 * @protected
 	 */
 	ElementOverlay.prototype.exit = function() {
@@ -3459,7 +3709,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		delete this._elementId;
 	};
 
-	/** 
+	/**
 	 * Sets an associated Element to create an overlay for
 	 * @param {string|sap.ui.core.Element} vElement element or element's id
 	 * @returns {sap.ui.dt.ElementOverlay} returns this
@@ -3475,7 +3725,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		this.destroyAggregation("aggregationOverlays");
 		this._destroyDefaultDesignTimeMetadata();
 		delete this._elementId;
-		
+
 		this.setAssociation("element", vElement);
 		// TODO: designTimeMetadata aggregation is NOT ready in this moment... how we can make it consistent?
 		this._createAggregationOverlays();
@@ -3492,14 +3742,14 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		}
 
 		return this;
-	};		
+	};
 
-	/** 
+	/**
 	 * Returns a DOM reference for the associated Element or null, if it can't be found
 	 * @return {Element} DOM element or null
 	 * @public
 	 */
-	Overlay.prototype.getAssociatedDomRef = function() {
+	ElementOverlay.prototype.getAssociatedDomRef = function() {
 		return ElementUtil.getDomRef(this.getElementInstance());
 	};
 
@@ -3519,7 +3769,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	/**
 	 * Sets wether the ElementOverlay is visible
 	 * @param {boolean} bVisible if the ElementOverlay is visible
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setVisible = function(bVisible) {
@@ -3527,12 +3777,12 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		this._bVisible = bVisible;
 
 		return this;
-	};	
+	};
 
 	/**
 	 * Sets wether the ElementOverlay is selectable
 	 * @param {boolean} bSelectable if the ElementOverlay is selectable
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setSelectable = function(bSelectable) {
@@ -3542,19 +3792,19 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				this.setSelected(false);
 			}
 
-			this.toggleStyleClass("sapUiDtOverlaySelectable", bSelectable);		
+			this.toggleStyleClass("sapUiDtOverlaySelectable", bSelectable);
 			this.setProperty("selectable", bSelectable);
 			this.fireSelectableChange({selectable : bSelectable});
 		}
 
 		return this;
 	};
-	
+
 	/**
 	 * Sets wether the ElementOverlay is selected and toggles corresponding css class
 	 * @param {boolean} bSelected if the ElementOverlay is selected
 	 * @param {boolean} bSuppressEvent (internal use only) supress firing "selectionChange" event
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setSelected = function(bSelected, bSuppressEvent) {
@@ -3565,46 +3815,46 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 			if (!bSuppressEvent) {
 				this.fireSelectionChange({
 					selected : bSelected
-				});	
+				});
 			}
 		}
 
 		return this;
 	};
 
-	/** 
+	/**
 	 * Sets whether the ElementOverlay is draggable and toggles corresponding css class
 	 * @param {boolean} bDraggable if the ElementOverlay is draggable
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setDraggable = function(bDraggable) {
 		if (this.getDraggable() !== bDraggable) {
 			this.toggleStyleClass("sapUiDtOverlayDraggable", bDraggable);
-			
+
 			this.setProperty("draggable", bDraggable);
 			this.fireDraggableChange({draggable : bDraggable});
 		}
 
 		return this;
-	};	
+	};
 
-	/** 
+	/**
 	 * Sets whether the ElementOverlay is editable and toggles corresponding css class
 	 * @param {boolean} bEditable if the ElementOverlay is editable
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setEditable = function(bEditable) {
 		if (this.getEditable() !== bEditable) {
 			this.toggleStyleClass("sapUiDtOverlayEditable", bEditable);
-			
+
 			this.setProperty("editable", bEditable);
 			this.fireEditableChange({editable : bEditable});
 		}
 
 		return this;
-	};	
+	};
 
 	/**
 	 * Returns the DesignTime metadata of this ElementOverlay, if no DT metadata exists, creates and returns the default DT metadata object
@@ -3635,7 +3885,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		});
 	};
 
-	/** 
+	/**
 	 * @private
 	 */
 	ElementOverlay.prototype._createAggregationOverlays = function() {
@@ -3713,7 +3963,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/**
-	 * @param {sap.ui.baseEvent} oEvent event object	
+	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
 	ElementOverlay.prototype._onElementModified = function(oEvent) {
@@ -3774,7 +4024,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 */
 	ElementOverlay.prototype.getParentElementOverlay = function() {
 		var oParentAggregationOverlay = this.getParentAggregationOverlay();
-		if (oParentAggregationOverlay) { 
+		if (oParentAggregationOverlay) {
 			return oParentAggregationOverlay.getParent();
 		}
 	};
@@ -3789,7 +4039,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		return oParentAggregationOverlay instanceof sap.ui.dt.AggregationOverlay ? oParentAggregationOverlay : null;
 	};
 
-	/** 
+	/**
 	 * Returns if the ElementOverlay is selected
 	 * @public
 	 * @return {boolean} if the ElementOverlay is selected
@@ -3798,7 +4048,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		return this.getSelected();
 	};
 
-	/** 
+	/**
 	 * Returns if the ElementOverlay is selectable
 	 * @public
 	 * @return {boolean} if the ElementOverlay is selectable
@@ -3807,7 +4057,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		return this.getSelectable();
 	};
 
-	/** 
+	/**
 	 * Returns if the ElementOverlay is draggable
 	 * @public
 	 * @return {boolean} if the ElementOverlay is draggable
@@ -3816,7 +4066,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		return this.getDraggable();
 	};
 
-	/** 
+	/**
 	 * Returns if the ElementOverlay is editable
 	 * @public
 	 * @return {boolean} if the ElementOverlay is editable
@@ -3825,7 +4075,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		return this.getEditable();
 	};
 
-	/** 
+	/**
 	 * Returns if the ElementOverlay is visible
 	 * @public
 	 * @return {boolean} if the ElementOverlay is visible
@@ -3866,7 +4116,7 @@ function(DragDrop, ElementUtil, DOMUtil) {
 	 * @extends sap.ui.dt.plugin.DragDrop"
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -4120,7 +4370,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	/**
 	 * Constructor for a new DesignTime.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
@@ -4129,7 +4379,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	 * @extends sap.ui.core.ManagedObject
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @private
@@ -4144,7 +4394,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				/** 
+				/**
 				 * Selection mode which should be used for overlays selection
 				 */
 				selectionMode : {
@@ -4161,7 +4411,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 				 }
 			},
 			associations : {
-				/** 
+				/**
 				 * Root elements to create overlays for
 				 */
 				rootElements : {
@@ -4170,7 +4420,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 				}
 			},
 			aggregations : {
-				/** 
+				/**
 				 * Plugins to use with a design time
 				 */
 				plugins : {
@@ -4179,7 +4429,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 				}
 			},
 			events : {
-				/** 
+				/**
 				 * Event fired when an ElementOverlay is created
 				 */
 				overlayCreated : {
@@ -4187,7 +4437,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 						ElementOverlay : { type : "sap.ui.dt.ElementOverlay" }
 					}
 				},
-				/** 
+				/**
 				 * Event fired when an ElementOverlay is destroyed
 				 */
 				overlayDestroyed : {
@@ -4195,7 +4445,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 						ElementOverlay : { type : "sap.ui.dt.ElementOverlay" }
 					}
 				},
-				/** 
+				/**
 				 * Event fired when an overlays selection is changed
 				 */
 				selectionChange : {
@@ -4243,9 +4493,9 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	 */
 	DesignTime.prototype.getSelection = function() {
 		return this._oSelection.getSelection();
-	};		
+	};
 
-	/** 
+	/**
 	 * Sets selection mode to be used in the Selection inside of the DesignTime
 	 * @param {sap.ui.dt.SelectionMode} oMode a selection mode to be used with the Selection
 	 * @return {sap.ui.dt.DesignTime} this
@@ -4256,7 +4506,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		this._oSelection.setMode(oMode);
 
 		return this;
-	};	
+	};
 
 	/**
 	 * Returns all plugins used with the DesignTime
@@ -4267,7 +4517,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		return this.getAggregation("plugins") || [];
 	};
 
-	/** 
+	/**
 	 * Adds new plugin to use with the DesignTime
 	 * @param {sap.ui.dt.Plugin} oPlugin to add
 	 * @return {sap.ui.dt.DesignTime} this
@@ -4278,10 +4528,10 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this.addAggregation("plugins", oPlugin);
 
-		return this;		
+		return this;
 	};
 
-	/** 
+	/**
 	 * Inserts new plugin to use with the DesignTime at a defined position
 	 * @param {sap.ui.dt.Plugin} oPlugin to insert
 	 * @param {integer} iIndex a position to insert the plugin at
@@ -4299,7 +4549,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	/**
 	 * Removes a plugin from the DesignTime
 	 * @param {sap.ui.dt.Plugin} oPlugin to remove
-	 * @return {sap.ui.dt.DesignTime} this	
+	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
 	DesignTime.prototype.removePlugin = function(oPlugin) {
@@ -4312,10 +4562,10 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this.removeAggregation("plugins", oPlugin);
 
-		return this;		
+		return this;
 	};
 
-	/** 
+	/**
 	 * Removes all plugins from the DesignTime
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
@@ -4374,7 +4624,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this.createOverlayFor(ElementUtil.getElementInstance(vRootElement));
 
-		return this;		
+		return this;
 	};
 
 	/**
@@ -4388,13 +4638,13 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this._destroyOverlaysForElement(ElementUtil.getElementInstance(vRootElement));
 
-		return this;			
-	}; 	
+		return this;
+	};
 
 	/**
 	 * Removes all root elements from the DesignTime and destroys overlays for them and theire public descendants
 	 * @param {string|sap.ui.core.Element} element or elemet's id
-	 * @return {sap.ui.dt.DesignTime} this	 
+	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
 	DesignTime.prototype.removeAllRootElement = function() {
@@ -4402,8 +4652,8 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this._destroyAllOverlays();
 
-		return this;			
-	}; 
+		return this;
+	};
 
 
 	/**
@@ -4438,7 +4688,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		});
 
 		return aOverlays;
-	};	
+	};
 
 	/**
 	 * @param {sap.ui.core.Element} oElement element
@@ -4479,7 +4729,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		this._iterateRootElementPublicChildren(oRootElement, function(oElement) {
 			var oOverlay = that._createOverlay(oElement);
 			oRootOverlay = oRootOverlay || oOverlay;
-		}); 
+		});
 
 		return oRootOverlay;
 	};
@@ -4493,9 +4743,9 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 			var oOverlay = OverlayRegistry.getOverlay(oElement);
 			if (oOverlay) {
 				oOverlay.destroy();
-			}			
+			}
 		});
-	};	
+	};
 
 	/**
 	 * @private
@@ -4504,11 +4754,11 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		var that = this;
 
 		this._iterateRootElements(function(oRootElement) {
-			that._destroyOverlaysForElement(oRootElement);			
+			that._destroyOverlaysForElement(oRootElement);
 		});
 	};
 
-	/** 
+	/**
 	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	*/
@@ -4530,7 +4780,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		var bSelected = oEvent.getParameter("selected");
 
 		this._oSelection.set(oOverlay, bSelected);
-	};	
+	};
 
 	/**
 	 * @param {sap.ui.baseEvent} oEvent event object
@@ -4538,7 +4788,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	 */
 	DesignTime.prototype._onElementModified = function(oEvent) {
 		var oParams = oEvent.getParameters();
-		if (oParams.type === "addAggregation" || oParams.type === "insertAggregation") {
+		if (oParams.type === "addOrSetAggregation" || oParams.type === "insertAggregation") {
 			this._onOverlayElementAddAggregation(oParams.value);
 		} else if (oParams.type === "setParent") {
 			this._onOverlayElementSetParent(oParams.target, oParams.value);
@@ -4563,10 +4813,10 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	 */
 	DesignTime.prototype._onOverlayElementSetParent = function(oElement, oParent) {
 		var oOverlay = OverlayRegistry.getOverlay(oElement);
-		if (oOverlay && !this._isElementInRootElements(oElement)) {
+		if (oOverlay && !this._isElementInRootElements(oElement) && !oElement.__bSapUiDtSupressOverlayDestroy) {
 			oOverlay.destroy();
 		}
-	};	
+	};
 
 	/**
 	 * @param {sap.ui.core.Element} oElement to check
@@ -4620,7 +4870,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		this._iterateRootElements(function(oRootElement) {
 			that._iterateRootElementPublicChildren(oRootElement, fnStep);
 		});
-	};	
+	};
 
 	return DesignTime;
 }, /* bExport= */ true);

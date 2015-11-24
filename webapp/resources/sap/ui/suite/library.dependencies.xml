@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <library  version="2.0" name="sap.ui.suite">
-  <module name="sap/ui/suite/QuickViewUtils.js" size="6349" compressedSize="3995">
+  <module name="sap/ui/suite/QuickViewUtils.js" size="6347" compressedSize="3993">
     <description>Provides</description>
     <requires>
       <module name="jquery.sap.global.js"/>
@@ -42,5 +42,7 @@
       <module name="jquery.sap.global.js"/>
       <module name="sap/ui/core/library.js"/>
     </requires>
+  </module>
+  <module name="sap/ui/suite/manifest.json" size="734">
   </module>
 </library>

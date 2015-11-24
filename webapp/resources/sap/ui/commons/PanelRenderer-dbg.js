@@ -141,6 +141,7 @@ sap.ui.define(['jquery.sap.global'],
 			var mAttributes = {};
 	
 			mAttributes["id"] = id + "-ico";
+			mAttributes["title"] = null; // prevent icon tooltip
 			aClasses.push("sapUiPanelIco");
 			aClasses.push("sapUiPanelHdrItem");
 			aClasses.push("sapUiTv" + sLevel); // use same font-size like header level (if icon font is used (for image it dosn't matters)
@@ -149,7 +150,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 	
 		// header title text
-		var text = jQuery.sap.escapeHTML(oControl.getText());
+		var text = jQuery.sap.encodeHTML(oControl.getText());
 		if (!text) {
 			text = "&nbsp;";
 		}

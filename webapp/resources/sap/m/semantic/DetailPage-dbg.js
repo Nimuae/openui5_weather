@@ -14,7 +14,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A DetailPage is a {@link sap.m.semantic.ShareMenuPage} that is restricted to include only semantic controls of the following semantic types:
+	 * A DetailPage is a {@link sap.m.semantic.ShareMenuPage} that supports semantic content of the following types:
 	 *
 	 * <ul>
 	 * 	<li>{@link sap.m.semantic.AddAction}</li>
@@ -34,13 +34,14 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	 * 	<li>{@link sap.m.semantic.SendMessageAction}</li>
 	 * 	<li>{@link sap.m.semantic.PrintAction}</li>
 	 * 	<li>{@link sap.m.semantic.MessagesIndicator}</li>
+	 * 	<li>{@link sap.m.DraftIndicator}</li>
 	 * </ul>
 	 *
 	 *
 	 * @extends sap.m.semantic.ShareMenuPage
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -183,6 +184,13 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 				pagingAction: {
 					type: "sap.m.PagingButton",
 					multiple: false
+				},
+				/**
+				 * DraftIndicator
+				 */
+				draftIndicator: {
+					type: "sap.m.DraftIndicator",
+					multiple: false
 				}
 			}
 		},
@@ -195,7 +203,8 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	DetailPage.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
 		if ((sAggregationName === "saveAsTileAction")
-				|| (sAggregationName === "pagingAction")) {
+				|| (sAggregationName === "pagingAction")
+				|| (sAggregationName === "draftIndicator")) {
 
 			var oPrivateReferenceName = '_' + sAggregationName;
 
@@ -220,7 +229,8 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	DetailPage.prototype.getAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
 		if ((sAggregationName === "saveAsTileAction")
-				|| (sAggregationName === "pagingAction")) {
+				|| (sAggregationName === "pagingAction")
+				|| (sAggregationName === "draftIndicator")) {
 
 				return this['_' + sAggregationName];
 		}
@@ -231,7 +241,8 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	DetailPage.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 
 		if ((sAggregationName === "saveAsTileAction")
-			|| (sAggregationName === "pagingAction")) {
+			|| (sAggregationName === "pagingAction")
+			|| (sAggregationName === "draftIndicator")) {
 
 			var oPrivateReferenceName = '_' + sAggregationName;
 

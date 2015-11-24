@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 	/**
 	 * Renders the HTML for single line of Attribute and Status.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            rm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.ObjectListItem}
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *          oRenderManager the RenderManager that can be used for writing to the
 	 *          Render-Output-Buffer
@@ -108,10 +108,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		var sTitleDir = oLI.getTitleTextDirection(),
 			sIntroDir = oLI.getIntroTextDirection(),
 			sNumberDir = oLI.getNumberTextDirection();
-
-		rm.write("<div"); // Start Main container
-		rm.writeControlData(oLI);
-		rm.write(">");
 
 		// Introductory text at the top of the item, like "On behalf of Julie..."
 		if (oLI.getIntro()) {
@@ -135,7 +131,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 		// Container for fields placed on the top half of the item, below the intro. This
 		// includes title, number, and number units.
-		rm.write("<div");  // Start Top row container     
+		rm.write("<div");  // Start Top row container
 		rm.addClass("sapMObjLTopRow");
 		rm.writeClasses();
 		rm.write(">");
@@ -200,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.renderControl(oTitleText);
 		}
 
-		rm.write("</div>"); // End Title container	
+		rm.write("</div>"); // End Title container
 
 		rm.write("</div>"); // End Top row container
 
@@ -261,8 +257,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 		// ARIA description node
 		this.renderAriaNode(rm, oLI, this.getAriaNodeText(oLI));
-
-		rm.write("</div>"); // End Main container
 	};
 
 	/**
@@ -278,7 +272,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 *			sAriaNodeText the ARIA node description text
 	 */
 	ObjectListItemRenderer.renderAriaNode = function(rm, oLI, sAriaNodeText) {
-		if (sAriaNodeText) {	
+		if (sAriaNodeText) {
 			rm.write("<div");
 
 			rm.writeAttribute("id", oLI.getId() + "-aria");

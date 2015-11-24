@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -580,7 +580,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	NavigationBar.prototype._scroll = function(iDelta, iDuration) {
 		var oDomRef = this.$()[0].firstChild;
 		var iScrollLeft = oDomRef.scrollLeft;
-		if (!!!sap.ui.Device.browser.internet_explorer && this._bRtl) {
+		if (!sap.ui.Device.browser.internet_explorer && this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
 		var iScrollTarget = iScrollLeft + iDelta;
@@ -598,38 +598,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	NavigationBar.prototype._checkOverflow = function(oListDomRef, of_back, of_fw) {
+
+		function isChromeOnMac() {
+			return sap.ui.Device.os.macintosh && sap.ui.Device.browser.chrome;
+		}
+
 		if (oListDomRef && this.getDomRef() && jQuery.sap.act.isActive()) {
 			var iScrollLeft = oListDomRef.scrollLeft;
-	
+
 			// check whether scrolling to the left is possible
 			var bScrollBack = false;
 			var bScrollForward = false;
-	
+
 			var realWidth = oListDomRef.scrollWidth;
 			var availableWidth = oListDomRef.clientWidth;
-			
+
+			// Exceptional case for Chrome on Mac OS
+			// Added scroll tolerance to ensure that the arrows are hidden correctly
+			// see BCP Internal Incident 1570758438
+			var iScrollTolerance = isChromeOnMac() ? 5 : 0;
+
 			if (Math.abs(realWidth - availableWidth) == 1) { // Avoid rounding issues see CSN 1316630 2013
 				realWidth = availableWidth;
 			}
-	
+
 			if (!this._bRtl) {   // normal LTR mode
-				if (iScrollLeft > 0) {
+
+				if (iScrollLeft > iScrollTolerance) {
 					bScrollBack = true;
 				}
-				if ((realWidth > availableWidth) && (iScrollLeft + availableWidth < realWidth)) {
+				if ((realWidth > availableWidth) && (realWidth - (iScrollLeft + availableWidth) > iScrollTolerance)) {
 					bScrollForward = true;
 				}
 	
 			} else {  // RTL mode
 				var $List = jQuery(oListDomRef);
-				if ($List.scrollLeftRTL() > 0) {
+				if ($List.scrollLeftRTL() > iScrollTolerance) {
 					bScrollForward = true;
 				}
-				if ($List.scrollRightRTL() > 0) {
+				if ($List.scrollRightRTL() > iScrollTolerance) {
 					bScrollBack = true;
 				}
 			}
-	
+
 			// only do DOM changes if the state changed to avoid periodic application of identical values
 			if ((bScrollForward != this._bPreviousScrollForward) || (bScrollBack != this._bPreviousScrollBack)) {
 				this._bPreviousScrollForward = bScrollForward;

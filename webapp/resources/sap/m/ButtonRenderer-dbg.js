@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		// add tooltip if available
 		if (sTooltip || (oIconInfo && !oButton.getText())) {
-			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
+			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text || oIconInfo.name);
 		}
 
 		oRm.writeClasses();
@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global'],
 		// set button specific styles
 		if (!oButton._isUnstyled() && sType !== "") {
 			// set button specific styles
-			oRm.addClass("sapMBtn" + jQuery.sap.escapeHTML(sType));
+			oRm.addClass("sapMBtn" + jQuery.sap.encodeHTML(sType));
 		}
 
 		// add all classes to inner button tag

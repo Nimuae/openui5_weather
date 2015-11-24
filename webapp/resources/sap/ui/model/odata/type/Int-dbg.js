@@ -78,7 +78,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int
@@ -92,9 +92,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 * @since 1.27.0
 	 */
-	var Int = ODataType.extend("sap.ui.model.odata.type.Int",
-			/** @lends sap.ui.model.odata.type.Int.prototype */
-			{
+	var Int = ODataType.extend("sap.ui.model.odata.type.Int", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					this.oFormatOptions = oFormatOptions;

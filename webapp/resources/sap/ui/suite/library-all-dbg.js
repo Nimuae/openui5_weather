@@ -30,7 +30,7 @@ sap.ui.define("sap/ui/suite/QuickViewUtils",['jquery.sap.global'],
 			
 			var oQV = new sap.ui.ux3.QuickView({firstTitle: "{title}", firstTitleHref: "{titleLinkURL}", type:"{Thing/text}", icon:"{imageURL}"});
 			oQV.setModel(oModel);
-			oQV.bindElement("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
+			oQV.bindObject("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
 			
 			var oMQVC = new sap.ui.suite.hcm.QvContent();
 			oMQVC.bindAggregation("items",{path:"QVAttributes",factory: function(sId, oContext) {
@@ -50,7 +50,7 @@ sap.ui.define("sap/ui/suite/QuickViewUtils",['jquery.sap.global'],
 			oQV.bindProperty("firstTitleHref", "titleLinkURL");
 			oQV.bindProperty("type", "Thing/text");
 			oQV.bindProperty("icon", "imageURL");
-			oQV.bindElement("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
+			oQV.bindObject("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
 			
 			var oMQVC = new sap.ui.suite.hcm.QvContent();
 			oMQVC.bindAggregation("items",{path:"QVAttributes",factory: function(sId, oContext) {
@@ -420,14 +420,14 @@ sap.ui.define("sap/ui/suite/library",['jquery.sap.global',
 	 * @namespace
 	 * @name sap.ui.suite
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.suite",
-		version: "1.30.8",
+		version: "1.32.7",
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.suite.TaskCircleColor"
@@ -444,7 +444,7 @@ sap.ui.define("sap/ui/suite/library",['jquery.sap.global',
 	/**
 	 * Defined color values for the Task Circle Control
 	 *
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -511,7 +511,7 @@ sap.ui.define("sap/ui/suite/TaskCircle",['jquery.sap.global', 'sap/ui/core/Contr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author Svetozar Buzdumovic
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -643,7 +643,7 @@ sap.ui.define("sap/ui/suite/VerticalProgressIndicator",['jquery.sap.global', 'sa
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author Svetozar Buzdumovic
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public

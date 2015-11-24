@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -481,8 +481,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			case jQuery.sap.KeyCodes.NUMPAD_MINUS:
 				/* if (!!(oEvent.metaKey || oEvent.ctrlKey)) { //NUMPAD_MINUS + CTRL: Collapse list vertically
 					//Deactivated on request of UX
-					var jListContRef = jQuery.sap.byId(this.getId() + "-lst");
-					if(jListContRef.hasClass("sapUiUx3ExactLstExpanded") && jQuery.sap.byId(this.getId() + "-exp").is(":visible")){
+					var jListContRef = this.$("lst");
+					if(jListContRef.hasClass("sapUiUx3ExactLstExpanded") && this.$("exp").is(":visible")){
 						toggleVerticalCollapseState(this);
 					}
 					oEvent.preventDefault();
@@ -500,8 +500,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			case jQuery.sap.KeyCodes.NUMPAD_PLUS:
 				/* if (!!(oEvent.metaKey || oEvent.ctrlKey)) { //NUMPAD_PLUS + CTRL: Expand list vertically
 					//Deactivated on request of UX
-					var jListContRef = jQuery.sap.byId(this.getId() + "-lst");
-					if(!jListContRef.hasClass("sapUiUx3ExactLstExpanded") && jQuery.sap.byId(this.getId() + "-exp").is(":visible")){
+					var jListContRef = this.$("lst");
+					if(!jListContRef.hasClass("sapUiUx3ExactLstExpanded") && this.$("exp").is(":visible")){
 						toggleVerticalCollapseState(this);
 					}
 					oEvent.preventDefault();
@@ -1012,7 +1012,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	
 				oList._oPopup = new Popup();
 	
-				if (!!!sap.ui.Device.browser.firefox) {
+				if (!sap.ui.Device.browser.firefox) {
 					oList._oPopup._fixPositioning = function(oPosition, bRtl) {
 						Popup.prototype._fixPositioning.apply(this, arguments);
 						if (bRtl) {

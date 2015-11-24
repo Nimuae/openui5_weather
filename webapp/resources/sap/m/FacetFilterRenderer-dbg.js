@@ -1,6 +1,8 @@
-/*
-* @copyright
-*/
+/*!
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
 
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
@@ -73,10 +75,6 @@ sap.ui.define(['jquery.sap.global'],
 			if (sap.ui.Device.system.desktop) {
 				oRm.renderControl(oControl._getScrollingArrow("left"));
 			}
-/*			// dummy after focusable area.
-			oRm.write("<div tabindex='-1'");
-			oRm.writeAttribute("id", oControl.getId() + "-before");
-			oRm.write("></div>");*/
 			// Render the div for the carousel
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-head");
@@ -93,7 +91,6 @@ sap.ui.define(['jquery.sap.global'],
 								}
 						}
 				oRm.renderControl(button);
-			//	oRm.writeAccessibilityState(oControl, this.getAccessibilityState(oControl));
 				if (oControl.getShowPersonalization()) {
 					
 					oRm.renderControl(oControl._getFacetRemoveIcon(aLists[i]));

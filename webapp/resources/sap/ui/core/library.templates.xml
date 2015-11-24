@@ -6,6 +6,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	name: undefined, // string
 	url: undefined, // sap.ui.core.URI
 	handleValidation: false, // boolean
@@ -16,7 +17,10 @@
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
-	component: undefined // sap.ui.core.UIComponent
+	component: undefined, // sap.ui.core.UIComponent
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ComponentContainer xmlns="sap.ui.core"
@@ -24,6 +28,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	name=""
 	url=""
 	handleValidation="false"
@@ -31,7 +36,8 @@
 	propagateModel="false"
 	width=""
 	height=""
-	component="">
+	component=""
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 </ComponentContainer>
@@ -43,16 +49,22 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
-	dependents: [] // sap.ui.core.Control, since 1.19
+	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Control xmlns="sap.ui.core"
 	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
-	visible="true">
+	visible="true"
+	fieldGroupIds=""
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 </Control>
@@ -100,6 +112,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	content: undefined, // string
 	preferDOM: true, // boolean
 	sanitizeContent: false, // boolean
@@ -107,6 +120,9 @@
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	afterRendering: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this]
@@ -117,10 +133,12 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	content=""
 	preferDOM="true"
 	sanitizeContent="false"
 	visible="true"
+	validateFieldGroup=""
 	afterRendering="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -133,6 +151,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	src: undefined, // sap.ui.core.URI
 	size: undefined, // sap.ui.core.CSSSize
 	color: undefined, // string
@@ -151,6 +170,9 @@
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	ariaLabelledBy: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	press: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this]
@@ -161,6 +183,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	src=""
 	size=""
 	color=""
@@ -176,6 +199,7 @@
 	alt=""
 	noTabStop="false"
 	ariaLabelledBy=""
+	validateFieldGroup=""
 	press="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -188,10 +212,14 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	text: "", // string
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
-	dependents: [] // sap.ui.core.Control, since 1.19
+	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<InvisibleText xmlns="sap.ui.core"
@@ -199,7 +227,9 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
-	text="">
+	fieldGroupIds=""
+	text=""
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 </InvisibleText>
@@ -276,11 +306,15 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "100px", // sap.ui.core.CSSSize
 	height: "100px", // sap.ui.core.CSSSize
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
-	dependents: [] // sap.ui.core.Control, since 1.19
+	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<LocalBusyIndicator xmlns="sap.ui.core"
@@ -288,8 +322,10 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="100px"
-	height="100px">
+	height="100px"
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 </LocalBusyIndicator>
@@ -326,6 +362,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	vertical: true, // boolean
 	scrollPosition: undefined, // int
 	size: undefined, // sap.ui.core.CSSSize
@@ -334,6 +371,9 @@
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	scroll: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this]
@@ -344,11 +384,13 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	vertical="true"
 	scrollPosition=""
 	size=""
 	contentSize=""
 	steps=""
+	validateFieldGroup=""
 	scroll="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -407,6 +449,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	text: "", // string
 	openDuration: 200, // int
 	closeDuration: 200, // int
@@ -419,6 +462,9 @@
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	closed: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this] // since 1.11.0
@@ -429,6 +475,7 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	text=""
 	openDuration="200"
 	closeDuration="200"
@@ -438,6 +485,7 @@
 	collision="flip"
 	openDelay="500"
 	closeDelay="100"
+	validateFieldGroup=""
 	closed="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -450,16 +498,22 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
-	dependents: [] // sap.ui.core.Control, since 1.19
+	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<UIComponent xmlns="sap.ui.core"
 	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
-	visible="true">
+	visible="true"
+	fieldGroupIds=""
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 </UIComponent>
@@ -488,6 +542,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "100%", // sap.ui.core.CSSSize
 	height: undefined, // sap.ui.core.CSSSize
 	viewName: undefined, // string
@@ -496,6 +551,9 @@
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	content: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	afterInit: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -515,10 +573,12 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="100%"
 	height=""
 	viewName=""
 	displayBlock="false"
+	validateFieldGroup=""
 	afterInit=""
 	beforeExit=""
 	afterRendering=""
@@ -535,6 +595,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "100%", // sap.ui.core.CSSSize
 	height: undefined, // sap.ui.core.CSSSize
 	viewName: undefined, // string
@@ -543,6 +604,9 @@
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	content: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	afterInit: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -562,10 +626,12 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="100%"
 	height=""
 	viewName=""
 	displayBlock="false"
+	validateFieldGroup=""
 	afterInit=""
 	beforeExit=""
 	afterRendering=""
@@ -582,6 +648,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "100%", // sap.ui.core.CSSSize
 	height: undefined, // sap.ui.core.CSSSize
 	viewName: undefined, // string
@@ -590,6 +657,9 @@
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	content: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	afterInit: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -609,10 +679,12 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="100%"
 	height=""
 	viewName=""
 	displayBlock="false"
+	validateFieldGroup=""
 	afterInit=""
 	beforeExit=""
 	afterRendering=""
@@ -629,6 +701,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "100%", // sap.ui.core.CSSSize
 	height: undefined, // sap.ui.core.CSSSize
 	viewName: undefined, // string
@@ -637,6 +710,9 @@
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	content: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	afterInit: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -656,10 +732,12 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="100%"
 	height=""
 	viewName=""
 	displayBlock="false"
+	validateFieldGroup=""
 	afterInit=""
 	beforeExit=""
 	afterRendering=""
@@ -676,6 +754,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "100%", // sap.ui.core.CSSSize
 	height: undefined, // sap.ui.core.CSSSize
 	viewName: undefined, // string
@@ -684,6 +763,9 @@
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	content: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	afterInit: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -703,10 +785,12 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="100%"
 	height=""
 	viewName=""
 	displayBlock="false"
+	validateFieldGroup=""
 	afterInit=""
 	beforeExit=""
 	afterRendering=""
@@ -723,6 +807,7 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	width: "100%", // sap.ui.core.CSSSize
 	height: undefined, // sap.ui.core.CSSSize
 	viewName: undefined, // string
@@ -731,6 +816,9 @@
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	content: [], // sap.ui.core.Control
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	afterInit: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -750,10 +838,12 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	width="100%"
 	height=""
 	viewName=""
 	displayBlock="false"
+	validateFieldGroup=""
 	afterInit=""
 	beforeExit=""
 	afterRendering=""
@@ -827,13 +917,17 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	text: undefined, // string
 	tag: "span", // string
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	attributes: [], // sap.ui.core.tmpl.DOMAttribute
-	elements: [] // sap.ui.core.tmpl.DOMElement
+	elements: [], // sap.ui.core.tmpl.DOMElement
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<tmpl/DOMElement xmlns="sap.ui.core"
@@ -841,8 +935,10 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	text=""
-	tag="span">
+	tag="span"
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<attributes></attributes> <!-- sap.ui.core.tmpl.DOMAttribute -->
@@ -856,10 +952,14 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	content: undefined, // string
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
-	dependents: [] // sap.ui.core.Control, since 1.19
+	dependents: [], // sap.ui.core.Control, since 1.19
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<tmpl/Template xmlns="sap.ui.core"
@@ -867,7 +967,9 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
-	content="">
+	fieldGroupIds=""
+	content=""
+	validateFieldGroup="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 </tmpl/Template>
@@ -879,11 +981,15 @@
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
+	fieldGroupIds: [], // string[], since 1.31
 	context: undefined, // object
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	template: undefined, // sap.ui.core.tmpl.Template
+	validateFieldGroup: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
 	afterRendering: [function (oEvent) {
 		var ${control} = oEvent.getSource();
 	}, this],
@@ -897,8 +1003,10 @@
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
+	fieldGroupIds=""
 	context=""
 	template=""
+	validateFieldGroup=""
 	afterRendering=""
 	beforeRendering="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->

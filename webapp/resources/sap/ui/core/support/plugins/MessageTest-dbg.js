@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-// Overlay for resource: sap/ui/core/support/plugins/MessageTest.js 
+// Overlay for resource: sap/ui/core/support/plugins/MessageTest.js
 
 // Provides class sap.ui.core.support.plugins.MessageTest (Test  plugin for support tool communication)
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.base.Object
-		 * @version 1.30.8
+		 * @version 1.32.7
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.MessageTest

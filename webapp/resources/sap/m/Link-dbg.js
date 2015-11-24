@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @implements sap.ui.core.IShrinkable
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -45,17 +45,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			text : {type : "string", group : "Data", defaultValue : ''},
 
 			/**
-			 * Whether the link can be triggered by the user.
+			 * Determines whether the link can be triggered by the user.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Options are the standard values for window.open() supported by browsers: _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered. This property is only used for href URLs.
+			 * Options are the standard values for window.open() supported by browsers: _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered. This property is only used when the href property is set.
 			 */
 			target : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * Width of the link. When it is set (CSS-size such as % or px), this is the exact size. When left blank, the text defines the size.
+			 * Width of the link (CSS-size such as % or px). When it is set, this is the exact size. When left blank, the text defines the size.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			href : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 			/**
-			 * Whether the link text is allowed to wrap when there is not sufficient space.
+			 * Determines whether the link text is allowed to wrap when there is not sufficient space.
 			 */
 			wrapping : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -82,13 +82,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
-			 * Subtle links look more like standard text than like links. They should only be used to help with visual hierarchy between large data lists of important and less important links. Subtle links should not be used in any other usecase.
+			 * Subtle links look more like standard text than like links. They should only be used to help with visual hierarchy between large data lists of important and less important links. Subtle links should not be used in any other use case.
 			 * @since 1.22
 			 */
 			subtle : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Set this property to true if the link should appear emphasized.
+			 * Emphasized links look visually more important than regular links.
 			 * @since 1.22
 			 */
 			emphasized : {type : "boolean", group : "Behavior", defaultValue : false}
@@ -119,7 +119,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	EnabledPropagator.call(Link.prototype); // inherit "disabled" state from parent controls
 
 	/**
-	 * Also trigger link activation when space is pressed on the focused control
+	 * Triggers link activation when space key is pressed on the focused control.
+	 *
+	 * @param {jQuery.Event} oEvent
 	 */
 	Link.prototype.onsapspace = function(oEvent) {
 		this._handlePress(oEvent); // this calls any JS event handlers
@@ -141,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	/**
-	 * Function is called when Link is triggered.
+	 * Handler for the "press" event of the link.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -150,7 +152,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getEnabled()) {
 			// mark the event for components that needs to know if the event was handled by the link
 			oEvent.setMarked();
-			
+
 			if (!this.firePress() || !this.getHref()) { // fire event and check return value whether default action should be prevented
 				oEvent.preventDefault();
 			}
@@ -165,7 +167,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		Link.prototype.onclick = Link.prototype._handlePress;
 	}
 
-
+	/**
+	 * Handles the touch event on mobile devices.
+	 *
+	 * @param {jQuery.Event} oEvent
+	 */
 	Link.prototype.ontouchstart = function(oEvent) {
 		if (this.getEnabled()) {
 			// for controls which need to know whether they should handle events bubbling from here
@@ -199,11 +205,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkSubtle", bSubtle);
 			if (bSubtle) {
-				if (!jQuery.sap.domById(this.getId() + "-linkSubtle")) {
+				if (!this.getDomRef("linkSubtle")) {
 					$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
 				}
 			} else {
-				jQuery.sap.byId(this.getId() + "-linkSubtle").remove();
+				this.$("linkSubtle").remove();
 			}
 		}
 		return this;
@@ -216,11 +222,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkEmphasized", bEmphasized);
 			if (bEmphasized) { // strictly spoken this should only be done when accessibility mode is true. But it is true by default, so not sure it is worth checking...
-				if (!jQuery.sap.domById(this.getId() + "-linkEmphasized")) {
+				if (!this.getDomRef("linkEmphasized")) {
 					$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
 				}
 			} else {
-				jQuery.sap.byId(this.getId() + "-linkEmphasized").remove();
+				this.$("linkEmphasized").remove();
 			}
 		}
 		return this;
@@ -274,7 +280,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Function that translates the resource text.
+	 * Translates a text from the resource bundle.
 	 *
 	 * @param {String} sKey the resource to be translated
 	 * @private

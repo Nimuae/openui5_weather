@@ -8,7 +8,7 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'../base/Interface', '../base/Object', 'sap/ui/core/LabelEnablement',
-		'jquery.sap.act', 'jquery.sap.encoder'
+		'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom', 'jquery.sap.trace'
 	], function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
 
 	"use strict";
@@ -38,7 +38,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -208,7 +208,7 @@ sap.ui.define([
 		}
 		this.aRenderStack.unshift(oControl.getId());
 		// start performance measurement
-		jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName());
+		jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
 
 		//Remember the current buffer size to check later whether the control produced output
 		var iBufferLength = this.aBuffer.length;
@@ -268,7 +268,11 @@ sap.ui.define([
 		}
 
 		//Render the control using the RenderManager interface
-		oRenderer.render(this.getRendererInterface(), oControl);
+		if (oRenderer && typeof oRenderer.render === "function") {
+			oRenderer.render(this.getRendererInterface(), oControl);
+		} else {
+			jQuery.sap.log.error("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
+		}
 
 		this.aStyleStack.pop();
 
@@ -342,7 +346,7 @@ sap.ui.define([
 						// store the element on the event (aligned with jQuery syntax)
 						oEvent.srcControl = oControl;
 						// start performance measurement
-						jQuery.sap.measure.start(oControl.getId() + "---AfterRendering","AfterRendering of " + oControl.getMetadata().getName());
+						jQuery.sap.measure.start(oControl.getId() + "---AfterRendering","AfterRendering of " + oControl.getMetadata().getName(), ["rendering","after"]);
 						oControl._handleEvent(oEvent);
 						// end performance measurement
 						jQuery.sap.measure.end(oControl.getId() + "---AfterRendering");
@@ -464,6 +468,8 @@ sap.ui.define([
 			this.aStyleStack = [{}];
 
 			jQuery.sap.act.refresh();
+
+			jQuery.sap.interaction.notifyStepEnd();
 		};
 
 		/**
@@ -547,6 +553,8 @@ sap.ui.define([
 							if (oldDomNode) {
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
 									jQuery(oldDomNode).html(sHTML);
+								} else if (this._isDomPathingEnabled()) {
+									jQuery.sap.replaceDOM(oldDomNode, sHTML, true);
 								} else {
 									jQuery(oldDomNode).replaceWith(sHTML);
 								}
@@ -651,7 +659,7 @@ sap.ui.define([
 			ATTR_UI_AREA_MARKER = "data-sap-ui-area";
 
 		function getPreserveArea() {
-			var $preserve = jQuery("#" + ID_PRESERVE_AREA);
+			var $preserve = jQuery.sap.byId(ID_PRESERVE_AREA);
 			if ($preserve.length === 0) {
 				$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
 					addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
@@ -728,7 +736,7 @@ sap.ui.define([
 
 			}
 
-			jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id);
+			jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id, ["rendering","preserve"]);
 			if ( bPreserveRoot ) {
 				check(oRootNode);
 			} else {
@@ -1024,7 +1032,7 @@ sap.ui.define([
 		this.write(sPlaceholderHtml);
 		return this;
 	};
-	
+
 	/**
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of a element
@@ -1077,7 +1085,7 @@ sap.ui.define([
 	 */
 	RenderManager.prototype.writeAttributeEscaped = function(sName, vValue) {
 		// writeAttribute asserts
-		this.writeAttribute(sName, jQuery.sap.escapeHTML(String(vValue)));
+		this.writeAttribute(sName, jQuery.sap.encodeHTML(String(vValue)));
 		return this;
 	};
 
@@ -1284,7 +1292,8 @@ sap.ui.define([
 			mDefaultAttributes = {
 				"data-sap-ui-icon-content": oIconInfo.content,
 				"role": "presentation",
-				"aria-label": oIconInfo.text || oIconInfo.name
+				"aria-label": oIconInfo.text || oIconInfo.name,
+				"title": oIconInfo.text || oIconInfo.name
 			};
 
 			this.write("style=\"font-family: " + oIconInfo.fontFamily + ";\" ");
@@ -1300,7 +1309,7 @@ sap.ui.define([
 
 		if (typeof mAttributes === "object") {
 			for (sProp in mAttributes) {
-				if (mAttributes.hasOwnProperty(sProp)) {
+				if (mAttributes.hasOwnProperty(sProp) && mAttributes[sProp] !== null) {
 					this.writeAttributeEscaped(sProp, mAttributes[sProp]);
 				}
 			}
@@ -1309,6 +1318,22 @@ sap.ui.define([
 		this.write(bIconURI ? "></span>" : "/>");
 
 		return this;
+	};
+
+	/**
+	 * Determines whether Dom Patching is enabled or not
+	 * @returns {Boolean}
+	 * @private
+	 */
+	RenderManager.prototype._isDomPathingEnabled = function() {
+		if (this._bDomPathing === undefined) {
+			this._bDomPathing = this.getConfiguration().getDomPatching();
+			if (this._bDomPathing) {
+				jQuery.sap.log.warning("DOM Patching is enabled: This feature should be used only for the testing purposes!");
+			}
+		}
+
+		return this._bDomPathing;
 	};
 
 	/**

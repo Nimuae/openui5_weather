@@ -10,20 +10,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new RichTooltip.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * 
+	 *
 	 * Is used to provide tool tips that can have long text, image and title. This tool tip extends the TooltipBase.
 	 * @extends sap.ui.core.TooltipBase
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -31,26 +31,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RichTooltip = TooltipBase.extend("sap.ui.commons.RichTooltip", /** @lends sap.ui.commons.RichTooltip.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Tool tip title to be displayed in the header.
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * If RichTooltip contains an image, this property is used to define the source path.
 			 */
 			imageSrc : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * This property is an individual text that will be used instead of the default ValueState text
 			 * @since 1.11.1
 			 */
 			valueStateText : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * This is the alt text for the image
 			 * @since 1.11.1
@@ -58,19 +58,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 			imageAltText : {type : "string", group : "Misc", defaultValue : null}
 		},
 		aggregations : {
-	
+
 			/**
 			 * FormattedTextView control used in the content area to enable HTML-text within the content
 			 */
-			formattedText : {type : "sap.ui.commons.FormattedTextView", multiple : false, visibility : "hidden"}, 
-	
+			formattedText : {type : "sap.ui.commons.FormattedTextView", multiple : false, visibility : "hidden"},
+
 			/**
 			 * Value State Text that can be specified individually.
 			 */
 			individualStateText : {type : "sap.ui.commons.FormattedTextView", multiple : false, visibility : "hidden"}
 		}
 	}});
-	
+
 	/**
 	 * Calculates the height of the RichTooltip to set a proper min-height.
 	 * Additionally the ARIA attributes are set to the corresponding elements.
@@ -82,14 +82,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 		if (oText && oText.getDomRef()) {
 			// set a corresponding ARIA role if there is a text
 			oText.$().attr("role", "tooltip");
-	
+
 			if (this.getImageSrc() !== "") {
 				// if text and image are set a bigger min-width is needed
 				this.$().addClass("sapUiRttContentWide");
 			}
 		}
 	};
-	
+
 	/**
 	 * This sets an individual text for the ValueState of the parent element of the RichTooltip.
 	 *
@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 				oValueStateText = new sap.ui.commons.FormattedTextView(this.getId() + "-valueStateText", {
 					htmlText : sText
 				}).addStyleClass("sapUiRttValueStateText").addStyleClass("individual");
-	
+
 				this.setAggregation("individualStateText", oValueStateText);
 				this.setProperty("valueStateText", sText, true);
 			}
@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 			}
 		}
 	};
-	
+
 	/**
 	 * This returns the previously set text. Since a FormattedTextView is used for
 	 * rendering and stuff the corresponding property of the FormattedTextView is
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 		}
 		return "";
 	};
-	
+
 	/**
 	 * This overrides the function of TooltipBase to create a FormattedTextView that
 	 * should be used for rendering
@@ -147,18 +147,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 			//replace carriage returns etc. with br tag
 			sText = sText.replace(/(\r\n|\n|\r)/g,"<br />");
 		}
+
 		var oText = this.getAggregation("formattedText");
 		if (oText) {
 			oText.setHtmlText(sText);
 		} else {
-			oText = new sap.ui.commons.FormattedTextView(this.getId() + "-txt", {
-				htmlText : sText
-			}).addStyleClass("sapUiRttText");
+			oText = new sap.ui.commons.FormattedTextView(this.getId() + "-txt");
+			oText.setHtmlText(sText);
+			oText.addStyleClass("sapUiRttText");
 			this.setAggregation("formattedText", oText);
 			this.setProperty("text", sText, true);
 		}
 	};
-	
+
 	/**
 	 * This returns the previously set text. Since a FormattedTextView is used for
 	 * rendering and stuff the corresponding property of the FormattedTextView is
@@ -175,39 +176,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 		}
 		return "";
 	};
-	
+
 	RichTooltip.prototype.onfocusin = function(oEvent) {
 		TooltipBase.prototype.onfocusin.apply(this, arguments);
-	
+
 		var oSC = jQuery(oEvent.target).control(0);
 		if (oSC != null) {
 			var sId = this.getId();
 			var sIds = "";
-	
+
 			if (this.getTitle() !== "") {
 				sIds += sId + "-title ";
 			}
-	
+
 			var $valueStateText = this.$("valueStateText");
 			if ($valueStateText.length > 0) {
 				sIds += sId + "-valueStateText ";
 			}
-	
+
 			// alt image
 			if (this.getImageSrc() !== "") {
 				sIds += sId + "-image ";
 			}
-	
+
 			//
 			if (this.getText() !== "") {
 				sIds += sId + "-txt";
 			}
-	
+
 			var oDomRef = oSC.getFocusDomRef();
 			oDomRef.setAttribute("aria-describedby", sIds);
 		}
 	};
-	
+
 
 	return RichTooltip;
 

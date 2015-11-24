@@ -14,13 +14,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new ObjectHeader.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * ObjectHeader is a display control that enables the user to easily identify a specific object. The object header title is the key identifier of the object and additional text and icons can be used to further distinguish it from other objects.
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -44,12 +44,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			number : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * Object header number units qualifier.
+			 * Object header number units qualifier
 			 */
 			numberUnit : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * Introductory text for the object header.
+			 * Introductory text for the object header
 			 */
 			intro : {type : "string", group : "Misc", defaultValue : null},
 
@@ -64,7 +64,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			titleActive : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * Object header icon
+			 * Object header icon.
+			 * 
+			 * <b>Note:</b> Recursive resolution of binding expressions is not supported by the framework.
+			 * It works only in ObjectHeader, since it is a composite control and creates an Image control internally.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
@@ -86,13 +89,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * Set the favorite state to true or false. The showMarkers property must be true for this property to take effect.
+			 * Sets the favorite state to true or false. The showMarkers property must be true for this property to take effect.
 			 * @since 1.16.0
 			 */
 			markFavorite : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * Set the flagged state to true or false. The showMarkers property must be true for this property to take effect.
+			 * Sets the flagged state to true or false. The showMarkers property must be true for this property to take effect.
 			 * @since 1.16.0
 			 */
 			markFlagged : {type : "boolean", group : "Misc", defaultValue : false},
@@ -104,7 +107,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			showMarkers : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * When it is true, the selector arrow icon/image is shown and can be pressed.
+			 * When set to true, the selector arrow icon/image is shown and can be pressed.
 			 * @since 1.16.0
 			 */
 			showTitleSelector : {type : "boolean", group : "Misc", defaultValue : false},
@@ -116,15 +119,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
 
 			/**
+			 * NOTE: Only applied if you set "responsive=false".
 			 * Displays the condensed object header with title, one attribute, number and number unit.
 			 */
 			condensed : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * NOTE: Only applied if you set "condensed=true" or "responsive=true".
 			 * This property is used to set the background color of the ObjectHeader. Possible values are "Solid", "Translucent" and "Transparent".
+			 * NOTE: The different types of ObjectHeader come with different default background. 
+			 * - non responsive ObjectHeader: Transparent
+			 * - responsive ObjectHeader: Translucent
+			 * - condensed ObjectHeder: Solid
 			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Transparent},
+			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance"},
 
 			/**
 			 * If this property is set to true the ObjectHeader is rendered with a different design and reacts responsively to the screen sizes.
@@ -181,7 +188,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * This property specifies the number and unit directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			numberTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			numberTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+
+			/**
+			 * Sets custom text for the tooltip of the select title arrow. If not set, a default text of the tooltip will be displayed.
+			 * @since 1.30.0
+			 */
+			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"}
 
 		},
 		defaultAggregation : "attributes",
@@ -241,7 +254,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events : {
 
 			/**
-			 * Event is fired when the title is active and the user tap/click on it
+			 * Event is fired when the title is active and the user taps/clicks on it
 			 */
 			titlePress : {
 				parameters : {
@@ -254,7 +267,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			},
 
 			/**
-			 * Event is fired when the title is active and the user tap/click on it
+			 * Event is fired when the intro is active and the user taps/clicks on it
 			 */
 			introPress : {
 				parameters : {
@@ -267,7 +280,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			},
 
 			/**
-			 * Event is fired when the title icon is active and the user tap/click on it
+			 * Event is fired when the title icon is active and the user taps/clicks on it
 			 */
 			iconPress : {
 				parameters : {
@@ -297,7 +310,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	ObjectHeader.prototype.init = function() {
 		var that = this,
-		oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
+			oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle;
 
 		//TODO Remove placeholder when Safari iconFont issue is addressed.
 		this._oPlaceholderIcon = IconPool.createControlByURI({
@@ -326,7 +339,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			src: IconPool.getIconURI("arrow-down"),
 			decorative: false,
 			visible : false,
-			useIconTooltip : false,
+			tooltip: oLibraryResourceBundle.getText("OH_SELECT_ARROW_TOOLTIP"),
 			size: "1.375rem",
 			press : function(oEvent) {
 				that.fireTitleSelectorPress({
@@ -395,6 +408,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype.setNumberState = function (sState) {
 		this.setProperty("numberState", sState, true);
 		this._getObjectNumber().setState(sState);
+		return this;
+	};
+
+	/**
+	 * Sets the new text for the tooltip of the select title arrow to the internal aggregation
+	 * @override
+	 * @public
+	 * @param sTooltip the new value
+	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 */
+	ObjectHeader.prototype.setTitleSelectorTooltip = function (sTooltip) {
+		this.setProperty("titleSelectorTooltip", sTooltip, false);
+		this._oTitleArrowIcon.setTooltip(sTooltip);
 		return this;
 	};
 
@@ -710,12 +736,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype.onAfterRendering = function() {
 		var oObjectNumber = this.getAggregation("_objectNumber");
 		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
-		var $titleArrow = jQuery.sap.byId(this.getId() + "-titleArrow");
+		var $titleArrow = this.$("titleArrow");
 
-		$titleArrow.attr("aria-haspopup", "true");
-		$titleArrow.attr("role", "link");
-		$titleArrow.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OH_ARIA_SELECT_ARROW_VALUE")); // set label from resource translation bundle
-		
+		$titleArrow.attr("role", "button");
+
 		if (this.getResponsive()) {
 			this._adjustIntroDiv();
 
@@ -873,6 +897,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return bHasStatus;
 	};
 
+	/**
+	 * Returns the default background design for the different types of the ObjectHeader
+	 * @private
+	 * @returns {sap.m.BackgroundDesign}
+	 */
+	ObjectHeader.prototype._getDefaultBackgroundDesign = function() {
+		if (this.getCondensed()) {
+			return sap.m.BackgroundDesign.Solid;
+		} else {
+			if (this.getResponsive()) {
+				return sap.m.BackgroundDesign.Translucent;
+			} else { // old none responsive OH
+				return sap.m.BackgroundDesign.Transparent;
+			}
+		}
+		
+	};
+	
+
+	/**
+	 * Returns either the default background or the one that is set by the user
+	 *
+	 * @private
+	 */
+	ObjectHeader.prototype._getBackground = function() {
+		
+		if (this.getBackgroundDesign() === undefined) {
+			return this._getDefaultBackgroundDesign();
+		} else {
+			return this.getBackgroundDesign();
+		}
+		
+	};
 
 	return ObjectHeader;
 

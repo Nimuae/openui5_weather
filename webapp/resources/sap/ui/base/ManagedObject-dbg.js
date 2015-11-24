@@ -172,7 +172,7 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -1983,7 +1983,6 @@ sap.ui.define([
 		return bInvalidateSuppressed;
 	};
 
-
 	/**
 	 * Removes the given child from this object's named aggregation.
 	 * @see sap.ui.core.UIArea#_removeChild
@@ -2121,7 +2120,6 @@ sap.ui.define([
 		return this.oParent;
 	};
 
-
 	/**
 	 * Cleans up the resources associated with this object and all its aggregated children.
 	 *
@@ -2175,7 +2173,7 @@ sap.ui.define([
 				that.unbindProperty(sName, true);
 			}
 		});
-
+		
 		jQuery.each(this.mBoundObjects, function(sName, oBoundObject) {
 			that.unbindObject(sName, /* _bSkipUpdateBindingContext */ true);
 		});
@@ -2557,6 +2555,7 @@ sap.ui.define([
 		var oModel,
 			oContext,
 			oBinding,
+			oDataStateTimer,
 			sMode,
 			sCompositeMode = BindingMode.TwoWay,
 			oType,
@@ -2566,41 +2565,40 @@ sap.ui.define([
 			that = this,
 			aBindings = [],
 			fModelChangeHandler = function(oEvent){
-				var oMessageManager = sap.ui.getCore().getMessageManager();
 				that.updateProperty(sName);
 				//clear Messages from messageManager
-				if (oMessageManager && that._aMessages && that._aMessages.length > 0) {
-					sap.ui.getCore().getMessageManager().removeMessages(that._aMessages);
-					that._aMessages = [];
-				}
-				//delete control Messages (value is updated from model) and update control with model messages
-				if (oBinding.getMessages()) {
-					that.propagateMessages(sName, oBinding.getMessages());
+				var oDataState = oBinding.getDataState();
+				if (oDataState) {
+					var oControlMessages = oDataState.getControlMessages();
+					if (oControlMessages && oControlMessages.length > 0) {
+						var oMessageManager = sap.ui.getCore().getMessageManager();
+						oDataState.setControlMessages([]); //remove the controlMessages before informing manager to avoid DataStateChange event to fire
+						if (oControlMessages) {
+							oMessageManager.removeMessages(oControlMessages);
+						}
+					}
+					oDataState.setInvalidValue(null); //assume that the model always sends valid data
 				}
 				if (oBinding.getBindingMode() === BindingMode.OneTime) {
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
-					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
+					// TODO remove the binding from the binding info or mark it somehow as "deactivated"? 
 				}
 			},
-			fMessageChangeHandler = function(oEvent){
-				var aAllMessages = [];
-
-				var sMessageSource = oEvent.getParameter("messageSource");
-				var aMessages = oEvent.getParameter("messages");
-
-				if (sMessageSource == "control") {
-					that._aMessages = aMessages;
+			fDataStateChangeHandler = function(){
+				var oDataState = oBinding.getDataState();
+				if (!oDataState) {
+					return;
 				}
-				//merge object/model messages
-				if (that._aMessages && that._aMessages.length > 0) {
-					aAllMessages = aAllMessages.concat(that._aMessages);
+				//inform generic refreshDataState method
+				if (that.refreshDataState) {
+					if (!oDataStateTimer) {
+						this.oDataStateTimer = jQuery.sap.delayedCall(0, this, function() {
+							that.refreshDataState(sName, oDataState);
+						});
+					}
 				}
-				if (oBinding.getMessages()) {
-					aAllMessages = aAllMessages.concat(oBinding.getMessages());
-				}
-				that.propagateMessages(sName, aAllMessages);
 			};
 
 		// Only use context for bindings on the primary model
@@ -2649,8 +2647,10 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(fModelChangeHandler);
-		oBinding.attachMessageChange(fMessageChangeHandler);
-
+		if (this.refreshDataState) {
+			oBinding.attachDataStateChange(fDataStateChangeHandler);
+		}
+	
 		// set only one formatter function if any
 		// because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility
 		// for formatter function which is now called by the property binding
@@ -2660,7 +2660,7 @@ sap.ui.define([
 		// Set additional information on the binding info
 		oBindingInfo.binding = oBinding;
 		oBindingInfo.modelChangeHandler = fModelChangeHandler;
-
+		oBindingInfo.dataStateChangeHandler = fDataStateChangeHandler;
 		oBinding.attachEvents(oBindingInfo.events);
 
 		oBinding.initialize();
@@ -2680,6 +2680,9 @@ sap.ui.define([
 		if (oBindingInfo) {
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+				if (this.refreshDataState) {
+					oBindingInfo.binding.detachDataStateChange(oBindingInfo.dataStateChangeHandler);
+				}
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
 				oBindingInfo.binding.destroy();
 			}
@@ -3853,29 +3856,39 @@ sap.ui.define([
 	/**
 	 * Searches and returns an array of child elements and controls which are
 	 * referenced within an aggregation or aggregations of child elements/controls.
-	 * This can be either done recursive or not.
+	 * This can be either done recursive or not. Optionally a condition function can be passed that
+	 * returns true if the object should be added to the array.
 	 * <br>
 	 * <b>Take care: this operation might be expensive.</b>
 	 * @param {boolean}
 	 *          bRecursive true, if all nested children should be returned.
+	 * @param {boolean}
+	 *          fnCondition if given, the object is passed as a parameter to the.
 	 * @return {sap.ui.base.ManagedObject[]} array of child elements and controls
 	 * @public
 	 */
-	ManagedObject.prototype.findAggregatedObjects = function(bRecursive) {
+	ManagedObject.prototype.findAggregatedObjects = function(bRecursive, fnCondition) {
 
 		var aAggregatedObjects = [];
+		if (fnCondition && !typeof fnCondition === "function") {
+			fnCondition = null;
+		}
 		function fFindObjects(oObject) {
 			for (var n in oObject.mAggregations) {
 				var a = oObject.mAggregations[n];
 				if (jQuery.isArray(a)) {
 					for (var i = 0; i < a.length; i++) {
-						aAggregatedObjects.push(a[i]);
+						if (!fnCondition || fnCondition(a[i])) {
+							aAggregatedObjects.push(a[i]);
+						}
 						if (bRecursive) {
 							fFindObjects(a[i]);
 						}
 					}
 				} else if (a instanceof ManagedObject) {
-					aAggregatedObjects.push(a);
+					if (!fnCondition || fnCondition(a)) {
+						aAggregatedObjects.push(a);
+					}
 					if (bRecursive) {
 						fFindObjects(a);
 					}

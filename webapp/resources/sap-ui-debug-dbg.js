@@ -26,7 +26,7 @@ sap.ui.predefine('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/
 	 * @class Control Tree used for the Debug Environment
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @alias sap.ui.debug.ControlTree
 	 * @private
 	 */
@@ -261,7 +261,7 @@ sap.ui.predefine('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/
 			}
 			var oParent = oSource.parentNode,
 				sId = oParent.getAttribute("sap-id"),
-				oElement = this.oCore.getElementById(sId),
+				oElement = this.oCore.byId(sId),
 				sNodeId = oParent.getAttribute("sap-type") === "Link" ? "sap-debug-controltree-" + sId : oParent.id;
 			this.oSelectionHighlighter.hide();
 			if (oElement && oElement instanceof Element) {
@@ -349,7 +349,7 @@ sap.ui.predefine('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/
 	ControlTree.prototype.getTargetDomRef = function(oTreeNodeDomRef) {
 		var sType = oTreeNodeDomRef.getAttribute("sap-type"),
 			sId = oTreeNodeDomRef.getAttribute("sap-id"),
-			oSomething = sType === "UIArea" ? this.oCore.getUIArea(sId) : this.oCore.getElementById(sId);
+			oSomething = sType === "UIArea" ? this.oCore.getUIArea(sId) : this.oCore.byId(sId);
 	
 		while (oSomething && oSomething instanceof Element) {
 			var oDomRef = oSomething.getDomRef();
@@ -416,7 +416,7 @@ sap.ui.predefine('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Int
 	 * @class Central Class for the Debug Environment
 	 *
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @private
 	 * @alias sap.ui.debug.DebugEnv
 	 */
@@ -1021,7 +1021,7 @@ sap.ui.predefine('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @param {sap.ui.core.Core}
 	 *            oCore the core instance to use for analysis
@@ -1084,7 +1084,7 @@ sap.ui.predefine('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base
 		var sControlId = oParams.getParameter("controlId");
 		this.oParentDomRef.innerHTML = "";
 	
-		var oControl = this.oCore.getElementById(sControlId);
+		var oControl = this.oCore.byId(sControlId);
 		if (!oControl) {
 			this.oParentDomRef.innerHTML = "Please select a valid control";
 			return;
@@ -1202,7 +1202,7 @@ sap.ui.predefine('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base
 					}
 					sTitle = ' title="This aggregation currently references an Element. You can set a ' + sType +  ' value instead"';
 				}
-				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + jQuery.sap.escapeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
+				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + jQuery.sap.encodeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
 			} else if (sType == "boolean") {
 				aHTML.push("<input type='checkbox' sap-name='" + sName + "' ");
 				if (oValue == true) {
@@ -1213,7 +1213,7 @@ sap.ui.predefine('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base
 				//Enum or Custom Type
 				var oEnum = jQuery.sap.getObject(sType);
 				if (!oEnum || oEnum instanceof DataType) {
-					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + jQuery.sap.escapeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
+					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + jQuery.sap.encodeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
 				} else {
 					aHTML.push("<select style='width:100%;font-size:8pt;background-color:#f5f5f5;' sap-name='" + sName + "'>");
 					sType = sType.replace("/",".");
@@ -1277,7 +1277,7 @@ sap.ui.predefine('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base
 	PropertyList.prototype.applyChanges = function(sId) {
 		var oSource = this.oParentDomRef.ownerDocument.getElementById(sId),
 			sControlId = oSource.getAttribute("sap-id"),
-			oControl = this.oCore.getElementById(sControlId),
+			oControl = this.oCore.byId(sControlId),
 			aInput = oSource.parentNode.getElementsByTagName("INPUT"),
 			aSelect = oSource.parentNode.getElementsByTagName("SELECT"),
 			oMethod;

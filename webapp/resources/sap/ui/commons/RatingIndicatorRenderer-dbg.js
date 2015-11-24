@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	RatingIndicatorRenderer.hoverRatingSymbol = function(iCount, oRating, bAfter){
-		var oSymbol = jQuery.sap.byId(oRating.getId() + "-itm-" + iCount);
+		var oSymbol = oRating.$("itm-" + iCount);
 		oSymbol.addClass("sapUiRatingItmHov");
 		var oSymbolImage = oSymbol.children("img");
 		var sIcon = RatingIndicatorRenderer.getThemeSymbol(bAfter ? "unselected" : "hover", oRating);
@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	RatingIndicatorRenderer.unhoverRatingSymbol = function(iCount, oRating){
-		var oSymbol = jQuery.sap.byId(oRating.getId() + "-itm-" + iCount);
+		var oSymbol = oRating.$("itm-" + iCount);
 		oSymbol.removeClass("sapUiRatingItmHov");
 		var oSymbolImage = oSymbol.children("img");
 		var sIcon = RatingIndicatorRenderer.getThemeSymbol("selected", oRating);

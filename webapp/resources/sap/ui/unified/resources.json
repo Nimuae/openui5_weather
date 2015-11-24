@@ -64,11 +64,45 @@
 			"name": "CalendarLegendRenderer.js"
 		},
 		{
+			"name": "CalendarMonthInterval-dbg.js",
+			"isDebug":true
+		},
+		{
+			"name": "CalendarMonthInterval.control"
+		},
+		{
+			"name": "CalendarMonthInterval.js"
+		},
+		{
+			"name": "CalendarMonthIntervalRenderer-dbg.js",
+			"isDebug":true
+		},
+		{
+			"name": "CalendarMonthIntervalRenderer.js"
+		},
+		{
 			"name": "CalendarRenderer-dbg.js",
 			"isDebug":true
 		},
 		{
 			"name": "CalendarRenderer.js"
+		},
+		{
+			"name": "CalendarTimeInterval-dbg.js",
+			"isDebug":true
+		},
+		{
+			"name": "CalendarTimeInterval.control"
+		},
+		{
+			"name": "CalendarTimeInterval.js"
+		},
+		{
+			"name": "CalendarTimeIntervalRenderer-dbg.js",
+			"isDebug":true
+		},
+		{
+			"name": "CalendarTimeIntervalRenderer.js"
 		},
 		{
 			"name": "ContentSwitcher-dbg.js",
@@ -370,6 +404,40 @@
 		},
 		{
 			"name": "calendar/MonthRenderer.js"
+		},
+		{
+			"name": "calendar/MonthsRow-dbg.js",
+			"isDebug":true
+		},
+		{
+			"name": "calendar/MonthsRow.control"
+		},
+		{
+			"name": "calendar/MonthsRow.js"
+		},
+		{
+			"name": "calendar/MonthsRowRenderer-dbg.js",
+			"isDebug":true
+		},
+		{
+			"name": "calendar/MonthsRowRenderer.js"
+		},
+		{
+			"name": "calendar/TimesRow-dbg.js",
+			"isDebug":true
+		},
+		{
+			"name": "calendar/TimesRow.control"
+		},
+		{
+			"name": "calendar/TimesRow.js"
+		},
+		{
+			"name": "calendar/TimesRowRenderer-dbg.js",
+			"isDebug":true
+		},
+		{
+			"name": "calendar/TimesRowRenderer.js"
 		},
 		{
 			"name": "calendar/YearPicker-dbg.js",

@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -608,7 +608,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 				sResolvedPath = this.isLegacySyntax() ? "/" + sPath : undefined;
 			}
 		}
-
+		if (!sPath && oContext) {
+			sResolvedPath = oContext.getPath();
+		}
 		// invariant: path never ends with a slash ... if root is requested we return /
 		if (sResolvedPath && sResolvedPath !== "/" && jQuery.sap.endsWith(sResolvedPath, "/")) {
 			sResolvedPath = sResolvedPath.substr(0, sResolvedPath.length - 1);
@@ -758,6 +760,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate);
+			oBinding.checkDataState(bForceUpdate);
 		});
 	};
 
@@ -779,7 +782,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @protected
 	 */
 	Model.prototype.getMessagesByPath = function(sPath) {
-		return this.mMessages[sPath];
+		if (this.mMessages) {
+			return this.mMessages[sPath] || [];
+		}
+		return null;
 	};
 
 	/**
@@ -787,9 +793,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @private
 	 */
 	Model.prototype.checkMessages = function() {
-		var aBindings = this.aBindings.slice(0);
-		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkMessages();
+		jQuery.each(this.aBindings, function(iIndex, oBinding) {
+			oBinding.checkDataState();
 		});
 	};
 
@@ -824,6 +829,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		return undefined;
 	};
 
+	/**
+	 * Returns the original value for the property with the given path and context.
+	 * The original value is the value that was last responded by a server if using a server model implementation.
+	 * 
+	 * @param {string} sPath the path/name of the property
+	 * @param {object} [oContext] the context if available to access the property value
+	 * @returns {any} vValue the value of the property
+	 * @public
+	 */
+	Model.prototype.getOriginalProperty = function(sPath, oContext) {
+		return this.getProperty(sPath, oContext);
+	};
+
+	/**
+	 * Returns whether a given path relative to the given contexts is in laundering state.
+	 * If data is send to the server the data state becomes laundering until the 
+	 * data was accepted or rejected
+	 * 
+	 * @param {string} sPath path to resolve
+	 * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+	 * @returns {boolean} true if the data in this path is laundering
+	 */
+	Model.prototype.isLaundering = function(sPath, oContext) {
+		return false;
+	};
 	return Model;
 
 });

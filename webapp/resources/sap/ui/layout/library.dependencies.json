@@ -3,15 +3,15 @@
     {
       "name" : "sap/ui/layout/DynamicSideContent.js",
       "description" : "Provides control sap.ui.layout.DynamicSideContent.",
-      "size" : 17944,
-      "compressedSize" : 7817,
-      "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/ResizeHandler.js", "sap/ui/Device.js"],
+      "size" : 21547,
+      "compressedSize" : 9551,
+      "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/ResizeHandler.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/layout/DynamicSideContentRenderer.js",
       "description" : "Provides default renderer for control sap.ui.layout.DynamicSideContent",
-      "size" : 2477,
+      "size" : 2478,
       "compressedSize" : 1328,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
@@ -19,7 +19,7 @@
     {
       "name" : "sap/ui/layout/FixFlex.js",
       "description" : "Provides control sap.ui.layout.FixFlex.",
-      "size" : 8262,
+      "size" : 8391,
       "compressedSize" : 3305,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/EnabledPropagator.js", "sap/ui/core/ResizeHandler.js", "sap/ui/layout/library.js"],
       "includes" : []
@@ -35,24 +35,24 @@
     {
       "name" : "sap/ui/layout/Grid.js",
       "description" : "Provides control sap.ui.layout.Grid.",
-      "size" : 10289,
-      "compressedSize" : 4927,
+      "size" : 10299,
+      "compressedSize" : 4937,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/layout/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/layout/GridData.js",
       "description" : "Provides control sap.ui.layout.GridData.",
-      "size" : 14976,
-      "compressedSize" : 6415,
+      "size" : 15533,
+      "compressedSize" : 6567,
       "required" : ["jquery.sap.global.js", "sap/ui/core/LayoutData.js", "sap/ui/layout/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/layout/GridRenderer.js",
       "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2015 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
-      "size" : 12821,
-      "compressedSize" : 5275,
+      "size" : 12855,
+      "compressedSize" : 5304,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
@@ -75,8 +75,8 @@
     {
       "name" : "sap/ui/layout/ResponsiveFlowLayout.js",
       "description" : "Provides control sap.ui.layout.ResponsiveFlowLayout.",
-      "size" : 20610,
-      "compressedSize" : 8055,
+      "size" : 21052,
+      "compressedSize" : 8168,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/IntervalTrigger.js", "sap/ui/core/theming/Parameters.js", "sap/ui/layout/ResponsiveFlowLayoutData.js", "sap/ui/layout/library.js"],
       "includes" : []
     },
@@ -99,8 +99,8 @@
     {
       "name" : "sap/ui/layout/Splitter.js",
       "description" : "Provides control sap.ui.layout.Splitter.",
-      "size" : 40088,
-      "compressedSize" : 13934,
+      "size" : 40896,
+      "compressedSize" : 14328,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/layout/library.js"],
       "includes" : []
     },
@@ -115,16 +115,16 @@
     {
       "name" : "sap/ui/layout/SplitterRenderer.js",
       "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2015 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
-      "size" : 3958,
-      "compressedSize" : 1887,
+      "size" : 4272,
+      "compressedSize" : 1949,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/layout/VerticalLayout.designtime.js",
       "description" : "Provides the Design Time Metadata for the sap.ui.layout.VerticalLayout control",
-      "size" : 365,
-      "compressedSize" : 205,
+      "size" : 527,
+      "compressedSize" : 369,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
@@ -147,8 +147,8 @@
     {
       "name" : "sap/ui/layout/form/Form.designtime.js",
       "description" : "Provides the Design Time Metadata for the sap.ui.layout.form.Form control",
-      "size" : 511,
-      "compressedSize" : 310,
+      "size" : 674,
+      "compressedSize" : 473,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
@@ -163,8 +163,8 @@
     {
       "name" : "sap/ui/layout/form/FormContainer.designtime.js",
       "description" : "Provides the Design Time Metadata for the sap.ui.layout.form.FormContainer control",
-      "size" : 324,
-      "compressedSize" : 174,
+      "size" : 487,
+      "compressedSize" : 337,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
@@ -195,8 +195,8 @@
     {
       "name" : "sap/ui/layout/form/FormLayoutRenderer.js",
       "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2015 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
-      "size" : 6091,
-      "compressedSize" : 2922,
+      "size" : 6209,
+      "compressedSize" : 2975,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
@@ -235,15 +235,15 @@
     {
       "name" : "sap/ui/layout/form/GridLayoutRenderer.js",
       "description" : "! UI development toolkit for HTML5 (OpenUI5) (c) Copyright 2009-2015 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
-      "size" : 17004,
-      "compressedSize" : 6933,
+      "size" : 17029,
+      "compressedSize" : 6958,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Renderer.js", "sap/ui/layout/form/FormLayoutRenderer.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/layout/form/ResponsiveGridLayout.js",
       "description" : "Provides control sap.ui.layout.form.ResponsiveGridLayout.",
-      "size" : 32918,
+      "size" : 32958,
       "compressedSize" : 12794,
       "required" : ["jquery.sap.global.js", "sap/ui/layout/Grid.js", "sap/ui/layout/GridData.js", "sap/ui/layout/form/FormLayout.js", "sap/ui/layout/library.js"],
       "includes" : []
@@ -259,8 +259,8 @@
     {
       "name" : "sap/ui/layout/form/ResponsiveLayout.js",
       "description" : "Provides control sap.ui.layout.form.ResponsiveLayout.",
-      "size" : 29289,
-      "compressedSize" : 9821,
+      "size" : 29704,
+      "compressedSize" : 10003,
       "required" : ["jquery.sap.global.js", "sap/ui/layout/ResponsiveFlowLayout.js", "sap/ui/layout/ResponsiveFlowLayoutData.js", "sap/ui/layout/form/FormLayout.js", "sap/ui/layout/library.js"],
       "includes" : []
     },
@@ -275,8 +275,8 @@
     {
       "name" : "sap/ui/layout/form/SimpleForm.js",
       "description" : "Provides control sap.ui.layout.form.SimpleForm.",
-      "size" : 47246,
-      "compressedSize" : 17822,
+      "size" : 47701,
+      "compressedSize" : 18035,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/layout/ResponsiveFlowLayoutData.js", "sap/ui/layout/form/Form.js", "sap/ui/layout/form/FormContainer.js", "sap/ui/layout/form/FormElement.js", "sap/ui/layout/form/FormLayout.js", "sap/ui/layout/library.js"],
       "includes" : []
     },
@@ -291,9 +291,15 @@
     {
       "name" : "sap/ui/layout/library.js",
       "description" : "Initialization Code and shared classes of library sap.ui.layout.",
-      "size" : 7343,
+      "size" : 7773,
       "compressedSize" : 2820,
       "required" : ["jquery.sap.global.js", "sap/ui/base/DataType.js", "sap/ui/core/library.js"],
+      "includes" : []
+    },
+    {
+      "name" : "sap/ui/layout/manifest.json",
+      "size" : 717,
+      "required" : [],
       "includes" : []
     },
     {
@@ -340,7 +346,7 @@
     },
     {
       "name" : "sap/ui/layout/messagebundle_el.properties",
-      "size" : 760,
+      "size" : 766,
       "required" : [],
       "includes" : []
     },
@@ -466,7 +472,7 @@
     },
     {
       "name" : "sap/ui/layout/messagebundle_ro.properties",
-      "size" : 447,
+      "size" : 446,
       "required" : [],
       "includes" : []
     },
@@ -514,13 +520,13 @@
     },
     {
       "name" : "sap/ui/layout/messagebundle_uk.properties",
-      "size" : 802,
+      "size" : 820,
       "required" : [],
       "includes" : []
     },
     {
       "name" : "sap/ui/layout/messagebundle_vi.properties",
-      "size" : 496,
+      "size" : 495,
       "required" : [],
       "includes" : []
     },

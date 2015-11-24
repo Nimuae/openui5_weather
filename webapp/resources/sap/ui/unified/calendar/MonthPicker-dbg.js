@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * renders a MonthPicker with ItemNavigation
 	 * This is used inside the calendar. Not for stand alone usage
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -160,6 +160,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		MonthPicker.prototype.onmouseup = function(oEvent){
+
+			// fire select event on mouseup to prevent closing MonthPicker during click
+
+			if (this._bMousedownChange) {
+				this._bMousedownChange = false;
+				this.fireSelect();
+			}
+
+		};
+
 		MonthPicker.prototype.onThemeChanged = function(){
 
 			if (this._bNoThemeChange) {
@@ -235,7 +246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _initItemNavigation(oThis){
 
 			var oRootDomRef = oThis.getDomRef();
-			var aDomRefs = oThis.$().find(".sapUiCalMonth");
+			var aDomRefs = oThis.$().find(".sapUiCalItem");
 			var iColumns = oThis.getColumns();
 			var iMonths = oThis.getMonths();
 			var bCycling = true;
@@ -312,7 +323,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var iMonth = iIndex + _getStartMonth(oThis);
 
 			_selectMonth(oThis, iMonth);
-			oThis.fireSelect();
+			oThis._bMousedownChange = true;
 
 			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
 			oEvent.setMark("cancelAutoClose");
@@ -376,9 +387,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				$DomRef = jQuery(aDomRefs[i]);
 				if ($DomRef.attr("id") == sId) {
-					$DomRef.addClass("sapUiCalMonthSel");
+					$DomRef.addClass("sapUiCalItemSel");
 				}else {
-					$DomRef.removeClass("sapUiCalMonthSel");
+					$DomRef.removeClass("sapUiCalItemSel");
 				}
 			}
 
@@ -491,9 +502,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					$DomRef.attr("aria-label", aMonthNamesWide[i + iStartMonth]);
 				}
 				if (i + iStartMonth == iSelectedMonth) {
-					$DomRef.addClass("sapUiCalMonthSel");
+					$DomRef.addClass("sapUiCalItemSel");
 				}else {
-					$DomRef.removeClass("sapUiCalMonthSel");
+					$DomRef.removeClass("sapUiCalItemSel");
 				}
 			}
 

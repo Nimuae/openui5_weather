@@ -12,36 +12,15 @@ jQuery.sap.declare('sap.ui.layout.DynamicSideContent'); // unresolved dependency
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.ResizeHandler'); // unlisted dependency retained
-jQuery.sap.require('sap.ui.Device'); // unlisted dependency retained
-sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/Device'],
-	function (jQuery, Control, ResizeHandler, Device) {
+sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler'],
+	function (jQuery, Control, ResizeHandler) {
 		"use strict";
 
-		var	S = "S",
-			M = "M",
-			L = "L",
-			XL = "XL",
-			HIDDEN_CLASS = "sapUiHidden",
-			SPAN_SIZE_12_CLASS = "sapUiDSCSpan12",
-			SPAN_SIZE_3 = 3,
-			SPAN_SIZE_4 = 4,
-			SPAN_SIZE_6 = 6,
-			SPAN_SIZE_8 = 8,
-			SPAN_SIZE_9 = 9,
-			SPAN_SIZE_12 = 12,
-			INVALID_BREAKPOINT_ERROR_MSG = "Invalid Breakpoint. Expected: S, M, L or XL",
-			INVALID_PARENT_WIDTH_ERROR_MSG = "Invalid input. Only values greater then 0 are allowed",
-			SC_GRID_CELL_SELECTOR = "SCGridCell",
-			MC_GRID_CELL_SELECTOR = "MCGridCell",
-			S_M_BREAKPOINT = 720,
-			M_L_BREAKPOINT = 1053,
-			L_XL_BREAKPOINT = 1440;
-
 		/**
-		 * Constructor for a new DynamicSideContent control.
+		 * Constructor for a new DynamicSideContent.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
 		 * The DynamicSideContent control allows additional (side) content to be displayed alongside or below the main
@@ -56,7 +35,7 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.30.8
+		 * @version 1.32.7
 		 *
 		 * @constructor
 		 * @public
@@ -78,7 +57,7 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 				showMainContent : {type : "boolean", group : "Appearance", defaultValue : true},
 
 				/**
-				 * Determines on which breakpoints the side content is visible
+				 * Determines on which breakpoints the side content is visible.
 				 */
 				sideContentVisibility : {type : "sap.ui.layout.SideContentVisibility", group : "Appearance", defaultValue : sap.ui.layout.SideContentVisibility.ShowAboveS},
 
@@ -100,62 +79,137 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 				containerQuery : {type : "boolean", group : "Behavior", defaultValue : false}
 			},
 			defaultAggregation : "mainContent",
+			events : {
+				/**
+				 * Fires when the current breakpoint has been changed.
+				 * @since 1.32
+				 */
+				breakpointChanged : {
+					parameters : {
+						currentBreakpoint : {type : "string"}
+					}
+				}
+			},
 			aggregations : {
 
 				/**
-				 * Main content controls
+				 * Main content controls.
 				 */
 				mainContent : {type: "sap.ui.core.Control", multiple:  true},
 
 				/**
-				 * Side content controls
+				 * Side content controls.
 				 */
 				sideContent : {type: "sap.ui.core.Control", multiple:  true}
 			}
 		}});
 
+		var	S = "S",
+			M = "M",
+			L = "L",
+			XL = "XL",
+			HIDDEN_CLASS = "sapUiHidden",
+			SPAN_SIZE_12_CLASS = "sapUiDSCSpan12",
+			MC_FIXED_CLASS = "sapUiDSCMCFixed",
+			SC_FIXED_CLASS = "sapUiDSCSCFixed",
+			SPAN_SIZE_3 = 3,
+			SPAN_SIZE_4 = 4,
+			SPAN_SIZE_6 = 6,
+			SPAN_SIZE_8 = 8,
+			SPAN_SIZE_9 = 9,
+			SPAN_SIZE_12 = 12,
+			INVALID_BREAKPOINT_ERROR_MSG = "Invalid Breakpoint. Expected: S, M, L or XL",
+			INVALID_PARENT_WIDTH_ERROR_MSG = "Invalid input. Only values greater then 0 are allowed",
+			SC_GRID_CELL_SELECTOR = "SCGridCell",
+			MC_GRID_CELL_SELECTOR = "MCGridCell",
+			S_M_BREAKPOINT = 720,
+			M_L_BREAKPOINT = 1024,
+			L_XL_BREAKPOINT = 1440;
+
+		DynamicSideContent.prototype.init = function () {
+			this._bSuppressInitialFireBreakPointChange = true;
+		};
+
 		/**
-		 * Setter for the showSideContent property
-		 * @param {boolean} bVisible determines if the side content part is visible
-		 * @param {boolean} bSuppressVisualUpdate determines if the visual state is updated
-		 * @returns {object} {DynamicSideContent} for chaining
+		 * Sets the showSideContent property.
+		 * @param {boolean} bVisible Determines if the side content part is visible
+		 * @param {boolean} bSuppressVisualUpdate Determines if the visual state is updated
+		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
 		DynamicSideContent.prototype.setShowSideContent = function (bVisible, bSuppressVisualUpdate) {
 			this.setProperty("showSideContent", bVisible, true);
-			if (!bSuppressVisualUpdate) {
+			this._SCVisible = bVisible;
+			if (!bSuppressVisualUpdate && this.$().length) {
+				this._setResizeData(this.getCurrentBreakpoint(), this.getEqualSplit());
+				if (this._currentBreakpoint === S) {
+					this._MCVisible = true;
+				}
 				this._changeGridState();
 			}
 			return this;
 		};
 
 		/**
-		 * Setter for the showMainContent property
-		 * @param {boolean} bVisible determines if the main content part is visible
-		 * @param {boolean} bSuppressVisualUpdate determines if the visual state is updated
-		 * @returns {object} {DynamicSideContent} for chaining
+		 * Sets the showMainContent property.
+		 * @param {boolean} bVisible Determines if the main content part is visible
+		 * @param {boolean} bSuppressVisualUpdate Determines if the visual state is updated
+		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
 		DynamicSideContent.prototype.setShowMainContent = function (bVisible, bSuppressVisualUpdate) {
 			this.setProperty("showMainContent", bVisible, true);
-			if (!bSuppressVisualUpdate) {
+			this._MCVisible = bVisible;
+			if (!bSuppressVisualUpdate && this.$().length) {
+				this._setResizeData(this.getCurrentBreakpoint(), this.getEqualSplit());
+				if (this._currentBreakpoint === S) {
+					this._SCVisible = true;
+				}
 				this._changeGridState();
 			}
 			return this;
 		};
 
 		/**
-		 * Set or unset the page in equalSplit mode
-		 * @param {boolean}[bState] determines if the page is set to equalSplit mode
-		 * @returns {object} {DynamicSideContent} for chaining
+		 * Gets the value of showSideContent property.
+		 * @returns {boolean} Side content visibility state
+		 * @override
+		 * @public
+		 */
+		DynamicSideContent.prototype.getShowSideContent = function () {
+			if (this._currentBreakpoint === S) {
+				return this._SCVisible && this.getProperty("showSideContent");
+			} else {
+				return this.getProperty("showSideContent");
+			}
+		};
+
+		/**
+		 * Gets the value of showMainContent property.
+		 * @returns {boolean} Side content visibility state
+		 * @override
+		 * @public
+		 */
+		DynamicSideContent.prototype.getShowMainContent = function () {
+			if (this._currentBreakpoint === S) {
+				return this._MCVisible && this.getProperty("showMainContent");
+			} else {
+				return this.getProperty("showMainContent");
+			}
+		};
+
+		/**
+		 * Sets or unsets the page in equalSplit mode.
+		 * @param {boolean}[bState] Determines if the page is set to equalSplit mode
+		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
 		DynamicSideContent.prototype.setEqualSplit = function (bState) {
-			this.setShowMainContent(true, true);
-			this.setShowSideContent(true, true);
+			this._MCVisible = true;
+			this._SCVisible = true;
 			this.setProperty("equalSplit", bState, true);
 			if (this._currentBreakpoint) {
 				this._setResizeData(this._currentBreakpoint, bState);
@@ -165,9 +219,10 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		};
 
 		/**
-		 * Adds control to the side content area. Only the side content part in the aggregation is re-rendered
-		 * @param {object} oControl object to be added in the aggregation
-		 * @returns {object} {DynamicSideContent} for chaining
+		 * Adds a control to the side content area.
+		 * Only the side content part in the aggregation is re-rendered.
+		 * @param {object} oControl Object to be added in the aggregation
+		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
@@ -179,9 +234,10 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		};
 
 		/**
-		 * Adds control to the main content area. Only the main content part in the aggregation is re-rendered
-		 * @param {object} oControl object to be added in the aggregation
-		 * @returns {object} {DynamicSideContent} for chaining
+		 * Adds a control to the main content area.
+		 * Only the main content part in the aggregation is re-rendered.
+		 * @param {object} oControl Object to be added in the aggregation
+		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
 		 * @override
 		 * @public
 		 */
@@ -193,29 +249,41 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		};
 
 		/**
-		 * Used for the toggle button functionality. When the control is on a phone screen size only
-		 * one control area is visible. This helper method is used to implement a button/switch for changing
+		 * Used for the toggle button functionality.
+		 * When the control is on a phone screen size only, one control area is visible.
+		 * This helper method is used to implement a button/switch for changing
 		 * between the main and side content areas.
-		 * Only works if the current breakpoint is "S"
-		 * @returns {object} {DynamicSideContent} for chaining
+		 * Only works if the current breakpoint is "S".
+		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
 		 * @public
 		 */
 		DynamicSideContent.prototype.toggle = function () {
 			if (this._currentBreakpoint === S) {
-				if (this.getShowMainContent() && !this.getShowSideContent()) {
-					this.setShowMainContent(false, true);
-					this.setShowSideContent(true, true);
-				} else if (!this.getShowMainContent() && this.getShowSideContent()) {
+
+				if (!this.getProperty("showMainContent")) {
 					this.setShowMainContent(true, true);
-					this.setShowSideContent(false, true);
+					this._MCVisible = false;
 				}
+				if (!this.getProperty("showSideContent")) {
+					this.setShowSideContent(true, true);
+					this._SCVisible = false;
+				}
+
+				if (this._MCVisible && !this._SCVisible) {
+					this._SCVisible = true;
+					this._MCVisible = false;
+				} else if (!this._MCVisible && this._SCVisible) {
+					this._MCVisible = true;
+					this._SCVisible = false;
+				}
+
 				this._changeGridState();
 			}
 			return this;
 		};
 
 		/**
-		 * Returns the breakpoint for the current state of the control
+		 * Returns the breakpoint for the current state of the control.
 		 * @returns {String} currentBreakpoint
 		 * @public
 		 */
@@ -231,9 +299,12 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		DynamicSideContent.prototype.onBeforeRendering = function () {
 			this._detachContainerResizeListener();
 
+			this._SCVisible = this.getProperty("showSideContent");
+			this._MCVisible = this.getProperty("showMainContent");
+
 			if (!this.getContainerQuery()) {
 				this._iWindowWidth = jQuery(window).width();
-				this._currentBreakpoint = this._getBreakPointFromWidth(this._iWindowWidth);
+				this._setBreakpointFromWidth(this._iWindowWidth);
 				this._setResizeData(this._currentBreakpoint, this.getEqualSplit());
 			}
 		};
@@ -246,6 +317,7 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		DynamicSideContent.prototype.onAfterRendering = function () {
 			if (this.getContainerQuery()) {
 				this._attachContainerResizeListener();
+				this._handleMediaChange();
 			} else {
 				var that = this;
 				jQuery(window).resize(function() {
@@ -275,10 +347,10 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		};
 
 		/**
-		 * Re-renders only part of the control that is changed
-		 * @param {object} {aControls} array containing the passed aggregation controls
-		 * @param {object} {$domElement} dom reference of the control to be re-rendered
-		 * @returns {object} {DynamicSideContent} for chaining
+		 * Re-renders only part of the control that is changed.
+		 * @param {object} aControls Array containing the passed aggregation controls
+		 * @param {object} $domElement DOM reference of the control to be re-rendered
+		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
 		 * @private
 		 */
 		DynamicSideContent.prototype._rerenderControl = function (aControls, $domElement) {
@@ -292,7 +364,7 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		};
 
 		/**
-		 * Initializes scroll for side and main content
+		 * Initializes scroll for side and main content.
 		 * @private
 		 */
 		DynamicSideContent.prototype._initScrolling = function () {
@@ -316,7 +388,7 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		};
 
 		/**
-		 * Attaches the event listener for the needed breakpoints to the container
+		 * Attaches event listener for the needed breakpoints to the container.
 		 * @private
 		 */
 		DynamicSideContent.prototype._attachContainerResizeListener = function () {
@@ -326,7 +398,7 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		};
 
 		/**
-		 * Detaches the event listener for the needed breakpoints to the container
+		 * Detaches event listener for the needed breakpoints to the container.
 		 * @private
 		 */
 		DynamicSideContent.prototype._detachContainerResizeListener = function () {
@@ -337,16 +409,15 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 		};
 
 		/**
-		 * Gets the current breakpoint, related to the width, which is passed to the method
+		 * Gets the current breakpoint, related to the width, which is passed to the method.
 		 * @private
-		 * @param {integer} iWidth is the parent container width
-		 * @returns {String} breakpoint corresponding to the width passed
+		 * @param {integer} iWidth The parent container width
+		 * @returns {String} Breakpoint corresponding to the width passed
 		 */
 		DynamicSideContent.prototype._getBreakPointFromWidth = function (iWidth) {
 			if (iWidth <= 0) {
 				throw new Error(INVALID_PARENT_WIDTH_ERROR_MSG);
 			}
-
 			if (iWidth <= S_M_BREAKPOINT && this._currentBreakpoint !== S) {
 				return S;
 			} else if ((iWidth > S_M_BREAKPOINT) && (iWidth <= M_L_BREAKPOINT) && this._currentBreakpoint !== M) {
@@ -359,8 +430,26 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 			return this._currentBreakpoint;
 		};
 
+
 		/**
-		 * Handles the screen size breakpoints
+		 * Sets the current breakpoint, related to the width, which is passed to the method.
+		 * @private
+		 * @param {integer} iWidth is the parent container width
+		 */
+		DynamicSideContent.prototype._setBreakpointFromWidth = function (iWidth) {
+			if (iWidth <= 0) {
+				throw new Error(INVALID_PARENT_WIDTH_ERROR_MSG);
+			}
+			this._currentBreakpoint = this._getBreakPointFromWidth(iWidth);
+			if (this._bSuppressInitialFireBreakPointChange) {
+				this._bSuppressInitialFireBreakPointChange = false;
+			} else {
+				this.fireBreakpointChanged({currentBreakpoint : this._currentBreakpoint});
+			}
+		};
+
+		/**
+		 * Handles the screen size breakpoints.
 		 * @private
 		 */
 		DynamicSideContent.prototype._handleMediaChange = function () {
@@ -374,9 +463,11 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 				this._iOldWindowWidth = this._iWindowWidth;
 
 				this._oldBreakPoint = this._currentBreakpoint;
-				this._currentBreakpoint = this._getBreakPointFromWidth(this._iWindowWidth);
+				this._setBreakpointFromWidth(this._iWindowWidth);
 
-				if ((this._oldBreakPoint !== this._currentBreakpoint) || this._currentBreakpoint === M) {
+				if ((this._oldBreakPoint !== this._currentBreakpoint)
+					|| (this._currentBreakpoint === M
+					&& this.getSideContentFallDown() === sap.ui.layout.SideContentFallDown.OnMinimumWidth)) {
 					this._setResizeData(this._currentBreakpoint, this.getEqualSplit());
 					this._changeGridState();
 				}
@@ -385,14 +476,13 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 
 		/**
 		 * Returns object with data about the size of the main and the side content, based on the screen breakpoint and
-		 * control mode
-		 * @param {string}[sSizeName] possible values S, M, L, XL
-		 * @param {boolean}[bComparison] checks if the page is in equalSplit mode
-		 * @returns {object} [DynamicSideContent] for chaining
+		 * control mode.
+		 * @param {string} sSizeName Possible values S, M, L, XL
+		 * @param {boolean} bComparison Checks if the page is in equalSplit mode
+		 * @returns {sap.m.DynamicSideContent} this pointer for chaining
 		 * @private
 		 */
 		DynamicSideContent.prototype._setResizeData = function (sSizeName, bComparison) {
-
 			var sideContentVisibility = this.getSideContentVisibility(),
 				sideContentFallDown = this.getSideContentFallDown();
 
@@ -401,11 +491,10 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 				switch (sSizeName) {
 					case S:
 						this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
-						if (sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow) {
-							this.setShowSideContent(true, true);
-						} else {
-							this.setShowSideContent(false, true);
+						if (this.getProperty("showSideContent") && this.getProperty("showMainContent")) {
+							this._SCVisible = sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow;
 						}
+						this._bFixedSideContent = false;
 						break;
 					case M:
 						var iSideContentWidth = Math.ceil((33.333 / 100) * this._iWindowWidth);
@@ -413,16 +502,15 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 							sideContentFallDown === sap.ui.layout.SideContentFallDown.BelowXL ||
 							(iSideContentWidth <= 320 && sideContentFallDown === sap.ui.layout.SideContentFallDown.OnMinimumWidth)) {
 							this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
+							this._bFixedSideContent = false;
 						} else {
 							this._setSpanSize(SPAN_SIZE_4, SPAN_SIZE_8);
+							this._bFixedSideContent = true;
 						}
-						if (sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
-							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow) {
-							this.setShowSideContent(true, true);
-						} else {
-							this.setShowSideContent(false, true);
-						}
-						this.setShowMainContent(true, true);
+						this._SCVisible = sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
+							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow;
+
+						this._MCVisible = true;
 						break;
 					case L:
 						if (sideContentFallDown === sap.ui.layout.SideContentFallDown.BelowXL) {
@@ -430,23 +518,17 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 						} else {
 							this._setSpanSize(SPAN_SIZE_4, SPAN_SIZE_8);
 						}
-						if (sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
+						this._SCVisible = sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
 							sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveM ||
-							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow) {
-							this.setShowSideContent(true, true);
-						} else {
-							this.setShowSideContent(false, true);
-						}
-						this.setShowMainContent(true, true);
+							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow;
+						this._MCVisible = true;
+						this._bFixedSideContent = false;
 						break;
 					case XL:
 						this._setSpanSize(SPAN_SIZE_3, SPAN_SIZE_9);
-						if (sideContentVisibility !== sap.ui.layout.SideContentVisibility.NeverShow) {
-							this.setShowSideContent(true, true);
-						} else {
-							this.setShowSideContent(false, true);
-						}
-						this.setShowMainContent(true, true);
+						this._SCVisible = sideContentVisibility !== sap.ui.layout.SideContentVisibility.NeverShow;
+						this._MCVisible = true;
+						this._bFixedSideContent = false;
 						break;
 					default:
 						throw new Error(INVALID_BREAKPOINT_ERROR_MSG);
@@ -456,44 +538,70 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 				switch (sSizeName) {
 					case S:
 						this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
-						this.setShowSideContent(false, true);
+						this._SCVisible = false;
 						break;
 					default:
 						this._setSpanSize(SPAN_SIZE_6, SPAN_SIZE_6);
-						this.setShowSideContent(true, true);
-						this.setShowMainContent(true, true);
+						this._SCVisible = true;
+						this._MCVisible = true;
 				}
+				this._bFixedSideContent = false;
 			}
 
 			return this;
 		};
 
 		/**
-		 * Determines if the control sets height, based on the control state
+		 * Determines if the control sets height, based on the control state.
 		 * @private
-		 * @return {boolean}
+		 * @return {boolean} If the control sets height
 		 */
 		DynamicSideContent.prototype._shouldSetHeight = function () {
-			if ((this._iScSpan + this._iMcSpan) === SPAN_SIZE_12 && this.getShowMainContent() && this.getShowSideContent()) {
-				return true;
-			}
-			return false;
+			var bSameLine,
+				bBothVisible,
+				bOnlyScVisible,
+				bOnlyMcVisible,
+				bOneVisible,
+				bFixedSC,
+				bSCNeverShow;
+
+			bSameLine = (this._iScSpan + this._iMcSpan) === SPAN_SIZE_12;
+			bBothVisible = this._MCVisible && this._SCVisible;
+
+			bOnlyScVisible = !this._MCVisible && this._SCVisible;
+			bOnlyMcVisible = this._MCVisible && !this._SCVisible;
+			bOneVisible = bOnlyScVisible || bOnlyMcVisible;
+
+			bFixedSC = this._fixedSideContent;
+			bSCNeverShow = this.getSideContentVisibility() === sap.ui.layout.SideContentVisibility.NeverShow;
+
+			return ((bSameLine && bBothVisible) || bOneVisible || bFixedSC || bSCNeverShow);
 		};
 
 		/**
-		 * Changes the state of the grid without re-rendering the control
-		 * Shows and hides the main and side content
+		 * Changes the state of the grid without re-rendering the control.
+		 * Shows and hides the main and side content.
 		 * @private
 		 */
 		DynamicSideContent.prototype._changeGridState = function () {
 			var $sideContent = this.$(SC_GRID_CELL_SELECTOR),
-				$mainContent = this.$(MC_GRID_CELL_SELECTOR);
+				$mainContent = this.$(MC_GRID_CELL_SELECTOR),
+				bMainContentVisibleProperty = this.getProperty("showMainContent"),
+				bSideContentVisibleProperty = this.getProperty("showSideContent");
 
-			if (this.getShowSideContent() && this.getShowMainContent()) {
+			if (this._bFixedSideContent) {
+				$sideContent.removeClass().addClass(SC_FIXED_CLASS);
+				$mainContent.removeClass().addClass(MC_FIXED_CLASS);
+			} else {
+				$sideContent.removeClass(SC_FIXED_CLASS);
+				$mainContent.removeClass(MC_FIXED_CLASS);
+			}
 
-				$mainContent.removeClass().addClass("sapUiDSCSpan" + this._iMcSpan);
-				$sideContent.removeClass().addClass("sapUiDSCSpan" + this._iScSpan);
-
+			if (this._SCVisible && this._MCVisible && bSideContentVisibleProperty && bMainContentVisibleProperty) {
+				if (!this._bFixedSideContent) {
+					$mainContent.removeClass().addClass("sapUiDSCSpan" + this._iMcSpan);
+					$sideContent.removeClass().addClass("sapUiDSCSpan" + this._iScSpan);
+				}
 				if (this._shouldSetHeight()) {
 					$sideContent.css("height", "100%").css("float", "left");
 					$mainContent.css("height", "100%").css("float", "left");
@@ -501,24 +609,25 @@ sap.ui.define("sap/ui/layout/DynamicSideContent",['jquery.sap.global', 'sap/ui/c
 					$sideContent.css("height", "auto").css("float", "none");
 					$mainContent.css("height", "auto").css("float", "none");
 				}
-			} else if (!this.getShowSideContent() && !this.getShowMainContent()) {
+			} else if (!this._SCVisible && !this._MCVisible) {
 				$mainContent.addClass(HIDDEN_CLASS);
 				$sideContent.addClass(HIDDEN_CLASS);
-
-			} else if (this.getShowMainContent()) {
+			} else if (this._MCVisible && bMainContentVisibleProperty) {
 				$mainContent.removeClass().addClass(SPAN_SIZE_12_CLASS);
 				$sideContent.addClass(HIDDEN_CLASS);
-
-			} else if (this.getShowSideContent()) {
+			} else if (this._SCVisible && bSideContentVisibleProperty) {
 				$sideContent.removeClass().addClass(SPAN_SIZE_12_CLASS);
 				$mainContent.addClass(HIDDEN_CLASS);
+			} else if (!bMainContentVisibleProperty && !bSideContentVisibleProperty) {
+				$mainContent.addClass(HIDDEN_CLASS);
+				$sideContent.addClass(HIDDEN_CLASS);
 			}
 		};
 
 		/**
-		 * Sets the main and side content span size
-		 * @param {integer} [iScSpan] side content span size
-		 * @param {integer} [iMcSpan] main content span size
+		 * Sets the main and side content span size.
+		 * @param {integer} iScSpan Side content span size
+		 * @param {integer} iMcSpan Main content span size
 		 * @private
 		 */
 		DynamicSideContent.prototype._setSpanSize = function (iScSpan, iMcSpan) {
@@ -546,7 +655,7 @@ sap.ui.define("sap/ui/layout/DynamicSideContentRenderer",[],
 		var SIDE_CONTENT_LABEL = "SIDE_CONTENT_LABEL";
 
 		/**
-		 * Renderer for sap.ui.layout.DynamicSideContent
+		 * Renderer for sap.ui.layout.DynamicSideContent.
 		 * @namespace
 		 */
 		var DynamicSideContentRenderer = {};
@@ -764,7 +873,7 @@ sap.ui.define("sap/ui/layout/GridRenderer",['jquery.sap.global'],
 	/**
 	 * @author SAP SE
 	 * @version
-	 * 1.30.8
+	 * 1.32.7
 	 * @namespace
 	 */
 	var GridRenderer = {};
@@ -888,7 +997,7 @@ sap.ui.define("sap/ui/layout/GridRenderer",['jquery.sap.global'],
 						oRm.addClass("sapUiRespGridBreakXL");
 					}
 					if (oLay.getLinebreakL() === true) {
-						if (!bBreakXLChanged){
+						if (!bBreakXLChanged && !oLay._getLinebreakXLChanged()){
 							oRm.addClass("sapUiRespGridBreakXL");
 						}
 						oRm.addClass("sapUiRespGridBreakL");
@@ -1388,7 +1497,13 @@ sap.ui.define("sap/ui/layout/SplitterRenderer",['jquery.sap.global'],
 						"tabindex=\"0\">"
 				);
 				// Icon ID must start with sId + "-splitbar-" + i so that the target is recognized for resizing
-				oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", { "id" : sId + "-splitbar-" + i + "-icon" });
+				oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
+					"id" : sId + "-splitbar-" + i + "-icon",
+					// prevent any tooltip / ARIA attributes on the icon as they
+					// are already set on the outer div
+					"title" : null,
+					"aria-label" : null
+				});
 				oRm.write("</div>");
 			}
 		}
@@ -1398,7 +1513,13 @@ sap.ui.define("sap/ui/layout/SplitterRenderer",['jquery.sap.global'],
 			"<div id=\"" + sId + "-overlayBar\" class=\"sapUiLoSplitterOverlayBar\">"
 		);
 		// Icon ID must start with sId + "-splitbar" so that the target is recognized for resizing
-		oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", { "id" : sId + "-splitbar-Overlay-icon" });
+		oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
+			"id" : sId + "-splitbar-Overlay-icon",
+			// prevent any tooltip / ARIA attributes on the icon as they
+			// are already set on the outer div
+			"title" : null,
+			"aria-label" : null
+		});
 		oRm.write(
 			"</div>" +
 			"</div>"
@@ -1415,7 +1536,9 @@ sap.ui.define("sap/ui/layout/SplitterRenderer",['jquery.sap.global'],
 }; // end of sap/ui/layout/SplitterRenderer.js
 if ( !jQuery.sap.isDeclared('sap.ui.layout.VerticalLayout.designtime') ) {
 /*!
- * @copyright@
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.VerticalLayout control
@@ -1423,7 +1546,7 @@ jQuery.sap.declare('sap.ui.layout.VerticalLayout.designtime'); // unresolved dep
 sap.ui.define("sap/ui/layout/VerticalLayout.designtime",[],
 	function() {
 	"use strict";
-	
+
 	return {
 		defaultSettings : {
 			width : "100%"
@@ -1436,8 +1559,8 @@ sap.ui.define("sap/ui/layout/VerticalLayout.designtime",[],
 		name: "{name}",
 		description: "{description}"
 	};
-	
-}, /* bExport= */ true);
+
+}, /* bExport= */ false);
 }; // end of sap/ui/layout/VerticalLayout.designtime.js
 if ( !jQuery.sap.isDeclared('sap.ui.layout.VerticalLayoutRenderer') ) {
 /*!
@@ -1504,7 +1627,9 @@ sap.ui.define("sap/ui/layout/VerticalLayoutRenderer",['jquery.sap.global'],
 }; // end of sap/ui/layout/VerticalLayoutRenderer.js
 if ( !jQuery.sap.isDeclared('sap.ui.layout.form.Form.designtime') ) {
 /*!
- * @copyright@
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.Form control
@@ -1533,7 +1658,9 @@ sap.ui.define("sap/ui/layout/form/Form.designtime",[],
 }; // end of sap/ui/layout/form/Form.designtime.js
 if ( !jQuery.sap.isDeclared('sap.ui.layout.form.FormContainer.designtime') ) {
 /*!
- * @copyright@
+ * UI development toolkit for HTML5 (OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.FormContainer control
@@ -1677,13 +1804,17 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 
 	FormLayoutRenderer.renderElement = function(rm, oLayout, oElement){
 
+		var oLabel = oElement.getLabelControl();
+
 		rm.write("<div");
 		rm.writeElementData(oElement);
 		rm.addClass("sapUiFormElement");
+		if (oLabel) {
+			rm.addClass("sapUiFormElementLbl");
+		}
 		rm.writeClasses();
 		rm.write(">");
 
-		var oLabel = oElement.getLabelControl();
 		if (oLabel) {
 			rm.renderControl(oLabel);
 		}
@@ -1746,7 +1877,9 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 
 				if (sIcon) {
 					var aClasses = [];
-					var mAttributes = {};
+					var mAttributes = {
+						"title": null // prevent default icon tooltip
+					};
 
 					mAttributes["id"] = oTitle.getId() + "-ico";
 					rm.writeIcon(sIcon, aClasses, mAttributes);
@@ -2219,7 +2352,7 @@ sap.ui.define("sap/ui/layout/form/GridLayoutRenderer",['jquery.sap.global', 'sap
 				iCells = iCells + 1;
 			}
 			if (oLabel && aReservedCells[0] != "full") {
-				rm.write("<td colspan=" + iCells + " class=\"sapUiGridLabelFull\">");
+				rm.write("<td colspan=" + iCells + " class=\"sapUiFormElementLbl sapUiGridLabelFull\">");
 				rm.renderControl(oLabel);
 				rm.write("</td>");
 				return ["full"];
@@ -2267,7 +2400,7 @@ sap.ui.define("sap/ui/layout/form/GridLayoutRenderer",['jquery.sap.global', 'sap
 				}
 			}
 
-			rm.write("<td colspan=" + iLabelCells + " class=\"sapUiGridLabel\">");
+			rm.write("<td colspan=" + iLabelCells + " class=\"sapUiFormElementLbl\">");
 			if (oLabel) {
 				rm.renderControl(oLabel);
 			}
@@ -2608,14 +2741,14 @@ sap.ui.define("sap/ui/layout/library",['jquery.sap.global', 'sap/ui/base/DataTyp
 	 * @namespace
 	 * @name sap.ui.layout
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @public
 	 */
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.layout",
-		version: "1.30.8",
+		version: "1.32.7",
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.layout.GridIndent",
@@ -2770,6 +2903,14 @@ sap.ui.define("sap/ui/layout/library",['jquery.sap.global', 'sap/ui/base/DataTyp
 
 	};
 
+	/**
+	 * Types of the DynamicSideContent Visibility options
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.30
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	sap.ui.layout.SideContentVisibility = {
 		/**
 		 * Show the side content on any breakpoint
@@ -2798,6 +2939,14 @@ sap.ui.define("sap/ui/layout/library",['jquery.sap.global', 'sap/ui/base/DataTyp
 		NeverShow: "NeverShow"
 	};
 
+	/**
+	 * Types of the DynamicSideContent FallDown options
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.30
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	sap.ui.layout.SideContentFallDown = {
 		/**
 		 * Side content falls down on breakpoints below XL
@@ -2851,7 +3000,7 @@ jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.EnabledPropagator'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.ResizeHandler'); // unlisted dependency retained
-sap.ui.define("sap/ui/layout/FixFlex",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/ResizeHandler', './library'],
+sap.ui.define("sap/ui/layout/FixFlex",["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledPropagator", "sap/ui/core/ResizeHandler", "./library"],
 	function (jQuery, Control, EnabledPropagator, ResizeHandler, library) {
 		"use strict";
 
@@ -2862,7 +3011,7 @@ sap.ui.define("sap/ui/layout/FixFlex",['jquery.sap.global', 'sap/ui/core/Control
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
-		 * The FixFlex control builds the container for a layout with a fixed and a flexible part. The flexible container adapts its size to the fix container. The fix container can hold any number of controls, while the flexible container can hold only one. 
+		 * The FixFlex control builds the container for a layout with a fixed and a flexible part. The flexible container adapts its size to the fix container. The fix container can hold any number of controls, while the flexible container can hold only one.
 		 *
 		 * In order for the FixFlex to stretch properly, the parent element, in which the control is placed, needs to have a specified height or needs to have an absolute position.
 		 *
@@ -2872,7 +3021,7 @@ sap.ui.define("sap/ui/layout/FixFlex",['jquery.sap.global', 'sap/ui/core/Control
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.30.8
+		 * @version 1.32.7
 		 *
 		 * @constructor
 		 * @public
@@ -2892,14 +3041,14 @@ sap.ui.define("sap/ui/layout/FixFlex",['jquery.sap.global', 'sap/ui/core/Control
 					vertical: {type: "boolean", group: "Appearance", defaultValue: true},
 
 					/**
-					 * Determines whether the fixed-size area should be on the beginning/top ( if the value is 'true') or beginning/bottom ( if the value is 'false').
+					 * Determines whether the fixed-size area should be on the beginning/top ( if the value is "true") or beginning/bottom ( if the value is "false").
 					 */
 					fixFirst: {type: "boolean", group: "Misc", defaultValue: true},
 
 					/**
-					 * Determines the height (if the vertical property is 'true') or the width (if the vertical property is 'false') of the fixed area. If left at the default value "auto", the fixed-size area will be as large as its content. In this case the content cannot use percentage sizes.
+					 * Determines the height (if the vertical property is "true") or the width (if the vertical property is "false") of the fixed area. If left at the default value "auto", the fixed-size area will be as large as its content. In this case the content cannot use percentage sizes.
 					 */
-					fixContentSize: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: 'auto'},
+					fixContentSize: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto"},
 
 					/**
 					 * Enables scrolling inside the flexible part. The given size is calculated in "px". If the child control in the flexible part is larger then the available flexible size on the screen and if the available size for the flexible part is smaller or equal to the minFlexSize value, the scroll will be for the entire FixFlex control.
@@ -2937,16 +3086,16 @@ sap.ui.define("sap/ui/layout/FixFlex",['jquery.sap.global', 'sap/ui/core/Control
 				$FlexChild;
 
 			// Exit if the container is invisible
-			if (!$Control.is(':visible')) {
+			if (!$Control.is(":visible")) {
 				return;
 			}
 
-			$FixChild = this.$('Fixed');
-			$FlexChild = this.$('Flexible');
+			$FixChild = this.$("Fixed");
+			$FlexChild = this.$("Flexible");
 
 			// Remove the style attribute from previous calculations
-			$FixChild.removeAttr('style');
-			$FlexChild.removeAttr('style');
+			$FixChild.removeAttr("style");
+			$FlexChild.removeAttr("style");
 
 			if (this.getVertical()) {
 				$FlexChild.height(Math.floor($Control.height() - $FixChild.height()));
@@ -2998,46 +3147,55 @@ sap.ui.define("sap/ui/layout/FixFlex",['jquery.sap.global', 'sap/ui/core/Control
 				nMinFlexSize = this.getMinFlexSize();
 
 			if (this.getVertical() === true) {
-				nFlexSize = this.$().height() - this.$('Fixed').height();
-				sDirection = 'height';
+				nFlexSize = this.$().height() - this.$("Fixed").height();
+				sDirection = "height";
 			} else {
-				nFlexSize = this.$().width() - this.$('Fixed').width();
-				sDirection = 'width';
+				nFlexSize = this.$().width() - this.$("Fixed").width();
+				sDirection = "width";
 			}
 
 			// Add scrolling inside Flexible container
 			if (nFlexSize < parseInt(this.getMinFlexSize(), 10)) {
-				$this.addClass('sapUiFixFlexScrolling');
-				$this.removeClass('sapUiFixFlexInnerScrolling');
+				$this.addClass("sapUiFixFlexScrolling");
+				$this.removeClass("sapUiFixFlexInnerScrolling");
 
 				// BCP Incident-ID: 1570246771
-				if (this.$('FlexibleContainer').children().height() > nMinFlexSize) {
-					this.$('Flexible').attr('style', 'min-' + sDirection + ':' + nMinFlexSize + 'px');
+				if (this.$("FlexibleContainer").children().height() > nMinFlexSize) {
+					this.$("Flexible").attr("style", "min-" + sDirection + ":" + nMinFlexSize + "px");
 				} else {
 					// If the child control is smaller then the content,
-					// the flexible part need to have set height/width, else the child control can't resize to max
-					this.$('Flexible').attr('style', sDirection + ':' + nMinFlexSize + 'px');
+					// the flexible part need to have set height/width, else the child control can"t resize to max
+					this.$("Flexible").attr("style", sDirection + ":" + nMinFlexSize + "px");
 				}
 
 			} else { // Add scrolling for entire FixFlex
-				$this.addClass('sapUiFixFlexInnerScrolling');
-				$this.removeClass('sapUiFixFlexScrolling');
-				this.$('Flexible').removeAttr('style');
+				$this.addClass("sapUiFixFlexInnerScrolling");
+				$this.removeClass("sapUiFixFlexScrolling");
+				this.$("Flexible").removeAttr("style");
 			}
 		};
 
+		/**
+		 * @private
+		 */
 		FixFlex.prototype.exit = function () {
 			this._deregisterControl();
 		};
 
+		/**
+		 * @private
+		 */
 		FixFlex.prototype.onBeforeRendering = function () {
 			this._deregisterControl();
 		};
 
+		/**
+		 * @private
+		 */
 		FixFlex.prototype.onAfterRendering = function () {
 			// Fallback for older browsers
 			if (!jQuery.support.hasFlexBoxSupport) {
-				this.sResizeListenerNoFlexBoxSupportFixedId = ResizeHandler.register(this.getDomRef('Fixed'), jQuery.proxy(this._handlerResizeNoFlexBoxSupport, this));
+				this.sResizeListenerNoFlexBoxSupportFixedId = ResizeHandler.register(this.getDomRef("Fixed"), jQuery.proxy(this._handlerResizeNoFlexBoxSupport, this));
 				this.sResizeListenerNoFlexBoxSupportId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handlerResizeNoFlexBoxSupport, this));
 				this._handlerResizeNoFlexBoxSupport();
 			}
@@ -3045,7 +3203,7 @@ sap.ui.define("sap/ui/layout/FixFlex",['jquery.sap.global', 'sap/ui/core/Control
 			// Add handler for FixFlex scrolling option
 			if (this.getMinFlexSize() !== 0) {
 				this.sResizeListenerFixFlexScroll = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._changeScrolling, this));
-				this.sResizeListenerFixFlexScrollFlexPart = ResizeHandler.register(this.getDomRef('Fixed'), jQuery.proxy(this._changeScrolling, this));
+				this.sResizeListenerFixFlexScrollFlexPart = ResizeHandler.register(this.getDomRef("Fixed"), jQuery.proxy(this._changeScrolling, this));
 
 				if (sap.ui.Device.browser.edge === true) {
 					// In some cases the resize handlers are not triggered in "Edge" browser on initial render and
@@ -3056,6 +3214,10 @@ sap.ui.define("sap/ui/layout/FixFlex",['jquery.sap.global', 'sap/ui/core/Control
 			}
 		};
 
+		/**
+		 * @private
+		 * @param {Object} oEvent
+		 */
 		FixFlex.prototype.ontouchmove = function (oEvent) {
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -3094,7 +3256,7 @@ sap.ui.define("sap/ui/layout/Grid",['jquery.sap.global', 'sap/ui/core/Control', 
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -3133,7 +3295,7 @@ sap.ui.define("sap/ui/layout/Grid",['jquery.sap.global', 'sap/ui/core/Control', 
 			defaultSpan : {type : "sap.ui.layout.GridSpan", group : "Behavior", defaultValue : "XL3 L3 M6 S12"},
 	
 			/**
-			 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins. It can be defined for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 0 to 11 that the container has to take, for example: "L2 M4 S6", "M12", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
+			 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins. It can be defined for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 0 to 11 that the container has to take, for example: "L2 M4 S6", "M11", "s10" or "l4 m4". Note that the parameters has to be provided in the order large medium small.
 			 */
 			defaultIndent : {type : "sap.ui.layout.GridIndent", group : "Behavior", defaultValue : "XL0 L0 M0 S0"},
 	
@@ -3215,6 +3377,14 @@ sap.ui.define("sap/ui/layout/Grid",['jquery.sap.global', 'sap/ui/core/Control', 
 			this._iBreakPointTablet = breakPoint;
 		};
 		
+		Grid.prototype._setBreakPointDesktop = function( breakPoint) {
+			this._iBreakPointDesktop = breakPoint;
+		};
+		
+		Grid.prototype._setBreakPointLargeDesktop = function( breakPoint) {
+			this._iBreakPointLargeDesktop = breakPoint;
+		};
+		
 		Grid.prototype.setDefaultIndent = function( sDefaultIndent) {
 			if (/XL/gi.test(sDefaultIndent)) {
 				this._setIndentXLChanged(true);
@@ -3244,14 +3414,6 @@ sap.ui.define("sap/ui/layout/Grid",['jquery.sap.global', 'sap/ui/core/Control', 
 		
 		Grid.prototype._getSpanXLChanged = function() {
 			return this._spanXLChanged;
-		};
-		
-		Grid.prototype._setBreakPointDesktop = function( breakPoint) {
-			this._iBreakPointDesktop = breakPoint;
-		};
-		
-		Grid.prototype._setBreakPointXL = function( breakPoint) {
-			this._iBreakPointLargeDesktop = breakPoint;
 		};
 		
 		Grid.prototype._onParentResize = function() {
@@ -3389,7 +3551,7 @@ sap.ui.define("sap/ui/layout/GridData",['jquery.sap.global', 'sap/ui/core/Layout
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -3576,7 +3738,7 @@ sap.ui.define("sap/ui/layout/GridData",['jquery.sap.global', 'sap/ui/core/Layout
 	 * This file defines behavior for the control
 	 */
 	(function() {
-	
+		
 		GridData.prototype._setStylesInternal = function(sStyles) {
 			if (sStyles && sStyles.length > 0) {
 				this._sStylesInternal = sStyles;
@@ -3697,7 +3859,21 @@ sap.ui.define("sap/ui/layout/GridData",['jquery.sap.global', 'sap/ui/core/Layout
 			return undefined;
 		};
 		
+		// Identifier for explicit changed line break property for XL size
+		var _bLinebreakXLChanged = false;
 		
+		// Finds out if the line break for XL was explicitly set
+		GridData.prototype.setLinebreakXL = function(bLinebreak) {
+			//set property XL
+			this.setProperty("linebreakXL", bLinebreak);
+			_bLinebreakXLChanged = true;
+		};
+		
+		// Internal function. Informs the Grid Renderer if the line break property for XL size was changed explicitly
+		GridData.prototype._getLinebreakXLChanged = function(bLinebreak) {
+			return _bLinebreakXLChanged;
+		};
+			
 		// Deprecated properties handling
 		//Setter
 		GridData.prototype.setSpanLarge = function(iSpan) {
@@ -3828,7 +4004,7 @@ sap.ui.define("sap/ui/layout/HorizontalLayout",['jquery.sap.global', 'sap/ui/cor
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -3891,7 +4067,7 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayoutData",['jquery.sap.global', 'sa
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -4009,7 +4185,7 @@ sap.ui.define("sap/ui/layout/Splitter",['jquery.sap.global', 'sap/ui/core/Contro
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -4118,10 +4294,14 @@ sap.ui.define("sap/ui/layout/Splitter",['jquery.sap.global', 'sap/ui/core/Contro
 			min          : this._onKeyboardResize.bind(this, "min")
 		};
 		this._enableKeyboardListeners();
-		
+
+		// Flag tracking the preserved state of this control. In case the control is preserved, no resizing attempts should be made.
+		this._isPreserved = false;
+		sap.ui.getCore().getEventBus().subscribe("sap.ui","__preserveContent", this._preserveHandler, this);
 	};
 	
 	Splitter.prototype.exit = function() {
+		sap.ui.getCore().getEventBus().unsubscribe("sap.ui","__preserveContent", this._preserveHandler);
 		this.disableAutoResize();
 		delete this._resizeCallback;
 	
@@ -4276,7 +4456,10 @@ sap.ui.define("sap/ui/layout/Splitter",['jquery.sap.global', 'sap/ui/core/Contro
 		this._$SplitterOverlay = this.$("overlay");
 		this._$SplitterOverlayBar = this.$("overlayBar");
 		this._$SplitterOverlay.detach();
-		
+
+		// Upon new rendering, the DOM cannot be preserved any more
+		this._isPreserved = false;
+
 		// Calculate and apply correct sizes to the Splitter contents 
 		this._resize();
 	};
@@ -4560,6 +4743,15 @@ sap.ui.define("sap/ui/layout/Splitter",['jquery.sap.global', 'sap/ui/core/Contro
 	
 	////////////////////////////////////////// Private Methods /////////////////////////////////////////
 	
+	Splitter.prototype._preserveHandler = function(sChannelId, sEventId, oData) {
+		var oDom = this.getDomRef();
+		if (oDom && oData.domNode.contains(oDom)) {
+			// Our HTML has been preserved...
+			this._isPreserved = true;
+		}
+	};
+
+	
 	/**
 	 * Resizes as soon as the current stack is done. Can be used in cases where several resize-relevant
 	 * actions are done in a loop to make sure only one resize calculation is done at the end.
@@ -4613,6 +4805,11 @@ sap.ui.define("sap/ui/layout/Splitter",['jquery.sap.global', 'sap/ui/core/Contro
 	 * @private
 	 */
 	Splitter.prototype._resize = function() {
+		if (this._isPreserved) {
+			// Do not attempt to resize the content areas in case we are in the preserved area
+			return;
+		}
+
 		var i = 0, $Bar;
 		var aContentAreas = this.getContentAreas();
 
@@ -5177,7 +5374,7 @@ sap.ui.define("sap/ui/layout/SplitterLayoutData",['jquery.sap.global', 'sap/ui/c
 	 * (The CSS value "auto" is used internally to recalculate the size of the content
 	 * dynamically and is not directly set as style property.)
 	 * @extends sap.ui.core.LayoutData
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -5243,7 +5440,7 @@ sap.ui.define("sap/ui/layout/VerticalLayout",['jquery.sap.global', 'sap/ui/core/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -5321,7 +5518,7 @@ sap.ui.define("sap/ui/layout/form/Form",['jquery.sap.global', 'sap/ui/core/Contr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -5539,7 +5736,7 @@ sap.ui.define("sap/ui/layout/form/FormContainer",['jquery.sap.global', 'sap/ui/c
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -5802,7 +5999,7 @@ sap.ui.define("sap/ui/layout/form/FormElement",['jquery.sap.global', 'sap/ui/cor
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -6160,7 +6357,7 @@ sap.ui.define("sap/ui/layout/form/FormLayout",['jquery.sap.global', 'sap/ui/core
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -7053,7 +7250,7 @@ sap.ui.define("sap/ui/layout/form/GridContainerData",['jquery.sap.global', 'sap/
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -7112,7 +7309,7 @@ sap.ui.define("sap/ui/layout/form/GridElementData",['jquery.sap.global', 'sap/ui
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -7186,7 +7383,7 @@ sap.ui.define("sap/ui/layout/form/GridLayout",['jquery.sap.global', './FormLayou
 	 * @extends sap.ui.layout.form.FormLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -7433,8 +7630,8 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 	/**
 	 * Constructor for a new sap.ui.layout.form.ResponsiveGridLayout.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Renders a <code>Form</code> using a responsive grid. Internally the <code>Grid</code> control is used for rendering.
@@ -7443,15 +7640,15 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 	 * This behavior can be influenced by the properties of this layout control.
 	 *
 	 * On the <code>FormContainers</code>, labels and content fields, <code>GridData</code> can be used to change the default rendering.
-	 * <code>GridData</code> are not supported for <code>FormElements</code>.
+	 * <code>GridData</code> is not supported for <code>FormElements</code>.
 	 *
-	 * <b>Note:</b> If <code>GridData</code> are used, this may result in a much more complex layout than the default one.
+	 * <b>Note:</b> If <code>GridData</code> is used, this may result in a much more complex layout than the default one.
 	 * This means that in some cases, the calculation for the other content may not bring the expected result.
 	 * In such cases, <code>GridData</code> should be used for all content controls to disable the default behavior.
 	 *
-	 * This control cannot be used stand alone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
+	 * This control cannot be used standalone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
 	 * @extends sap.ui.layout.form.FormLayout
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -7531,8 +7728,8 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 
 	/*
 	 * The ResponsiveGridLayout uses Grid controls to render the Form
-	 * If more than one FormContainer is used there is an outer Grid (mainGrid) that holds the FormContainers
-	 * Each FormContainer holds it's own Grid where the FormElements content is placed.
+	 * If more than one FormContainer is used, there is an outer Grid (mainGrid) that holds the FormContainers.
+	 * Each FormContainer holds its own Grid where the FormElements content is placed.
 	 * If a FormContainer has a Title or is expandable it is rendered as a ResponsiveGridLayoutPanel.
 	 * The panels and Grid layouts are stored in this.mContainers. This has the following structure:
 	 * - For each FormContainer there is an entry inside the object. (this.mContainers[FormContainerId])
@@ -7542,7 +7739,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 	 *          - the getLayoutData function of this Grid is overwritten to get the LayoutData of the FormContainer
 	 *            (If no panel is used)
 	 *
-	 * It must be made sure to hold this object up to date. So it is filled onBeforeRendering. Entries no longer used are deleted
+	 * It must make sure that this object is kept up to date, so for this reason it is filled onBeforeRendering. Entries that are no longer used are deleted.
 	 *
 	*/
 
@@ -7704,7 +7901,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 		};
 
 		/*
-		 * If onAfterRendering of a field is processed the width must be set to 100% (if no other width set)
+		 * If onAfterRendering of a field is processed, the width must be set to 100% (if no other width set)
 		 */
 		ResponsiveGridLayout.prototype.contentOnAfterRendering = function(oFormElement, oControl){
 
@@ -7760,7 +7957,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 		};
 
 		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists.
+		 * As Elements must not have a DOM reference it is not clear if one exists.
 		 * If the <code>FormContainer</code> has a title or is expandable an internal panel is rendered.
 		 * In this case, the panel's DOM reference is returned, otherwise the DOM reference
 		 * of the <code>Grid</code> rendering the container's content.
@@ -7789,7 +7986,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 		};
 
 		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists.
+		 * As Elements must not have a DOM reference it is not clear if one exists.
 		 * In this Layout a <code>FormElement</code> has no DOM representation,
 		 * so null will always be returned
 		 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
@@ -7895,7 +8092,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 		}
 
 		/*
-		 * clear variables before delete it
+		 * clear content before delete panel
 		 */
 		function _deletePanel( oPanel ) {
 
@@ -7949,7 +8146,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 				var oLabel = oElement.getLabelControl();
 				if (oLD) {
 					if (oLabel == oControl) {
-						oLD._setStylesInternal("sapUiFormResGridLbl");
+						oLD._setStylesInternal("sapUiFormElementLbl");
 					}
 					return oLD;
 				} else {
@@ -7981,7 +8178,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					if (oLabel == oControl) {
 						oLayout.oDummyLayoutData.setSpan("L" + iLabelLSpan + " M" + iLabelMSpan + " S" + iLabelSSpan);
 						oLayout.oDummyLayoutData.setLinebreak(true);
-						oLayout.oDummyLayoutData._setStylesInternal("sapUiFormResGridLbl");
+						oLayout.oDummyLayoutData._setStylesInternal("sapUiFormElementLbl");
 						return oLayout.oDummyLayoutData;
 					} else {
 						var iLSpan = 12 - oLayout.getEmptySpanL();
@@ -8144,7 +8341,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 		}
 
 		/*
-		 * clear variables before delete it
+		 * clear internal variables before delete grid
 		 */
 		function _deleteGrid( oGrid ) {
 
@@ -8440,8 +8637,8 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 	/**
 	 * Constructor for a new sap.ui.layout.form.SimpleForm.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * The <code>SimpleForm</code> provides an easy to use API to create simple forms.
@@ -8454,7 +8651,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 	 * Use <code>LayoutData</code> to influence the layout for special cases in the Input/Display controls.
 	 * <b>Note:</b> If a more complex form is needed, use <code>Form</code> instead.
 	 * @extends sap.ui.core.Control
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -8474,7 +8671,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			maxContainerCols : {type : "int", group : "Appearance", defaultValue : 2},
 
 			/**
-			 * The overall minimum width in pixels that is used for the <code>SimpleForm</code>. If the available width is below the given minWidth the SimpleForm will create a new row for the next group(<code>FormContainer</code>).
+			 * The overall minimum width in pixels that is used for the <code>SimpleForm</code>. If the available width is below the given minWidth the SimpleForm will create a new row for the next group (<code>FormContainer</code>).
 			 * The default value is -1, meaning that inner groups (<code>FormContainers</code>) will be stacked until maxCols is reached, irrespective of whether a maxWidth is reached or the available parents width is reached.
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
 			 */
@@ -8552,7 +8749,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 
 			/**
 			 * Form columns for large size.
-			 * The number of columns for large size must not be smaller that the number of columns for medium size.
+			 * The number of columns for large size must not be smaller than the number of columns for medium size.
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -8589,7 +8786,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			 * <li>Add a <code>Label</code> control to start a new row (<code>FormElement</code>).</li>
 			 * <li>Add controls as input fields, text fields or other as needed.</li>
 			 * <li>Use <code>LayoutData</code> to influence the layout for special cases in the single controls.
-			 * For example, if a <code>ResponsiveLayout</code> is used as a layout the form content is weighted using weight 3 for the labels and weight 5 for the fields part. Per default the label column is 192 pixels wide.
+			 * For example, if a <code>ResponsiveLayout</code> is used as a layout, the form content is weighted using weight 3 for the labels and weight 5 for the fields part. By default the label column is 192 pixels wide.
 			 * If your input controls should influence their width, you can add <code>sap.ui.layout.ResponsiveFlowLayoutData</code> to them via <code>setLayoutData</code> method.
 			 * Ensure that the sum of the weights in the <code>ResponsiveFlowLayoutData</code> is not more than 5, as this is the total width of the input control part of each form row.</li>
 			 * </ul>
@@ -8614,6 +8811,14 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			 * @since 1.16.3
 			 */
 			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false}
+		},
+		associations: {
+
+			/**
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.32.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		}
 	}});
 
@@ -8644,6 +8849,16 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					oSimpleForm._formInvalidated(oOrigin);
 				}
 			};
+
+			oForm.getAriaLabelledBy = function(){
+				var oSimpleForm = this.getParent();
+				if (oSimpleForm) {
+					return oSimpleForm.getAriaLabelledBy();
+				}else {
+					return null;
+				}
+			};
+
 			this.setAggregation("form",oForm);
 			this._aElements = null;
 			this._aLayouts = [];
@@ -8675,7 +8890,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		};
 
 		/*
-		 * Update FormContaners, FormElements and LayoutData before controls are rendered
+		 * Update FormContainers, FormElements and LayoutData before controls are rendered
 		 */
 		SimpleForm.prototype.onBeforeRendering = function() {
 
@@ -8725,7 +8940,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		};
 
 		/*
-		 * overwrite generated functions to use internal array to look for aggregation
+		 * Overwrite generated functions to use internal array to look for aggregation
 		 */
 		SimpleForm.prototype.indexOfContent = function(oObject) {
 
@@ -9189,7 +9404,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		};
 
 	/*
-	 * set the FormLayout to the Form. If already a FormLayout is set, just set a new one.
+	 * Set the FormLayout to the Form. If a FormLayout is already set, just set a new one.
 	 */
 		SimpleForm.prototype.setLayout = function(sLayout) {
 
@@ -9246,7 +9461,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		};
 
 		/*
-		 * overwrite the clone function because content will not be cloned in default one
+		 * Overwrite the clone function because content will not be cloned in default one
 		 */
 		SimpleForm.prototype.clone = function(sIdSuffix) {
 
@@ -9398,7 +9613,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		}
 
 		/*
-		 * Mabe there are VariantLayoutData used -> so get the right one for the used Layout
+		 * There may be VariantLayoutData used -> so get the right one for the used Layout
 		 */
 		function _getFieldLayoutData(oThis, oField){
 
@@ -9545,7 +9760,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		}
 
 		/*
-		 * creates a new form container and adds the given title to it.
+		 * Creates a new form container and adds the given title to it.
 		 * @param {sap.ui.core.Title} optional The title of the container
 		 * @returns {sap.ui.layout.form.FormContainer} The newly created FormContainer
 		 * @private
@@ -9634,7 +9849,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		}
 
 		/*
-		 * Applies the linebreaks of form containers according the minWidth and maxContainerCol settings of the SimpleForm
+		 * Applies the linebreaks of form containers according to the minWidth and maxContainerCol settings of the SimpleForm
 		 * @private
 		 */
 		SimpleForm.prototype._applyLinebreaks = function(){
@@ -9844,7 +10059,7 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayout",['jquery.sap.global', 'sap/ui
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -9986,7 +10201,7 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayout",['jquery.sap.global', 'sap/ui
 				// check if item has been pushed needed if no element was found that
 				// is allowed to be wrapped into a new line
 				var bPushed = false;
-				if (!!!bLinebreakable) {
+				if (!bLinebreakable) {
 					// if an element mustn't break -> find any previous element that
 					// is allowed to do wrapping
 					for (var br = length; br > 0; br--) {
@@ -10234,7 +10449,12 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayout",['jquery.sap.global', 'sap/ui
 					if (oCont.padding) {
 						aClasses.push("sapUiRFLPaddingClass");
 					}
-	
+
+					var sClass = this._addContentClass(oCont.control, j);
+					if (sClass) {
+						aClasses.push(sClass);
+					}
+
 					oStyles = {};
 					this.oRm.writeHeader("", oStyles, aClasses);
 	
@@ -10503,13 +10723,26 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayout",['jquery.sap.global', 'sap/ui
 		};
 
 		/**
-		 * Gets the role used for accessibility
-		 * Set by the Form control if Grid represents a FormContainer
-		 * @return {string} sRole accessibility role
+		 * Gets the role used for accessibility.
+		 * Set by the Form control if ResponsiveFlowLayout represents a FormContainer.
+		 * @return {string} sRole Accessibility role
 		 * @since 1.28.0
 		 * @private
 		 */
 		ResponsiveFlowLayout.prototype._getAccessibleRole = function() {
+
+			return null;
+
+		};
+
+		/**
+		 * Sets a class at the content container
+		 * Set by the Form control if ResponsiveFlowLayout represents a FormElement.
+		 * @return {string} sClass CSS class
+		 * @since 1.28.22
+		 * @private
+		 */
+		ResponsiveFlowLayout.prototype._addContentClass = function(oControl, iIndex) {
 
 			return null;
 
@@ -10557,7 +10790,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 	 * @extends sap.ui.layout.form.FormLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -11109,6 +11342,23 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 						} else {
 							return false;
 						}
+					};
+
+					oRFLayout._addContentClass = function(oControl, iIndex) {
+
+						if (iIndex == 0) {
+							// check if it's the label of the FormElement
+							var oElement = sap.ui.getCore().byId(this.__myParentElementId);
+							if (oElement) {
+								var oLabel = oElement.getLabelControl();
+								if (oControl == oLabel) {
+									return "sapUiFormElementLbl";
+								}
+							}
+						}
+
+						return null;
+
 					};
 				} else {
 					oRFLayout.getContent = function(){

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @class XML serializer delegate class.
 	 * @extends sap.ui.core.util.serializer.delegate.Delegate
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @alias sap.ui.core.util.serializer.delegate.XML
 	 * @experimental Since 1.15.1. The XML serializer delegate is still under construction, so some implementation details can be changed in future.
 	 */
@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 				var oValue = oControl[sGetter]();
 				oValue = fnGetValue ? fnGetValue(sName, oValue) : oValue;
 				if (!oControl.getBindingInfo(sName)) {
-					if (oValue !== oProp.defaultValue) {
+					if (!jQuery.sap.equal(oValue,oProp.defaultValue)) {
 						if (!fnValueCheck || fnValueCheck(sName, oValue)) {
 							aXml.push(this._createAttribute(sName, oValue));
 						}

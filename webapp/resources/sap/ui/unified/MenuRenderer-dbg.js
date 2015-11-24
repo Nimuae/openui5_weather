@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * Menu renderer.
 	 * @author SAP - TD Core UI&AM UI Infra
 	 *
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @namespace
 	 */
 	var MenuRenderer = {
@@ -45,8 +45,12 @@ sap.ui.define(['jquery.sap.global'],
 		// ARIA
 		var bAccessible = sap.ui.getCore().getConfiguration().getAccessibility();
 		if (bAccessible) {
-			rm.writeAttribute("role", "menu");
-			rm.writeAttribute("aria-level", oMenu.getMenuLevel());
+			rm.writeAccessibilityState(oMenu, {
+				role: "menu",
+				disabled: null,
+				level: oMenu.getMenuLevel(),
+				labelledby: {value: oMenu.getId() + "-label", append: true}
+			});
 			if (oMenu.oHoveredItem) {
 				rm.writeAttribute("aria-activedescendant", oMenu.oHoveredItem.getId());
 			}
@@ -73,16 +77,16 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");
 		MenuRenderer.renderItems(rm, oMenu);
 		if (bAccessible) {
-			var _getText = function(sKey, aArgs) {
+			/*var _getText = function(sKey, aArgs) {
 				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 				if (rb) {
 					return rb.getText(sKey, aArgs);
 				}
 				return sKey;
-			};
+			};*/
 			
 			rm.write("<span id='", oMenu.getId(), "-label' class='sapUiInvisibleText' aria-hidden='true'>");
-			rm.writeEscaped(oMenu.getAriaDescription() ? oMenu.getAriaDescription() : _getText("MNU_ARIA_NAME"));
+			rm.writeEscaped(oMenu.getAriaDescription() ? oMenu.getAriaDescription() : ""/*_getText("MNU_ARIA_NAME")*/);
 			rm.write("</span>");
 		}
 		rm.write("</div>");

@@ -20,7 +20,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 		 * @extends sap.ui.core.Element
 		 *
 		 * @author SAP SE
-		 * @version 1.30.8
+		 * @version 1.32.7
 		 *
 		 * @constructor
 		 * @public
@@ -40,12 +40,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 						/**
 						 * Specifies the title of the message
 						 */
-						title: { type: "string", group: "Appearance" },
+						title: { type: "string", group: "Appearance", defaultValue: "" },
 
 						/**
 						 * Specifies detailed description of the message
 						 */
-						description: { type: "string", group: "Appearance" },
+						description: { type: "string", group: "Appearance", defaultValue: "" },
 
 						/**
 						 * Specifies if description should be interpreted as markup
@@ -67,10 +67,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 			}
 
 			if (this.getMarkupDescription()) {
-				this.setProperty("description", jQuery.sap._sanitizeHTML(sDescription), true);
-			} else {
-				this.setProperty("description", sDescription, true);
+				sDescription = jQuery.sap._sanitizeHTML(sDescription);
 			}
+
+			this.setProperty("description", sDescription, true);
 
 			return this;
 		};

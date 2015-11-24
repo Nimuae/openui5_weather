@@ -63,6 +63,11 @@ sap.ui.define(['jquery.sap.global'],
 				fPercent: fWidthBar
 			})
 		});
+
+		if (oC.getTooltip_AsString()) {
+			oRm.writeAttributeEscaped("title", oC.getTooltip_AsString());
+		}
+
 		oRm.write(">"); // div element
 
 		// PI bar

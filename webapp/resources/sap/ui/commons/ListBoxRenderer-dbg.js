@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 	 * ListBox Renderer
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 * @namespace
 	 */
 	var ListBoxRenderer = {
@@ -222,14 +222,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 						rm.addClass("sapUiLbxIIco");
 						rm.addClass("sapUiLbxIIcoFont");
 						var oIconInfo = IconPool.getIconInfo(sIcon);
-						rm.addStyle("font-family", "'" + oIconInfo.fontFamily + "'");
+						rm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
 						if (oIconInfo && !oIconInfo.skipMirroring) {
 							rm.addClass("sapUiIconMirrorInRTL");
 						}
 						rm.writeClasses();
 						rm.writeStyles();
 						rm.write(">");
-						rm.write(oIconInfo.content);
+						rm.writeEscaped(oIconInfo.content);
 					} else {
 						rm.write(" class='sapUiLbxIIco'><img src='");
 						// if the item has an icon, use it; otherwise use something empty

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -164,20 +164,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this._oItemNavigation.setCycling(false);
 		this.addDelegate(this._oItemNavigation);
 		this._setItemNavigation();
-		this.$().on("keyup.ActionSheet", jQuery.proxy(this.onKeyUp, this));
 	};
-	ActionSheet.prototype.onBeforeRendering = function() {
-		if (this.getDomRef()) {
-			this.$().off("keyup.ActionSheet");
-		}
-	};
-	ActionSheet.prototype.onKeyUp = function(event) {
-		if ( event.which == jQuery.sap.KeyCodes.ESCAPE) {
-			this.close();
-			event.stopPropagation();
-			event.preventDefault();
-		}
-	};
+
 	ActionSheet.prototype.sapfocusleave = function() {
 		this.close();
 	};
@@ -236,8 +224,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				}).addStyleClass("sapMActionSheetPopover");
 
 				if (sap.ui.Device.browser.internet_explorer) {
-					this._parent._fnSetArrowPosition = jQuery.proxy(function(){
-						Popover.prototype._setArrowPosition.apply(this);
+					this._parent._fnAdjustPositionAndArrow = jQuery.proxy(function(){
+						Popover.prototype._adjustPositionAndArrow.apply(this);
 
 						var $this = this.$(),
 							fContentWidth = $this.children(".sapMPopoverCont")[0].getBoundingClientRect().width;

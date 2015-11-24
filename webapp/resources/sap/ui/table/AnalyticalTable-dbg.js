@@ -18,14 +18,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Table which handles analytical OData backends
+	 * Table which handles analytical OData backends. The AnalyticalTable only works with an AnalyticalBinding and
+	 * correctly annotated OData services. Please check on the SAP Annotations for OData Version 2.0 documentation for further details.
+	 * @see http://scn.sap.com/docs/DOC-44986
+	 *
 	 * @extends sap.ui.table.Table
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since version 1.21.
-	 * The AnalyticalTable will be productized soon.
 	 * @alias sap.ui.table.AnalyticalTable
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -200,20 +201,45 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 	
 	/**
-	 * Sets the selection mode. The current selection is lost.
+	 * Sets the selection mode, the current selection is lost.
+	 * Since the AnalyticalTable relies on the RowSelector for rendering the group headers the SelectionMode "None" is
+	 * not supported and must not be used.
 	 * @param {string} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
 	 * @public
-	 * @return a reference on the table for chaining
+	 * @return {sap.ui.table.Table} a reference on the table for chaining
 	 */
 	AnalyticalTable.prototype.setSelectionMode = function (sSelectionMode) {
 		// clear selection if the mode changes
+		if (sSelectionMode === sap.ui.table.SelectionMode.None) {
+			jQuery.sap.log.fatal("SelectionMode 'None' is not supported by the AnalyticalTable.");
+			return this;
+		}
+
 		var oBinding = this.getBinding("rows");
 		if (oBinding && oBinding.clearSelection) {
 			oBinding.clearSelection();
 		}
-		// set selection mode independet from clearing the selection
+
+		// set selection mode independent from clearing the selection
 		this.setProperty("selectionMode", sSelectionMode);
 		return this;
+	};
+
+	/**
+	 * Sets the selection behavior.
+	 * Since the AnalyticalTable relies on the RowSelector for rendering the group headers the SelectionBehavior "RowOnly" is
+	 * not supported and must not be used.
+	 * @param {string} sBehavior the selection behavior, see sap.ui.table.SelectionBehavior
+	 * @public
+	 * @returns {sap.ui.table.Table} this for chaining
+	 */
+	AnalyticalTable.prototype.setSelectionBehavior = function (sBehavior) {
+		if (sBehavior === sap.ui.table.SelectionBehavior.RowOnly) {
+			jQuery.sap.log.fatal("SelectionBehavior 'RowOnly' is not supported by the AnalyticalTable.");
+			return this;
+		} else {
+			return Table.prototype.setSelectionBehavior.apply(this, arguments);
+		}
 	};
 	
 	AnalyticalTable.prototype._sanitizeBindingInfo = function (oBindingInfo) {
@@ -402,7 +428,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				$fixedRow.addClass("sapUiTableGroupHeader");
 
 				$rowHdr.attr("aria-haspopup", true);
-
+				
 				var sGroupHeaderText = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
 
 				var sClass = oContextInfo.nodeState.expanded ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
@@ -444,7 +470,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 				$row.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 
-				$fixedRow.attr('aria-expanded', false);
 				$fixedRow.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum");
 
 				$rowHdr.html("");
@@ -468,6 +493,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					}
 				}
 			}
+
 			//set the level of the node on the DOM
 			$row.attr("data-sap-ui-level", iLevel);
 			$fixedRow.attr("data-sap-ui-level", iLevel);
@@ -482,12 +508,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			$rowHdr.data("sap-ui-level", iLevel);
 			
 			if ('ontouchstart' in document) {
+				var iScrollBarOffset = 0;
+				if (this.$().hasClass("sapUiTableVScr")) {
+					iScrollBarOffset += this.$().find('.sapUiTableVSb').width();
+				}
 				var $GroupHeaderMenuButton = $rowHdr.find(".sapUiTableGroupMenuButton");
 				
 				if (this._bRtlMode) {
-					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - 20) + "px");
+					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - iScrollBarOffset) + "px");
 				} else {
-					$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $rowHdr.position().left - 20) + "px");
+					$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $rowHdr.position().left - iScrollBarOffset) + "px");
 				}
 			}
 
@@ -978,31 +1008,34 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype.removeColumn = function(vColumn, bSuppressInvalidate) {
-		Table.prototype.removeColumn.apply(this, arguments);
+		var oResult = Table.prototype.removeColumn.apply(this, arguments);
 		
-		//TODO: Make sure vColumn is really an AnalyticalColumn instance
-		this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
-			//check if vColum is an object with getId function
-			if (vColumn.getId) {
-				return sValue != vColumn.getId();
-			} else {
-				return sValue == vColumn;
-			}
-		});
+		// only remove from grouped columns if not caused by column move. If this._iNewColPos
+		// is set, the column was moved by user.-
+		if (!this._iNewColPos) {
+			this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
+				//check if vColum is an object with getId function
+				if (vColumn.getId) {
+					return sValue != vColumn.getId();
+				} else {
+					return sValue == vColumn;
+				}
+			});
+		}
 		
 		this.updateAnalyticalInfo(bSuppressInvalidate);
 
-		return this;
+		return oResult;
 	};
 
 	AnalyticalTable.prototype.removeAllColumns = function(bSuppressInvalidate) {
 		this._aGroupedColumns = [];
-		Table.prototype.removeColumn.apply(this, arguments);
+		var aResult = Table.prototype.removeAllColumns.apply(this, arguments);
 		
 		this._updateTableColumnDetails();
 		this.updateAnalyticalInfo(bSuppressInvalidate);
 
-		return this;
+		return aResult;
 	};
 
 	AnalyticalTable.prototype._getColumn = function(vColumn) {
@@ -1039,22 +1072,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._updateTotalRow = function(aColumnInfo, bSuppressInvalidate) {
-
-		var bHasTotal = false;
-		for (var i = 0, l = aColumnInfo ? aColumnInfo.length : 0; i < l; i++) {
-			if (aColumnInfo[i].visible && aColumnInfo[i].total) {
-				bHasTotal = true;
-				break;
-			}
-		}
-
 		var oBinding = this.getBinding("rows");
-		if (oBinding && (!oBinding.providesGrandTotal() || !oBinding.hasTotaledMeasures())) {
-			bHasTotal = false;
-		}
 
 		var iFixedBottomRowCount = this.getFixedBottomRowCount();
-		if (bHasTotal) {
+		if (oBinding && (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures())) {
 			if (iFixedBottomRowCount !== 1) {
 				this.setProperty("fixedBottomRowCount", 1, bSuppressInvalidate);
 			}
@@ -1185,7 +1206,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype._hasData = function() {
 		var oBinding = this.getBinding("rows"),
 			iLength = oBinding && (oBinding.getLength() || 0),
-			bHasTotal = oBinding && (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures());
+			bHasTotal = oBinding && oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
 
 		if (!oBinding || (bHasTotal && iLength < 2) || (!bHasTotal && iLength === 0)) {
 			return false;
@@ -1382,7 +1403,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._isRowSelectable = function(iRowIndex) {
-		return this.getBinding("rows").isIndexSelectable(iRowIndex);
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			return oBinding.isIndexSelectable(iRowIndex);
+		} else {
+			// if there is no binding the selection can't be handled, therefore the row is not selectable
+			return false;
+		}
+
 	};
 	
 	return AnalyticalTable;

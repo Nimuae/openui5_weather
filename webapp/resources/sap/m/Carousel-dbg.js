@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.30.8
+	 * @version 1.32.7
 	 *
 	 * @constructor
 	 * @public
@@ -323,6 +323,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				//mobify carousel is 1-based
 				this._oMobifyCarousel.move(iIndex + 1);
 				this._changePage(iIndex + 1);
+
+				// BCP: 1580078315
+				if (sap.zen && sap.zen.commons && this.getParent() instanceof sap.zen.commons.layout.PositionContainer) {
+					if (this._isCarouselUsedWithCommonsLayout === undefined){
+						jQuery.sap.delayedCall(0, this, "invalidate");
+						this._isCarouselUsedWithCommonsLayout = true;
+					}
+				}
 			}
 		}
 
@@ -941,7 +949,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Returns the last element that has been focus in the curent active page
-	 * @returns {Element || undefined}  HTML DOM or undefined
+	 * @returns {Element | undefined}  HTML DOM or undefined
 	 * @private
 	 */
 	Carousel.prototype._getActivePageLastFocusedElement = function() {

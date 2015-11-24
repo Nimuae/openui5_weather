@@ -17,6 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Exception'],
 	 * a specific property value in the UI.
 	 *
 	 * @alias sap.ui.model.FormatException
+	 * @public
 	 */
 	var FormatException = function(message) {
 		this.name = "FormatException";

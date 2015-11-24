@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', './Object'],
 
 
 	/**
-	 * Creates an event with the given sId, linked to the provided oSource and enriched with the mParameters.
+	 * Creates an event with the given <code>sId</code>, linked to the provided <code>oSource</code> and enriched with the <code>mParameters</code>.
 	 *
 	 * @param {string} sId The id of the event
 	 * @param {sap.ui.base.EventProvider} oSource The source of the event
@@ -20,8 +20,8 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 * @class An Event object consisting of an id, a source and a map of parameters
 	 * @extends sap.ui.base.Object
 	 * @implements sap.ui.base.Poolable
-	 * @author Malte Wedel, Daniel Brinkmann
-	 * @version 1.30.8
+	 * @author SAP SE
+	 * @version 1.32.7
 	 * @alias sap.ui.base.Event
 	 * @public
 	 */
@@ -47,8 +47,10 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	 *
 	 * @param {string} sId The id of the event
 	 * @param {sap.ui.base.EventProvider} oSource The source of the event
-	 * @param {object} [mParameters] the event parameters
+	 * @param {object} [mParameters] The event parameters
 	 *
+	 * @private
+	 * 
 	 * @see sap.ui.base.Poolable.prototype#init
 	 */
 	Event.prototype.init = function(sId, oSource, mParameters) {
@@ -63,8 +65,10 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	};
 	
 	/**
-	 * Reset event data, needed for pooling
+	 * Reset event data, needed for pooling.
+	 * 
 	 * @see sap.ui.base.Poolable.prototype#reset
+	 * @private
 	 */
 	Event.prototype.reset = function() {
 		this.sId = "";
@@ -75,7 +79,8 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	};
 	
 	/**
-	 * Returns the id of the event
+	 * Returns the id of the event.
+	 * 
 	 * @return {string} The id of the event
 	 * @public
 	 */
@@ -86,7 +91,8 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	};
 	
 	/**
-	 * Returns the source of the event
+	 * Returns the event provider on which the event was fired.
+	 * 
 	 * @return {sap.ui.base.EventProvider} The source of the event
 	 * @public
 	 */
@@ -110,8 +116,8 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	/**
 	 * Returns the value of the parameter with the given sName.
 	 *
-	 * @param {string} sName the name of the parameter to return
-	 * @return {any} the value for the named parameter
+	 * @param {string} sName The name of the parameter to return
+	 * @return {any} The value for the named parameter
 	 * @public
 	 */
 	Event.prototype.getParameter = function(sName) {
@@ -124,6 +130,9 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	
 	/**
 	 * Cancel bubbling of the event.
+	 * 
+	 * <b>Note:</b> This function only has an effect if the bubbling of the event is supported by the event source.
+	 * 
 	 * @public
 	 */
 	Event.prototype.cancelBubble = function() {
@@ -134,6 +143,9 @@ sap.ui.define(['jquery.sap.global', './Object'],
 	
 	/**
 	 * Prevent the default action of this event.
+	 * 
+	 * <b>Note:</b> This function only has an effect if preventing the default action of the event is supported by the event source.
+	 * 
 	 * @public
 	 */
 	Event.prototype.preventDefault = function() {
