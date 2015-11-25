@@ -9,10 +9,11 @@ var randomizer = new Randomizer();
 //check for debug switch:
 DEBUG = process.argv.indexOf("debug") >= 0;
 if(DEBUG){
-	SERVICE_URL = "http://localhost:3000/request.json?api={API}";
+	SERVICE_URL = "http://localhost:3000/test/request.json?api={API}";
 }else{
 	SERVICE_URL = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/Germany/Wiesloch.json";
 }
+TESTDATA_URL = "http://localhost:3000/test/request.json";
 
 API = "19420d53f811294e";
 DATA = {};
@@ -28,6 +29,32 @@ console.log("Sending Requests to \"" + buildRequestURI() + "\"");
 //create routes for retrieval of stored data
 router.get("/service", function(req, res, next){
 	res.send(DATA);
+});
+router.get("/service/test", function(req, response, next){
+	http.get(TESTDATA_URL, function(res){
+
+		//set encoding and read data from body
+		res.setEncoding('utf8');
+		var data = "";
+		res.on('data', function (chunk) {
+			data += chunk;
+		});
+		res.on('end', function () {
+			try{
+				DATA = JSON.parse(data);
+				response.send(DATA);
+			}catch(e){
+				console.error("Error", e);
+				log(e);
+			}
+		});
+
+	}).on("error", function(e){
+		var d = new Date().toUTCString();
+		
+		console.error("[" + d + "] " + e.code + ": ", e);
+		log(e.code + ": " + e.hostname);
+	});
 });
 
 //add router to app as middleware for data requests
