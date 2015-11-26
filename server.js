@@ -2,6 +2,7 @@ var express = require("express");
 var http = require("http");
 var fs = require("fs");
 var path = require("path");
+var bodyParser = require("body-parser");
 
 var Randomizer = require("./randomizer.js");
 var randomizer = new Randomizer();
@@ -33,12 +34,18 @@ router.get("/service", function(req, res, next){
 	res.send(DATA);
 });
 router.get("/service/settings", function(req, res, next){
-	res.send(readSettings());
+	var settings = readSettings();
+
+	res.send({
+		city: settings.city || "Wiesloch",
+		temp_unit: settings.temp_unit || "C",
+		show_forecast: settings.show_forecast || true
+	});
 });
 router.post("/service/settings", function(req, res, next){
-	// writeSettings({
-	// 	city: req.body.city
-	// });
+	writeSettings({
+		city: req.body.city
+	});
 	res.end();
 });
 router.get("/service/test", function(req, response, next){
@@ -68,6 +75,8 @@ router.get("/service/test", function(req, response, next){
 	});
 });
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 //add router to app as middleware for data requests
 app.use(router);
 //add static webapp-Folder to app as middleware
@@ -139,7 +148,7 @@ function readSettings(){
 	if(!fs.existsSync(SETTINGS_FILE)){
 		return {};
 	}
-	return fs.readFileSync(SETTINGS_FILE, { encoding: "utf-8" });
+	return JSON.parse(fs.readFileSync(SETTINGS_FILE, { encoding: "utf-8" }) || "{}");
 }
 
 function writeSettings(o){
@@ -147,10 +156,12 @@ function writeSettings(o){
 }
 
 //set an interval to update weather data from the web service and store it
-var intv = 1000 * 60 * 30; //update every 30 minutes
+var INTERVAL = (process.argv.indexOf("-i") !== -1) ? parseInt(process.argv[process.argv.indexOf("-i") + 1], 10) : 2000; //take argument or update every 30 minutes
+console.log("Updating every", INTERVAL, "ms", "(DEBUG)", DEBUG);
+
 setInterval(function(){
 	var msg = "[" + (new Date().toUTCString()) + "] Fetching weather data from Service...";
 	console.log(msg);
 	log(msg);
 	getWeatherData();
-}, DEBUG ? 2000 : intv);
+}, DEBUG ? INTERVAL : 1000 * 60 * 30);

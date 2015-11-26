@@ -35,14 +35,14 @@
                             columnsM="1">
                             <f:content>
                                 <Label text="Stadt" />
-                                <Input value="Wiesloch" />
+                                <Input value="{settings>/city}" />
                                 <Label text="Temperatur" />
-                                <RadioButtonGroup columns="2" editable="true">
-                                    <RadioButton id="RB_C" text="Celsius" />
-                                    <RadioButton id="RB_F" text="Fahrenheit" />
+                                <RadioButtonGroup columns="2" editable="true" select="onRadioButtonChange">
+                                    <RadioButton selected="{=${settings>/temp_unit} === 'C'}" id="RB_C" text="Celsius" />
+                                    <RadioButton selected="{=${settings>/temp_unit} === 'F'}" id="RB_F" text="Fahrenheit" />
                                 </RadioButtonGroup>
                                 <Label text="Wettervorhersage" />
-                                <Switch state="true" customTextOn="An" customTextOff="Aus" />
+                                <Switch state="{settings>/show_forecast}" customTextOn="An" customTextOff="Aus" />
                             </f:content>
                         </f:SimpleForm>
                     </l:content>
