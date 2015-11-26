@@ -54,9 +54,32 @@
                                     formatter: 'hss.weather.view.Formatter.animateLabel'
                                 }"
                                 class="feltTemp"/>
-                            <Label
-                                text="{data>/forecast/simpleforecast/forecastday/2/low/celsius}°C | {data>/forecast/simpleforecast/forecastday/2/high/celsius}°C" class="highLow"
-                                visible="{ path: 'data>/forecast/simpleforecast/forecastday/2/low/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
+                            <HBox>
+                                <Label
+                                    text="{=
+                                        ${settings>/temp_unit} === 'C' ?
+                                            (${data>/forecast/simpleforecast/forecastday/2/low/celsius} + '°C') :
+                                            (${data>/forecast/simpleforecast/forecastday/2/low/fahrenheit} + '°F')
+                                    }"
+                                    class="ForecastTempLow"
+                                    visible="{ path: 'data>/forecast/simpleforecast/forecastday/2/low/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
+                                <Label
+                                    text="{=
+                                        ${settings>/temp_unit} === 'C' ?
+                                            (${data>/forecast/simpleforecast/forecastday/2/high/celsius} + '°C') :
+                                            (${data>/forecast/simpleforecast/forecastday/2/high/fahrenheit} + '°F')
+                                    }"
+                                    class="ForecastTempHigh"
+                                    visible="{ path: 'data>/forecast/simpleforecast/forecastday/2/high/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
+                            </HBox>
+                            <!-- <Label
+                                text="{=
+                                    ${settings>/temp_unit} === 'C' ?
+                                        (${data>/forecast/simpleforecast/forecastday/2/low/celsius}+'°C | ' + ${data>/forecast/simpleforecast/forecastday/2/high/celsius} + '°C') :
+                                        (${data>/forecast/simpleforecast/forecastday/2/low/fahrenheit}+'°F | ' + ${data>/forecast/simpleforecast/forecastday/2/high/fahrenheit} + '°F')
+                                }"
+                                class="highLow"
+                                visible="{ path: 'data>/forecast/simpleforecast/forecastday/2/low/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/> -->
                         </HBox>
                         <layoutData>
                             <l:GridData spanL="6" spanM="6" spanS="12" />

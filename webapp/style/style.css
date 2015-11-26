@@ -103,7 +103,7 @@ html{
 	max-width: 5rem;
 }
 .ForecastTempHigh{
-	font-size: 1.1rem !important;
+	font-size: 1.0rem !important;
 
 	text-align: left !important;
 	border-top: 2px solid #666;
@@ -111,11 +111,12 @@ html{
 	padding-left: 0.5rem;
 	padding-top: 0.25rem;
 	width: 5rem;
+	font-weight: 600 !important;
 
 	color: #E03F00 !important;
 }
 .ForecastTempLow{
-	font-size: 1.1rem !important;
+	font-size: 1.0rem !important;
 
 	text-align: right !important;
 	border-top: 2px solid #666;
@@ -123,6 +124,7 @@ html{
 	padding-right: 0.5rem;
 	padding-top: 0.25rem;
 	width: 5rem;
+	font-weight: 600 !important;
 
 	color: #009de0 !important;
 }
@@ -139,16 +141,21 @@ html{
 	padding: 0.2rem;
 }
 
+.TileTemp .ForecastTempLow, .TileTemp .ForecastTempHigh{
+	border: none;
+	font-size: 1.0rem !important;
+	width: auto;
+	font-weight: 600;
+}
+
 .feltTemp{
 	font-size: 1rem !important;
 	font-weight: 600 !important;
+	margin-top: 0.5rem;
+	padding-top: 0.25rem;
 }
 .curWeather{
 	font-size: 1.2rem !important;
-}
-.highLow{
-	font-size: 1rem !important;
-	font-weight: 600 !important;
 }
 
 

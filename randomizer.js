@@ -1,9 +1,6 @@
 module.exports = function(){
-	var that = this;
-
-	this.init = function(){
-		that.stack = {};
-	};
+	var self = this;
+	
 	this.stack = {};
 	this.fields = {
 		"temp_c": [-20.0, 40.0], //between -20 and 40
@@ -72,19 +69,19 @@ module.exports = function(){
 
 		var result = "";
 		if (o.length === 2) { //contains two boundaries
-			result = that.rand(o[0], o[1]);
+			result = self.rand(o[0], o[1]);
 		} else { //expect an object
 			if(!!o.depends && o.depends.field){
 				//resolve dependency if it does not exist yet:
-				if(!that.stack[o.depends.field]){
-					that.__evaluate(o.depends.field, that.fields[o.depends.field]);
+				if(!self.stack[o.depends.field]){
+					self.__evaluate(o.depends.field, self.fields[o.depends.field]);
 				}
 
 				//has a dependency
 				if(o.depends.fn){
-					result = o.depends.fn(o.depends.field, that.stack[o.depends.field]);
+					result = o.depends.fn(o.depends.field, self.stack[o.depends.field]);
 				}else{
-					result = that.stack[o.depends.field];
+					result = self.stack[o.depends.field];
 				}
 			}else{
 				var range = o.range;
@@ -93,14 +90,14 @@ module.exports = function(){
 				var suffix = o.suffix || "";
 
 				result += prefix;
-				result += range ? that.rand(range[0], range[1]) : "";
-				result += select ? select[that.rand(select.length-1)] : "";
+				result += range ? self.rand(range[0], range[1]) : "";
+				result += select ? select[self.rand(select.length-1)] : "";
 				result += suffix;
 			}
 		}
 
 		//add to stack
-		that.stack[field] = result;
+		self.stack[field] = result;
 
 		return result;
 	};
@@ -110,8 +107,8 @@ module.exports = function(){
 			return v;
 		}
 		var val = null;
-		if (that.fields.hasOwnProperty(k)) {
-			val = that.__evaluate(k, that.fields[k]);
+		if (self.fields.hasOwnProperty(k)) {
+			val = self.__evaluate(k, self.fields[k]);
 		}
 		return val || v;
 	};
