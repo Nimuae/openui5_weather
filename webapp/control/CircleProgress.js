@@ -2,65 +2,64 @@ jQuery.sap.require("sap.ui.core.Control");
 jQuery.sap.declare("hss.weather.control.CircleProgress");
 
 jQuery.sap.includeStyleSheet("../control/CircleProgress.css");
+jQuery.sap.includeScript("../resources/circle-progress.js");
 
 sap.ui.core.Control.extend("hss.weather.control.CircleProgress", {
     metadata: {
         properties: {
             value: { type: "float", defaultValue: 0 },
-            min: { type: "integer", defaultValue: 0 },
-            max: { type: "integer", defaultValue: 100 },
-            showValue: { type: "boolean", defaultValue: false },
-            size: { type: "integer", defaultValue: 100 }
+            showValue: { type: "boolean", defaultValue: true },
+            size: { type: "int", defaultValue: 100 }
         }
     },
 
     init: function(){
     },
 
-    setValue: function(val){
-        //set bound for value to min and max
-        this.setProperty("value", Math.max(this.getProperty("min"), Math.min(this.getProperty("max"), val)));
-    },
-
     getPercentValue: function(){
-        var v = this.getProperty("value");
-        var min = this.getProperty("min");
-        var max = this.getProperty("max");
-        var range = Math.abs(max - min);
-        return Number((v - min) / range).toFixed(2) * 100;
+        return Math.max(0, Math.min(Math.floor(this.getValue() * 100), 100));
     },
 
     renderer: {
         render: function(oRm, oControl){
-            var size = oControl.getProperty("size");
-
-            //outer
             oRm.addClass("CircleProgress");
+            oRm.addStyle("width", oControl.getSize() + "px");
+            oRm.addStyle("height", oControl.getSize() + "px");
             oRm.write("<div");
             oRm.writeControlData(oControl);
-
             oRm.writeClasses();
+            oRm.writeStyles();
             oRm.write(">");
 
-                oRm.addClass("CircleProgressInner");
-                oRm.addStyle("width", size + "px");
-                oRm.addStyle("line-height", size + "px");
+            if(oControl.getShowValue()){
                 oRm.write("<div");
-                oRm.writeStyles();
+                oRm.addClass("CircleProgressNumber");
+                oRm.addStyle("line-height", oControl.getSize() + "px");
                 oRm.writeClasses();
+                oRm.writeStyles();
                 oRm.write(">");
-
-                    oRm.addClass("CircleProgressGauge");
-                    oRm.addStyle("border-width", Math.floor(oControl.getPercentValue()/2) + "px");
-                    oRm.write("<div");
-                    oRm.writeClasses();
-                    oRm.writeStyles();
-                    oRm.write(">");
-                    oRm.write("</div>");
-
+                oRm.write(oControl.getPercentValue() + "%");
                 oRm.write("</div>");
+            }
 
             oRm.write("</div>");
         }
+    },
+
+    onAfterRendering: function(){
+        var value = this.getValue();
+
+        this.$().circleProgress({
+            value: value,
+            size: this.getSize(),
+            animation: false,
+            emptyFill: "#666",
+            lineCap: "round",
+            startAngle: Math.PI/-2,
+            thickness: this.getSize() / 10,
+            fill: {
+                gradient: ["#009de0", "#00b0e8"]
+            }
+        });
     }
 });

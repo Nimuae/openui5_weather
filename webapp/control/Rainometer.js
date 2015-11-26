@@ -8,7 +8,8 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
         properties: {
             value: { type: "float", defaultValue: 0.0 },
             unit: { type: "string", defaultValue: "%" },
-            showValue: { type: "boolean", defaultValue: false }
+            showValue: { type: "boolean", defaultValue: false },
+            size: { type: "int", defaultValue: 100 }
         }
     },
 
@@ -23,6 +24,8 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
         render: function(oRm, oControl){
             //outer
             oRm.addClass("Rainometer");
+            oRm.addStyle("width", oControl.getSize() + "px");
+            oRm.addStyle("height", oControl.getSize() + "px");
             oRm.write("<div");
             oRm.writeControlData(oControl);
             oRm.writeStyles();

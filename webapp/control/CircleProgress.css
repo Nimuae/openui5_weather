@@ -1,27 +1,18 @@
 .CircleProgress{
-	
-}
-
-.CircleProgressInner{
     position: relative;
-    z-index: 90;
-
-    background-color: #666;
-    border-radius: 100%;
-
-    text-align: center;
 }
 
-.CircleProgressGauge{
-	display: inline-block;
-	vertical-align: middle;
+.CircleProgress canvas{
+    max-width: 100%;
+    max-height: 100%;
+}
 
-
-    border-radius: 100%;
-
-    margin-top: -1px;
-    border: 0px solid #009de0;
-    outline: white;
-
-    box-shadow: 0 0 0 2px white;
+.CircleProgress .CircleProgressNumber{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #666;
+    font-size: 1.5rem;
 }

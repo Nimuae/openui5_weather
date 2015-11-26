@@ -58,28 +58,20 @@
                                 <Label
                                     text="{=
                                         ${settings>/temp_unit} === 'C' ?
-                                            (${data>/forecast/simpleforecast/forecastday/2/low/celsius} + '°C') :
-                                            (${data>/forecast/simpleforecast/forecastday/2/low/fahrenheit} + '°F')
+                                            (${data>/forecast/simpleforecast/forecastday/0/low/celsius} + '°C') :
+                                            (${data>/forecast/simpleforecast/forecastday/0/low/fahrenheit} + '°F')
                                     }"
                                     class="ForecastTempLow"
-                                    visible="{ path: 'data>/forecast/simpleforecast/forecastday/2/low/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
+                                    visible="{ path: 'data>/forecast/simpleforecast/forecastday/0/low/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
                                 <Label
                                     text="{=
                                         ${settings>/temp_unit} === 'C' ?
-                                            (${data>/forecast/simpleforecast/forecastday/2/high/celsius} + '°C') :
-                                            (${data>/forecast/simpleforecast/forecastday/2/high/fahrenheit} + '°F')
+                                            (${data>/forecast/simpleforecast/forecastday/0/high/celsius} + '°C') :
+                                            (${data>/forecast/simpleforecast/forecastday/0/high/fahrenheit} + '°F')
                                     }"
                                     class="ForecastTempHigh"
-                                    visible="{ path: 'data>/forecast/simpleforecast/forecastday/2/high/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
+                                    visible="{ path: 'data>/forecast/simpleforecast/forecastday/0/high/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
                             </HBox>
-                            <!-- <Label
-                                text="{=
-                                    ${settings>/temp_unit} === 'C' ?
-                                        (${data>/forecast/simpleforecast/forecastday/2/low/celsius}+'°C | ' + ${data>/forecast/simpleforecast/forecastday/2/high/celsius} + '°C') :
-                                        (${data>/forecast/simpleforecast/forecastday/2/low/fahrenheit}+'°F | ' + ${data>/forecast/simpleforecast/forecastday/2/high/fahrenheit} + '°F')
-                                }"
-                                class="highLow"
-                                visible="{ path: 'data>/forecast/simpleforecast/forecastday/2/low/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/> -->
                         </HBox>
                         <layoutData>
                             <l:GridData spanL="6" spanM="6" spanS="12" />
@@ -106,20 +98,20 @@
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
                             </layoutData>
                         </HBox>
-                        <HBox justifyContent="SpaceBetween" class="Tile TileGust" alignItems="Center">
-                            <HBox alignItems="Center">
-                                <hss:Rainometer
-                                    value="{data>/current_observation/precip_today_metric}"
-                                    showValue="true"
-                                    unit="mm"
-                                    visible="{ path: 'data>/current_observation/precip_today_metric', formatter: 'hss.weather.view.Formatter.animateLabel' }" />
-                                <Label text="Niederschlag" class="LabelGustDir PrecipText" />
-                            </HBox>
-                            <!-- <hss:CircleProgress value="35" /> -->
-                            <!-- <VBox>
-                                <Label text="10% Chance" />
-                                <Label text="{data>/current_observation/precip_today_metric} mm" />
-                            </VBox> -->
+                        <HBox class="Tile TileGust" alignItems="Center" justifyContent="SpaceBetween">
+                            <hss:Rainometer
+                                size="85"
+                                value="{data>/current_observation/precip_today_metric}"
+                                showValue="true"
+                                unit="mm"
+                                visible="{ path: 'data>/current_observation/precip_today_metric', formatter: 'hss.weather.view.Formatter.animateLabel' }" />
+                            <VBox alignItems="Center">
+                                <Label text="Niederschlag (1h)" class="PrecipText" />
+                                <Label text="Luftfeuchtigkeit" class="HumidityText" />
+                            </VBox>
+                            <hss:CircleProgress
+                                size="85"
+                                value="{=parseInt(${data>/current_observation/relative_humidity}.replace('%', ''), 10)/100 }" />
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
                             </layoutData>
