@@ -6,7 +6,7 @@
     xmlns:f="sap.ui.layout.form"
     xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
     xmlns:hss="hss.weather.control">
-    <Popover
+    <Dialog
         id="SettingsPane"
         class="SettingsPane"
         placement="Left"
@@ -14,7 +14,7 @@
         contentWidth="300px"
         contentHeight="480px"
         showArrow="false"
-        modal="true">
+        modal="false">
         <Page
             title="Einstellungen">
             <content>
@@ -56,5 +56,5 @@
                 </Toolbar>
             </footer>
         </Page>
-    </Popover>
+    </Dialog>
 </core:FragmentDefinition>

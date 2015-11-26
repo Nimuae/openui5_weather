@@ -20,8 +20,10 @@ DATA = {};
 LOGS = __dirname + "/log";
 HISTORY = __dirname + "/history";
 DATA_DIR = __dirname + "/data";
+SETTINGS_FILE = DATA_DIR + "/settings.json";
 
 var app = express();
+
 var router = express.Router();
 
 console.log("Sending Requests to \"" + buildRequestURI() + "\"");
@@ -29,6 +31,15 @@ console.log("Sending Requests to \"" + buildRequestURI() + "\"");
 //create routes for retrieval of stored data
 router.get("/service", function(req, res, next){
 	res.send(DATA);
+});
+router.get("/service/settings", function(req, res, next){
+	res.send(readSettings());
+});
+router.post("/service/settings", function(req, res, next){
+	// writeSettings({
+	// 	city: req.body.city
+	// });
+	res.end();
 });
 router.get("/service/test", function(req, response, next){
 	http.get(TESTDATA_URL, function(res){
@@ -124,15 +135,15 @@ function log(msg, file){
 	fs.appendFileSync(LOGS + path.sep + file, "[" + d + "] " + msg + "\n");
 }
 
-//persist current data!
-function saveCurrentData(){
-	var file = "requests.json";
-
-	if(!fs.existsSync(DATA_DIR)){
-		fs.mkdirSync(DATA_DIR);
+function readSettings(){
+	if(!fs.existsSync(SETTINGS_FILE)){
+		return {};
 	}
+	return fs.readFileSync(SETTINGS_FILE, { encoding: "utf-8" });
+}
 
-	fs.writeFileSync(DATA_DIR + path.sep + file, JSON.stringify(DATA));
+function writeSettings(o){
+	fs.writeFileSync(SETTINGS_FILE, JSON.stringify(o));
 }
 
 //set an interval to update weather data from the web service and store it

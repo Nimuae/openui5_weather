@@ -1,4 +1,5 @@
 jQuery.sap.require("hss.weather.view.Formatter");
+jQuery.sap.require("sap.m.MessageBox");
 
 sap.ui.define([
 	"sap/ui/core/mvc/Controller"
@@ -13,6 +14,9 @@ sap.ui.define([
 			var oConditionsModel = new sap.ui.model.json.JSONModel(this.SERVICE_URL);
 			this.getView().setModel(oConditionsModel, "data");
 
+			var oSettingsModel = new sap.ui.model.json.JSONModel({});
+			this.getView().setModel(oSettingsModel, "settings");
+
 			var delay = 1000 * 60 * 30;
 			if(jQuery.sap.getUriParameters().get("debug")){
 				delay = 5000;
@@ -25,47 +29,34 @@ sap.ui.define([
 		},
 
 		openSettingsPane: function(oEvent){
-			if(!this._settingsPopover){
-				this._settingsPopover = sap.ui.xmlfragment("settingsPopover", "hss.weather.view.SettingsPopover", this);
-				this.getView().addDependent(this._settingsPopover);
+			if(!this._settingsDialog){
+				this._settingsDialog = sap.ui.xmlfragment("settingsPopover", "hss.weather.view.SettingsPopover", this);
+				this.getView().addDependent(this._settingsDialog);
 			}
 
 			var oSource = oEvent.getSource();
 
 			jQuery.sap.delayedCall(0, this, function(){
-				this._settingsPopover.openBy(oSource);
+				this._settingsDialog.open();
 			});
 		},
 		
 		onSave: function(){			
 			sap.m.MessageToast.show("Änderungen wurden erfolgreich gespeichert.");
+			this._settingsDialog.close();
 		},
 
 		onCancel: function(){
 			var that = this;
-			var dialog = new sap.m.Dialog({
-				title: 'Abbrechen',
-				type: 'Message',
-				content: new sap.m.Text({ text: 'Wollen Sie die Änderungen wirklich verwerfen?' }),
-				beginButton: new sap.m.Button({
-					text: 'Ja',
-					press: function () {
-						dialog.close();
-						that._settingsPopover.close();
+
+			sap.m.MessageBox.confirm("Wollen Sie die Änderungen wirklich verwerfen?", {
+				title: "Abbrechen",
+				onClose: function(oAction){
+					if(oAction === "OK"){
+						that._settingsDialog.close();
 					}
-				}),
-				endButton: new sap.m.Button({
-					text: 'Abbrechen',
-					press: function () {
-						dialog.close();
-					}
-				}),
-				afterClose: function() {
-					dialog.destroy();
 				}
 			});
-
-			dialog.open();
 		}
 	});
 });
