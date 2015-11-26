@@ -46,7 +46,7 @@ sap.ui.define([
 
 			jQuery.sap.delayedCall(0, this, function(){
 				this._settingsDialog.open();
-				this.oData_old = this.getView().getModel("settings").getData();
+				this.oData_old = JSON.parse(JSON.stringify(this.getView().getModel("settings").getData()));
 			});
 		},
 		
@@ -54,9 +54,19 @@ sap.ui.define([
 			this._settingsDialog.close();
 
 			var data = this.getView().getModel("settings").getData();
-			if(this.checkDataChanged()){
+			var bChanged = this.checkDataChanged();
+			if(bChanged){
 				//send request
-				sap.m.MessageToast.show("Änderungen wurden erfolgreich gespeichert.");
+				$.ajax({
+					url: this.SETTINGS_URL,
+					method: "POST",
+					data: JSON.stringify(data),
+					contentType: "application/json"
+				}).success(function(d){
+					sap.m.MessageToast.show("Änderungen wurden erfolgreich gespeichert.");
+				}).fail(function(jqXHR){
+					sap.m.MessageToast.show("Fehler beim Speichern: " + jqXHR.statusText);
+				});
 			}else{
 				this._settingsDialog.close();
 			}

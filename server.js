@@ -39,12 +39,14 @@ router.get("/service/settings", function(req, res, next){
 	res.send({
 		city: settings.city || "Wiesloch",
 		temp_unit: settings.temp_unit || "C",
-		show_forecast: settings.show_forecast || true
+		show_forecast: !!settings.show_forecast
 	});
 });
 router.post("/service/settings", function(req, res, next){
 	writeSettings({
-		city: req.body.city
+		city: req.body.city,
+		temp_unit: req.body.temp_unit,
+		show_forecast: req.body.show_forecast
 	});
 	res.end();
 });
