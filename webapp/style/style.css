@@ -74,7 +74,7 @@ html{
 	margin-bottom: 3rem;
 	font-weight: 600 !important;
 	font-size: 0.9rem !important;
-	left: -0.5rem;
+	left: -1rem;
 	width: 100%;
 }
 .PrecipText:before{
@@ -115,7 +115,7 @@ html{
 	border-top: 2px solid #666;
 	margin-top: 0.5rem;
 
-	color: #009de0 !important;
+	/*color: #009de0 !important;*/
 }
 .WeatherIcon{
 	height: 8rem;
