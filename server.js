@@ -2,7 +2,6 @@ var express = require("express");
 var http = require("http");
 var fs = require("fs");
 var path = require("path");
-var bodyParser = require("body-parser");
 
 var Randomizer = require("./randomizer.js");
 var randomizer = new Randomizer();
@@ -42,7 +41,7 @@ router.get("/service/settings", function(req, res, next){
 		show_forecast: !!settings.show_forecast
 	});
 });
-router.post("/service/settings", function(req, res, next){
+router.post("/service/settings", require("body-parser").json(), function(req, res, next){
 	writeSettings({
 		city: req.body.city,
 		temp_unit: req.body.temp_unit,
@@ -77,8 +76,6 @@ router.get("/service/test", function(req, response, next){
 	});
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 //add router to app as middleware for data requests
 app.use(router);
 //add static webapp-Folder to app as middleware
