@@ -9,8 +9,13 @@ sap.ui.define([
 	return Controller.extend("hss.weather.controller.Main", {
 
 		SERVICE_URL: "/service",
+		SERVICE_TEST_URL: "/service/test",
 
 		onInit: function(){
+			if(jQuery.sap.getUriParameters().get("test")){
+				this.SERVICE_URL = this.SERVICE_TEST_URL;
+			}
+
 			var oConditionsModel = new sap.ui.model.json.JSONModel(this.SERVICE_URL);
 			this.getView().setModel(oConditionsModel, "data");
 
