@@ -32,10 +32,15 @@
                                 class="WeatherIcon" />
 
                                 <Label
-                                    text="{
-                                        path: 'data>/current_observation/temp_c', 
+                                    text="{=
+                                        ${settings>/temp_unit} === 'C' ?
+                                        ${path: 'data>/current_observation/temp_c', 
                                         formatter: 'hss.weather.view.Formatter.roundTemp'
-                                    }°C"
+                                    } + '°C' : 
+                                     ${path: 'data>/current_observation/temp_f', 
+                                        formatter: 'hss.weather.view.Formatter.roundTemp'
+                                    } + 'F' }
+                                    "
                                     visible="{
                                         path: 'data>/current_observation/temp_c',
                                         formatter: 'hss.weather.view.Formatter.animateLabel'
@@ -45,10 +50,16 @@
 
                         <HBox justifyContent= "SpaceBetween">
                             <Label
-                                text="Gefühlt: {
-                                    path: 'data>/current_observation/feelslike_c',
-                                    formatter: 'hss.weather.view.Formatter.roundTemp'
-                                }°C"
+                                text="Gefühlt: 
+                                {=
+                                	${settings>/temp_unit} === 'C' ?
+                                     ${path: 'data>/current_observation/feelslike_c', 
+                                        formatter: 'hss.weather.view.Formatter.roundTemp'
+                                    	} + '°C' : 
+                                     ${path: 'data>/current_observation/feelslike_f', 
+                                        formatter: 'hss.weather.view.Formatter.roundTemp'
+                                    } + 'F' 
+                                }"
                                 visible="{
                                     path: 'data>/current_observation/feelslike_c',
                                     formatter: 'hss.weather.view.Formatter.animateLabel'
