@@ -39,6 +39,7 @@ sap.ui.define([
 		openSettingsPane: function(oEvent){
 			if(!this._settingsDialog){
 				this._settingsDialog = sap.ui.xmlfragment("settingsPopover", "hss.weather.view.SettingsPopover", this);
+
 				this.getView().addDependent(this._settingsDialog);
 			}
 
@@ -46,7 +47,9 @@ sap.ui.define([
 
 			jQuery.sap.delayedCall(0, this, function(){
 				this._settingsDialog.open();
-				this.oData_old = JSON.parse(JSON.stringify(this.getView().getModel("settings").getData()));
+
+				var oSettings = this.getView().getModel("settings").getData();
+				this.oData_old = JSON.parse(JSON.stringify(oSettings));
 			});
 		},
 		
@@ -73,25 +76,31 @@ sap.ui.define([
 		},
 
 		onCancel: function(){
-			var that = this;
+			var self = this;
 
 			if(this.checkDataChanged()){
 				sap.m.MessageBox.confirm("Wollen Sie die Änderungen wirklich verwerfen?", {
 					title: "Abbrechen",
 					onClose: function(oAction){
 						if(oAction === "OK"){
-							that._settingsDialog.close();
+							var oSettingsModel = self.getView().getModel("settings");
+							oSettingsModel.setData(self.oData_old);
+							self._settingsDialog.close();
 						}
 					}
 				});
 			}else{
-				that._settingsDialog.close();
+				self._settingsDialog.close();
 			}
 		},
 
 		checkDataChanged: function(){
 			var data = this.getView().getModel("settings").getData();
 			var data_old = this.oData_old;
+
+			if(!data_old){
+				return true;
+			}
 
 			var bChanged = false;
 			for(var k in data){
