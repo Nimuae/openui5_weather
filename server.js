@@ -9,9 +9,9 @@ var randomizer = new Randomizer();
 //check for debug switch:
 DEBUG = process.argv.indexOf("debug") >= 0;
 if(DEBUG){
-	SERVICE_URL = "http://localhost:3000/test/request.json?api={API}";
+	SERVICE_URL = "http://localhost:3000/test/request.json?api={API}&city={city}";
 }else{
-	SERVICE_URL = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/Germany/Wiesloch.json";
+	SERVICE_URL = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/Germany/{city}.json";
 }
 TESTDATA_URL = "http://localhost:3000/test/request.json";
 
@@ -42,11 +42,20 @@ router.get("/service/settings", function(req, res, next){
 	});
 });
 router.post("/service/settings", require("body-parser").json(), function(req, res, next){
+	var settings = readSettings();
+
+
 	writeSettings({
 		city: req.body.city,
 		temp_unit: req.body.temp_unit,
 		show_forecast: req.body.show_forecast
 	});
+
+	//did the city name change?
+	if((settings.city || "Wiesloch") !== (req.body.city || "Wiesloch")){
+		getWeatherData();
+	}
+	
 	res.end();
 });
 router.get("/service/test", function(req, response, next){
@@ -84,9 +93,6 @@ app.use("/", express.static(__dirname + "/webapp"));
 var server = app.listen(3000, function(){
 	var port = server.address().port;
 
-	var msg = "[" + (new Date().toUTCString()) + "] Fetching weather data from Service...";
-	console.log(msg);
-	log(msg);
 	getWeatherData();
 	console.log('Server listening on port %s', port);
 });
@@ -94,6 +100,11 @@ var server = app.listen(3000, function(){
 
 function getWeatherData(options){
 	var reqURI = buildRequestURI(options || {});
+
+	var msg = "[" + (new Date().toUTCString()) + "] Fetching weather data from \"" + reqURI + "\"";
+	console.log(msg);
+	log(msg);
+
 	http.get(reqURI, function(res){
 
 		//set encoding and read data from body
@@ -107,11 +118,6 @@ function getWeatherData(options){
 			try{
 				randomizer = new Randomizer();
 				DATA = JSON.parse(data, DEBUG ? randomizer.randomize : function(k, v) { return v; });
-				/*log("\n" +
-					JSON.stringify(DATA) +
-					"\n---------------------------------------\n\n",
-					"history.log"
-				);*/
 			}catch(e){
 				console.error("Error", e);
 				log(e);
@@ -128,7 +134,8 @@ function getWeatherData(options){
 
 function buildRequestURI(options){
 	var sOptions = "lang:DL";
-	var uri = SERVICE_URL.replace("{API}", API).replace("{options}", sOptions);
+	var city = readSettings().city || "Wiesloch";
+	var uri = SERVICE_URL.replace("{API}", API).replace("{city}", city).replace("{options}", sOptions);
 
 	return uri;
 }
@@ -159,8 +166,5 @@ var INTERVAL = (process.argv.indexOf("-i") !== -1) ? parseInt(process.argv[proce
 console.log("Updating every", INTERVAL, "ms", "(DEBUG)", DEBUG);
 
 setInterval(function(){
-	var msg = "[" + (new Date().toUTCString()) + "] Fetching weather data from Service...";
-	console.log(msg);
-	log(msg);
 	getWeatherData();
 }, DEBUG ? INTERVAL : 1000 * 60 * 30);

@@ -21,7 +21,7 @@
                     justifyContent="Center" >
 
                     <VBox justifyContent="SpaceBetween" class="TileTemp Tile">
-                        <Label text="{data>/current_observation/display_location/city}" class="town" id="town"/>
+                        <Label text="{settings>/city}" class="town" id="town"/>
 
                         <VBox alignItems="Center">
                             <Image
@@ -37,11 +37,6 @@
                                         ${ path: 'data>/current_observation/temp_c', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°C' :
                                         ${ path: 'data>/current_observation/temp_f', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°F'
                                     }"
-                                    visible="{
-                                        path: 'data>/current_observation/temp_c',
-                                        formatter: 'hss.weather.view.Formatter.animateLabel'
-
-                                    }"
                                     class="curTemp"/>
                         </VBox>
 
@@ -52,10 +47,6 @@
                                     ${ path: 'data>/current_observation/feelslike_c', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°C' :
                                     ${ path: 'data>/current_observation/feelslike_f', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°F'
                                 }"
-                                visible="{
-                                    path: 'data>/current_observation/feelslike_c',
-                                    formatter: 'hss.weather.view.Formatter.animateLabel'
-                                }"
                                 class="feltTemp"/>
                             <HBox>
                                 <Label
@@ -64,16 +55,14 @@
                                             (${data>/forecast/simpleforecast/forecastday/0/low/celsius} + '°C') :
                                             (${data>/forecast/simpleforecast/forecastday/0/low/fahrenheit} + '°F')
                                     }"
-                                    class="ForecastTempLow"
-                                    visible="{ path: 'data>/forecast/simpleforecast/forecastday/0/low/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
+                                    class="ForecastTempLow"/>
                                 <Label
                                     text="{=
                                         ${settings>/temp_unit} === 'C' ?
                                             (${data>/forecast/simpleforecast/forecastday/0/high/celsius} + '°C') :
                                             (${data>/forecast/simpleforecast/forecastday/0/high/fahrenheit} + '°F')
                                     }"
-                                    class="ForecastTempHigh"
-                                    visible="{ path: 'data>/forecast/simpleforecast/forecastday/0/high/celsius', formatter: 'hss.weather.view.Formatter.animateLabel' }"/>
+                                    class="ForecastTempHigh"/>
                             </HBox>
                         </HBox>
                         <layoutData>
@@ -90,11 +79,9 @@
                             <VBox class="WindBox">
                                 <Label
                                     text="{data>/current_observation/wind_kph} km/h"
-                                    visible="{ path: 'data>/current_observation/wind_kph', formatter: 'hss.weather.view.Formatter.animateLabel' }"
                                     class="LabelGustStrength" />
                                 <Label
                                     text="{data>/current_observation/wind_dir}"
-                                    visible="{ path: 'data>/current_observation/wind_dir', formatter: 'hss.weather.view.Formatter.animateLabel' }"
                                     class="LabelGustDir" />
                             </VBox>
                             <layoutData>
@@ -106,8 +93,7 @@
                                 size="85"
                                 value="{data>/current_observation/precip_today_metric}"
                                 showValue="true"
-                                unit="mm"
-                                visible="{ path: 'data>/current_observation/precip_today_metric', formatter: 'hss.weather.view.Formatter.animateLabel' }" />
+                                unit="mm" />
                             <VBox alignItems="Center">
                                 <Label text="Niederschlag (1h)" class="PrecipText" />
                                 <Label text="Luftfeuchtigkeit" class="HumidityText" />
@@ -124,7 +110,7 @@
 
                 <HBox
                     justifyContent="Center">
-                    <VBox class="TileForecast Tile">
+                    <VBox class="TileForecast Tile" visible="{settings>/show_forecast}">
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
@@ -148,50 +134,8 @@
                                     text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
-                        <!-- <HBox height="12%" class="TileForecastBorderBottom">
-                            <Label text="{data>/forecast/simpleforecast/forecastday/1/date/weekday} {data>/forecast/simpleforecast/forecastday/1/date/day}.{data>/forecast/simpleforecast/forecastday/1/date/month}.{data>/forecast/simpleforecast/forecastday/1/date/year}" class="TileForcastBigText"/>
-                        </HBox> 
-                        <HBox height="83%" justifyContent="Center" class="TileForecastPaddingTop">
-                            <VBox height="100%" width="100%" class="alignCenterVertically">
-                                <HBox height="25%">
-                                	<HBox>
-                                		<HBox width="2.5rem" justifyContent="Center">
-                                			<Label text="{data>/forecast/simpleforecast/forecastday/1/low/celsius}°C"/>
-                                		</HBox>
-                                		<HBox  width="1.0rem" justifyContent="Center">
-                                			<Label text="|"/>
-                                		</HBox>
-                                		<HBox width="2.5rem" justifyContent="Center">
-                                			<Label text="{data>/forecast/simpleforecast/forecastday/1/high/celsius}°C"/>
-                                		</HBox>
-                                	</HBox>
-                                </HBox>
-                                <HBox>
-                                    <VBox>
-                                        <Image src="./icons/water117.svg" class="image TileForecastPadding2" height="1.2rem"/>
-                                    </VBox>
-                                    <VBox class="TileForecastPaddingLeft">
-                                        <HBox height="50%">
-                                            <Label text="10%"/>
-                                        </HBox>
-                                        <HBox height="50%">
-                                            <Label text="10 mm"/>
-                                        </HBox>
-                                    </VBox>
-                                </HBox>
-                            </VBox>
-                            <VBox  width="100%" class="alignCenterVertically">
-
-                                <Image src="{
-                                        path: 'data>/forecast/simpleforecast/forecastday/1/icon',
-                                        formatter: 'hss.weather.view.Formatter.image'
-                                    }" 
-                                    class="image TileForecastImagePaddingTop" height="5.0rem"/>
-
-                            </VBox>
-                        </HBox> -->
                     </VBox>
-                    <VBox class="TileForecast Tile">
+                    <VBox class="TileForecast Tile" visible="{settings>/show_forecast}">
                          <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
@@ -216,7 +160,7 @@
                             </HBox>
                         </VBox>
                     </VBox>
-                    <VBox class="TileForecast Tile">
+                    <VBox class="TileForecast Tile" visible="{settings>/show_forecast}">
                          <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
