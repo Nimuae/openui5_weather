@@ -95,12 +95,22 @@
                                 showValue="true"
                                 unit="mm" />
                             <VBox alignItems="Center">
-                                <Label text="Niederschlag (1h)" class="PrecipText" />
-                                <Label text="Luftfeuchtigkeit" class="HumidityText" />
+                                <Label
+                                    text="Niederschlag (1h)"
+                                    class="PrecipText"
+                                    visible="{
+                                        path: 'settings>/show_humidity',
+                                        formatter: 'hss.weather.view.Formatter.PrecipTextStyle'
+                                    }" />
+                                <Label
+                                    text="Luftfeuchtigkeit"
+                                    class="HumidityText"
+                                    visible="{settings>/show_humidity}" />
                             </VBox>
                             <hss:CircleProgress
                                 size="85"
-                                value="{=parseInt(${data>/current_observation/relative_humidity}.replace('%', ''), 10)/100 }" />
+                                value="{=parseInt(${data>/current_observation/relative_humidity}.replace('%', ''), 10)/100 }"
+                                visible="{settings>/show_humidity}" />
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
                             </layoutData>

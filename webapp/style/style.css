@@ -77,6 +77,10 @@ html{
 	left: -1rem;
 	width: 100%;
 }
+.PrecipText.HumidityHidden{
+	margin-bottom: 0;
+	font-size: 1.2rem !important;
+}
 .PrecipText:before{
 	content: "\e067";
 	font-family: "SAP-icons";
@@ -84,6 +88,9 @@ html{
 	padding: 0.2rem;
 	color: #009de0;
 	padding: 5px;
+}
+.PrecipText.HumidityHidden:before{
+	content: "";
 }
 .HumidityText{
 	position: relative;

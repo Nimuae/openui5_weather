@@ -10,8 +10,8 @@
         id="SettingsPane"
         class="SettingsPane"
         showHeader="false"
-        contentWidth="300px"
-        contentHeight="480px"
+        contentWidth="500px"
+        contentHeight="600px"
         draggable="true">
         <Page
             title="Einstellungen">
@@ -41,6 +41,8 @@
                                 </RadioButtonGroup>
                                 <Label text="Wettervorhersage" />
                                 <Switch state="{settings>/show_forecast}" customTextOn="An" customTextOff="Aus" />
+                                <Label text="Luftfeuchtigkeit anzeigen" />
+                                <Switch state="{settings>/show_humidity}" customTextOn="An" customTextOff="Aus" />
                             </f:content>
                         </f:SimpleForm>
                     </l:content>

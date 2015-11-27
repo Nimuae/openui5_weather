@@ -38,7 +38,9 @@ router.get("/service/settings", function(req, res, next){
 	res.send({
 		city: settings.city || "Wiesloch",
 		temp_unit: settings.temp_unit || "C",
-		show_forecast: !!settings.show_forecast
+		show_forecast: !!settings.show_forecast,
+		show_precip: !!settings.show_precip,
+		show_humidity: !!settings.show_humidity
 	});
 });
 router.post("/service/settings", require("body-parser").json(), function(req, res, next){
@@ -48,14 +50,16 @@ router.post("/service/settings", require("body-parser").json(), function(req, re
 	writeSettings({
 		city: req.body.city,
 		temp_unit: req.body.temp_unit,
-		show_forecast: req.body.show_forecast
+		show_forecast: req.body.show_forecast,
+		show_precip: req.body.show_precip,
+		show_humidity: req.body.show_humidity,
 	});
 
 	//did the city name change?
 	if((settings.city || "Wiesloch") !== (req.body.city || "Wiesloch")){
 		getWeatherData();
 	}
-	
+
 	res.end();
 });
 router.get("/service/test", function(req, response, next){

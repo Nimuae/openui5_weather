@@ -107,5 +107,15 @@ hss.weather.view.Formatter = {
 
 		var a = (deg + 180);
 		return parseInt((a >= 360) ? a - 360 : a, 10);
+	},
+
+	PrecipTextStyle: function(showHumidity){
+		if(showHumidity){
+			this.removeStyleClass("HumidityHidden");
+		}else{
+			this.addStyleClass("HumidityHidden");
+		}
+
+		return true;
 	}
 };
