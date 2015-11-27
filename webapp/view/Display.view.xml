@@ -139,10 +139,10 @@
                             <HBox>
                                 <Label
                                     class="ForecastTempLow"
-                                    text="{data>/forecast/simpleforecast/forecastday/1/low/celsius}°C"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/low/fahrenheit} + 'F'}"/>
                                 <Label
                                     class="ForecastTempHigh"
-                                    text="{data>/forecast/simpleforecast/forecastday/1/high/celsius}°C"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/high/fahrenheit} + 'F'}"/>
                             </HBox>
                         </VBox>
                         <!-- <HBox height="12%" class="TileForecastBorderBottom">
@@ -206,10 +206,10 @@
                             <HBox>
                                 <Label
                                     class="ForecastTempLow"
-                                    text="{data>/forecast/simpleforecast/forecastday/2/low/celsius}°C"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/low/fahrenheit} + 'F'}"/>
                                 <Label
                                     class="ForecastTempHigh"
-                                    text="{data>/forecast/simpleforecast/forecastday/2/high/celsius}°C"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/high/fahrenheit} + 'F'}"/>
                             </HBox>
                         </VBox>
                     </VBox>
@@ -231,10 +231,10 @@
                             <HBox>
                                 <Label
                                     class="ForecastTempLow"
-                                    text="{data>/forecast/simpleforecast/forecastday/3/low/celsius}°C"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/low/fahrenheit} + 'F'}"/>
                                 <Label
                                     class="ForecastTempHigh"
-                                    text="{data>/forecast/simpleforecast/forecastday/3/high/celsius}°C"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/high/fahrenheit} + 'F'}"/>
                             </HBox>
                         </VBox>
                     </VBox>
