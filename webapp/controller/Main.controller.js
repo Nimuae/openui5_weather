@@ -8,12 +8,35 @@ sap.ui.define([
 
 	return Controller.extend("hss.weather.controller.Main", {
 
+		/**
+		 * The service URL to send requests to
+		 * @type {String}
+		 */
 		SERVICE_URL: "/service",
+
+		/**
+		 * The service URL to send settings requests to
+		 * @type {String}
+		 */
 		SETTINGS_URL: "/service/settings",
+
+		/**
+		 * The service URL to be used for test data
+		 * @type {String}
+		 */
 		SERVICE_TEST_URL: "/service/test",
 
+		/**
+		 * Old settings data for cancel dialog data reset
+		 * @type {Object}
+		 */
 		oData_old: null,
 
+		/**
+		 * Called when the view is freshly initialized.
+		 * Create and attach models to the view and load first data; set refresh interval
+		 * @return {void} Nothing
+		 */
 		onInit: function(){
 			if(jQuery.sap.getUriParameters().get("test")){
 				this.SERVICE_URL = this.SERVICE_TEST_URL;
@@ -32,10 +55,19 @@ sap.ui.define([
 			setInterval(jQuery.proxy(this.refreshData, this), delay);
 		},
 
+		/**
+		 * Trigger a fresh request to update all data and the corresponding bindings
+		 * @return {void} Nothing
+		 */
 		refreshData: function(){
 			this.getView().getModel("data").loadData(this.SERVICE_URL);
 		},
 
+		/**
+		 * Open the settings dialog and store old settings for reset in this.oData_old
+		 * @param  {sap.ui.base.Event} oEvent The UI event
+		 * @return {void}        Nothing
+		 */
 		openSettingsPane: function(oEvent){
 			if(!this._settingsDialog){
 				this._settingsDialog = sap.ui.xmlfragment("settingsPopover", "hss.weather.view.SettingsPopover", this);
@@ -53,6 +85,11 @@ sap.ui.define([
 			});
 		},
 		
+		/**
+		 * The UI event handler for settings dialog's save button
+		 * Send settings request to the server and shows a message
+		 * @return {void} Nothing
+		 */
 		onSave: function(){
 			this._settingsDialog.close();
 
@@ -75,6 +112,11 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * The UI event handler for settings dialog's cancel button
+		 * Opens a confirm dialog and resets settings data on OK
+		 * @return {void} Nothing
+		 */
 		onCancel: function(){
 			var self = this;
 
@@ -94,6 +136,10 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Checks the view's settings model for changes
+		 * @return {Boolean} Returns true if there were changes in both, the old and the current settings data objects, else returns false
+		 */
 		checkDataChanged: function(){
 			var data = this.getView().getModel("settings").getData();
 			var data_old = this.oData_old;
@@ -114,6 +160,12 @@ sap.ui.define([
 			return bChanged;
 		},
 
+		/**
+		 * Settings Dialog radio button select event handler
+		 * Sets the data model's /temp_unit property to "C" or "F" for degrees Celsius or degrees Fahrenheit, respectively
+		 * @param  {sap.ui.base.Event} oEvent The UI event object
+		 * @return {void}        Nothing
+		 */
 		onRadioButtonChange: function(oEvent){
 			var oSource = oEvent.getSource();
 			var index = oEvent.getParameter("selectedIndex");

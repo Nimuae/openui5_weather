@@ -27,15 +27,15 @@
                             <Image
                                 src="{
                                     path: 'data>/current_observation/icon',
-                                    formatter: 'hss.weather.view.Formatter.image'
+                                    formatter: 'hss.weather.view.Formatter.WeatherIcon'
                                 }"
                                 class="WeatherIcon" />
 
                                 <Label
                                     text="{= 
                                         ${settings>/temp_unit} === 'C' ?
-                                        ${ path: 'data>/current_observation/temp_c', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°C' :
-                                        ${ path: 'data>/current_observation/temp_f', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°F'
+                                        ${ path: 'data>/current_observation/temp_c', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°C' :
+                                        ${ path: 'data>/current_observation/temp_f', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°F'
                                     }"
                                     class="curTemp"/>
                         </VBox>
@@ -44,8 +44,8 @@
                             <Label
                                 text="Gefühlt: {= 
                                     ${settings>/temp_unit} === 'C' ?
-                                    ${ path: 'data>/current_observation/feelslike_c', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°C' :
-                                    ${ path: 'data>/current_observation/feelslike_f', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°F'
+                                    ${ path: 'data>/current_observation/feelslike_c', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°C' :
+                                    ${ path: 'data>/current_observation/feelslike_f', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°F'
                                 }"
                                 class="feltTemp"/>
                             <HBox>
@@ -74,7 +74,7 @@
                             <hss:Compass
                                 direction="{
                                     path: 'data>/current_observation/wind_degrees',
-                                    formatter: 'hss.weather.view.Formatter.invertWindDir'
+                                    formatter: 'hss.weather.view.Formatter.InvertWindDir'
                                 }" />
                             <VBox class="WindBox">
                                 <Label
@@ -132,7 +132,7 @@
                             <Image
                                 src="{
                                     path: 'data>/forecast/simpleforecast/forecastday/1/icon',
-                                    formatter: 'hss.weather.view.Formatter.image'
+                                    formatter: 'hss.weather.view.Formatter.WeatherIcon'
                                 }" 
                                 class="WeatherIconSmall" />
                             <HBox>
@@ -157,7 +157,7 @@
                             <Image
                                 src="{
                                     path: 'data>/forecast/simpleforecast/forecastday/2/icon',
-                                    formatter: 'hss.weather.view.Formatter.image'
+                                    formatter: 'hss.weather.view.Formatter.WeatherIcon'
                                 }" 
                                 class="WeatherIconSmall" />
                             <HBox>
@@ -182,7 +182,7 @@
                             <Image
                                 src="{
                                     path: 'data>/forecast/simpleforecast/forecastday/3/icon',
-                                    formatter: 'hss.weather.view.Formatter.image'
+                                    formatter: 'hss.weather.view.Formatter.WeatherIcon'
                                 }" 
                                 class="WeatherIconSmall" />
                             <HBox>

@@ -3,6 +3,11 @@ jQuery.sap.includeScript("./resources/jquery-ui/jquery-ui.js");
 jQuery.sap.declare("hss.weather.view.Formatter");
 
 hss.weather.view.Formatter = {
+	
+	/**
+	 * Object for mapping German direction names with technical names
+	 * @type {Object}
+	 */
 	dirMap: {
 		"nord": "north",
 		"ost": "east",
@@ -21,6 +26,11 @@ hss.weather.view.Formatter = {
 		"west-nordwest": "west",
 		"west-südwest": "west"
 	},
+
+	/**
+	 * Object for mapping technical weather icon names from the requests with file name numbers
+	 * @type {Object}
+	 */
 	iconMap: {
 		"chanceflurries": "24",
 		"chancerain": "21",
@@ -62,17 +72,12 @@ hss.weather.view.Formatter = {
 		"nt_partlysunny": "07"	
 	},
 	
-
-	windDir: function(dir){
-		if(!dir){
-			return "";
-		}
-		
-		var imagePath = "./icons/weather/";
-		return imagePath + hss.weather.view.Formatter.dirMap[dir.toLowerCase()] + ".svg";
-	},
-	
-	image: function(weather){
+	/**
+	 * Formatter for weather icons
+	 * @param {String} weather Weather icon string from requests
+	 * @return {String} Returns the corresponding icon file
+	 */
+	WeatherIcon: function(weather){
 		if(!weather){
 			return "";
 		}
@@ -81,26 +86,36 @@ hss.weather.view.Formatter = {
 		return imagePath + ".svg";
 	},
 	
-	roundTemp: function(temp){
+	/**
+	 * Formatter for temperatures
+	 * @param {Float} temp Temperature number from requests
+	 * @return {Int} Rounded temperature
+	 */
+	RoundTemp: function(temp){
 		if(!temp){
 			return "";
 		}
 		return Math.round(Number(temp));
 	},
 
-	animateLabel: function(){
-		var $elements = this.$().find("span label").andSelf();
-		var color = this.$().css("color");
-		$elements.animate({
-			color: "#007cc0"
-		}, 100, "swing").animate({
-			color: color
-		}, 400, "swing");
+	// animateLabel: function(){
+	// 	var $elements = this.$().find("span label").andSelf();
+	// 	var color = this.$().css("color");
+	// 	$elements.animate({
+	// 		color: "#007cc0"
+	// 	}, 100, "swing").animate({
+	// 		color: color
+	// 	}, 400, "swing");
 
-		return true;
-	},
+	// 	return true;
+	// },
 	
-	invertWindDir: function(deg){
+	/**
+	 * Formatter for Compass' wind direction, angle has to be turned by 180°
+	 * Needed because requests return the source direction, a compass shows the direction the wind blows in
+	 * @param {Int} deg The inverted wind direction
+	 */
+	InvertWindDir: function(deg){
 		if(typeof deg === "undefined" || Number.isNaN(deg)){
 			return 0;
 		}
@@ -109,6 +124,11 @@ hss.weather.view.Formatter = {
 		return parseInt((a >= 360) ? a - 360 : a, 10);
 	},
 
+	/**
+	 * Formatter for PrecipText to check whether relative humidity is visible
+	 * @param {Boolean} showHumidity From data model: is humidity visible?
+	 * @return {Boolean} Always returns true, bcause it's employed as a formatter for the 'visible' property
+	 */
 	PrecipTextStyle: function(showHumidity){
 		if(showHumidity){
 			this.removeStyleClass("HumidityHidden");
