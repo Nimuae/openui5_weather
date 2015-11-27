@@ -32,51 +32,29 @@
                                 class="WeatherIcon" />
 
                                 <Label
-<<<<<<< HEAD
-                                    text="{=
-                                        ${settings>/temp_unit} === 'C' ?
-                                        ${path: 'data>/current_observation/temp_c', 
-                                        formatter: 'hss.weather.view.Formatter.roundTemp'
-                                    } + '°C' : 
-                                     ${path: 'data>/current_observation/temp_f', 
-                                        formatter: 'hss.weather.view.Formatter.roundTemp'
-                                    } + 'F' }
-                                    "
-                                    visible="{
-                                        path: 'data>/current_observation/temp_c',
-                                        formatter: 'hss.weather.view.Formatter.animateLabel'
-=======
                                     text="{= 
                                         ${settings>/temp_unit} === 'C' ?
                                         ${ path: 'data>/current_observation/temp_c', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°C' :
                                         ${ path: 'data>/current_observation/temp_f', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°F'
->>>>>>> branch 'dev' of https://github.com/d060270/openui5_weather.git
+                                    }"
+                                    visible="{
+                                        path: 'data>/current_observation/temp_c',
+                                        formatter: 'hss.weather.view.Formatter.animateLabel'
+
                                     }"
                                     class="curTemp"/>
                         </VBox>
 
                         <HBox justifyContent= "SpaceBetween">
                             <Label
-<<<<<<< HEAD
-                                text="Gefühlt: 
-                                {=
-                                	${settings>/temp_unit} === 'C' ?
-                                     ${path: 'data>/current_observation/feelslike_c', 
-                                        formatter: 'hss.weather.view.Formatter.roundTemp'
-                                    	} + '°C' : 
-                                     ${path: 'data>/current_observation/feelslike_f', 
-                                        formatter: 'hss.weather.view.Formatter.roundTemp'
-                                    } + 'F' 
-                                }"
-                                visible="{
-                                    path: 'data>/current_observation/feelslike_c',
-                                    formatter: 'hss.weather.view.Formatter.animateLabel'
-=======
                                 text="Gefühlt: {= 
                                     ${settings>/temp_unit} === 'C' ?
                                     ${ path: 'data>/current_observation/feelslike_c', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°C' :
                                     ${ path: 'data>/current_observation/feelslike_f', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°F'
->>>>>>> branch 'dev' of https://github.com/d060270/openui5_weather.git
+                                }"
+                                visible="{
+                                    path: 'data>/current_observation/feelslike_c',
+                                    formatter: 'hss.weather.view.Formatter.animateLabel'
                                 }"
                                 class="feltTemp"/>
                             <HBox>
