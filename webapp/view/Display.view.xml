@@ -32,6 +32,7 @@
                                 class="WeatherIcon" />
 
                                 <Label
+<<<<<<< HEAD
                                     text="{=
                                         ${settings>/temp_unit} === 'C' ?
                                         ${path: 'data>/current_observation/temp_c', 
@@ -44,12 +45,19 @@
                                     visible="{
                                         path: 'data>/current_observation/temp_c',
                                         formatter: 'hss.weather.view.Formatter.animateLabel'
+=======
+                                    text="{= 
+                                        ${settings>/temp_unit} === 'C' ?
+                                        ${ path: 'data>/current_observation/temp_c', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°C' :
+                                        ${ path: 'data>/current_observation/temp_f', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°F'
+>>>>>>> branch 'dev' of https://github.com/d060270/openui5_weather.git
                                     }"
                                     class="curTemp"/>
                         </VBox>
 
                         <HBox justifyContent= "SpaceBetween">
                             <Label
+<<<<<<< HEAD
                                 text="Gefühlt: 
                                 {=
                                 	${settings>/temp_unit} === 'C' ?
@@ -63,6 +71,12 @@
                                 visible="{
                                     path: 'data>/current_observation/feelslike_c',
                                     formatter: 'hss.weather.view.Formatter.animateLabel'
+=======
+                                text="Gefühlt: {= 
+                                    ${settings>/temp_unit} === 'C' ?
+                                    ${ path: 'data>/current_observation/feelslike_c', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°C' :
+                                    ${ path: 'data>/current_observation/feelslike_f', formatter: 'hss.weather.view.Formatter.roundTemp'} + '°F'
+>>>>>>> branch 'dev' of https://github.com/d060270/openui5_weather.git
                                 }"
                                 class="feltTemp"/>
                             <HBox>
@@ -150,10 +164,10 @@
                             <HBox>
                                 <Label
                                     class="ForecastTempLow"
-                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/low/fahrenheit} + 'F'}"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/low/fahrenheit} + '°F'}"/>
                                 <Label
                                     class="ForecastTempHigh"
-                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/high/fahrenheit} + 'F'}"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
                         <!-- <HBox height="12%" class="TileForecastBorderBottom">
@@ -217,10 +231,10 @@
                             <HBox>
                                 <Label
                                     class="ForecastTempLow"
-                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/low/fahrenheit} + 'F'}"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/low/fahrenheit} + '°F'}"/>
                                 <Label
                                     class="ForecastTempHigh"
-                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/high/fahrenheit} + 'F'}"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
                     </VBox>
@@ -242,10 +256,10 @@
                             <HBox>
                                 <Label
                                     class="ForecastTempLow"
-                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/low/fahrenheit} + 'F'}"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/low/fahrenheit} + '°F'}"/>
                                 <Label
                                     class="ForecastTempHigh"
-                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/high/fahrenheit} + 'F'}"/>
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
                     </VBox>
