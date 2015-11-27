@@ -12,9 +12,10 @@ hss.weather.test.Assertions = new sap.ui.test.Opa5({
 				value: value
 			}),
 			success: function(oControl){
-				sap.ui.test.Opa5.assert.ok(true, "Found matching property " + value)
+				oCtrl = oControl;
+				sap.ui.test.Opa5.assert.ok(true, "Saw matching property " + value)
 			},
-			errorMessage: "Did not find matching property"
+			errorMessage: "Did not find matching property -- Expected: " + value 
 		});
 	}
 });

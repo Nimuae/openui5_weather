@@ -37,7 +37,8 @@
                                         ${ path: 'data>/current_observation/temp_c', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°C' :
                                         ${ path: 'data>/current_observation/temp_f', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°F'
                                     }"
-                                    class="curTemp"/>
+                                    class="curTemp"
+                                    id="curTemp"/>
                         </VBox>
 
                         <HBox justifyContent= "SpaceBetween">
@@ -47,7 +48,8 @@
                                     ${ path: 'data>/current_observation/feelslike_c', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°C' :
                                     ${ path: 'data>/current_observation/feelslike_f', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°F'
                                 }"
-                                class="feltTemp"/>
+                                class="feltTemp"
+                                id="feltTemp"/>
                             <HBox>
                                 <Label
                                     text="{=

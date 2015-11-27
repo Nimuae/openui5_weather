@@ -7,13 +7,15 @@ hss.weather.test.modules.Display = function(){
 	module("Current Weather");
 
 	/**
-	* Opa Test "Find label of town and see matching town"
-	* Searches for lable by id and checks weather the text is 'Wiesloch'
+	* Opa Test "Find of town and see matching town"
+	* Searches for label by id and checks the text
+	* Search for: label with id 'town'
+	* Expected value: Wiesloch
 	**/
 
-	opaTest("Find label of town and see matching town", function(Given, When, Then){
+	opaTest("Find of town and see matching town", function(Given, When, Then){
 		//Arrangements
-		Given.iStartMyAppInAFrame("/index.html"); 
+		Given.iStartMyAppInAFrame("/index.html?test=true"); 
 
 		//Actions
 		When.iSearchById("town");
@@ -23,13 +25,41 @@ hss.weather.test.modules.Display = function(){
 		Then.iTeardownMyAppFrame();
 	});
 
-	opaTest("Find felt temperature and get a positive value", function(Given, When, Then){
+	/**
+	* Opa Test "Find current temperature and see matching property"
+	* Searches for label by id and checks the text
+	* Search for: label with id 'curTemp'
+	* Expected value: 4°C
+	**/
+
+	opaTest("Find current temperature and see matching property", function(Given, When, Then){
 		//Arrangements
-		Given.iStartMyAppInAFrame("/index.html");
+		Given.iStartMyAppInAFrame("/index.html?test=true");
+
+		//Actions
+		When.iSearchById("curTemp");
+
+		//Assertions
+		Then.iSeeMatchingProperty("curTemp", "text", "4°C");
+		Then.iTeardownMyAppFrame();
+	})
+
+	/**
+	* Opa Test "Find felt temperature and see matching property"
+	* Searches for label by id and checks the text
+	* Search for: label with id 'feltTemp'
+	* Expected value: Gefühlt: 2°C
+	**/
+
+	opaTest("Find felt temperature and see matching property", function(Given, When, Then){
+		//Arrangements
+		Given.iStartMyAppInAFrame("/index.html?test=true");
 
 		//Actions
 		When.iSearchById("feltTemp");
-		
+
 		//Assertions
+		Then.iSeeMatchingProperty("feltTemp", "text", "Gefühlt: 2°C");
+		Then.iTeardownMyAppFrame();
 	});
 };
