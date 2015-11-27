@@ -13,7 +13,8 @@
             <core:Icon
                 src="sap-icon://action-settings"
                 class="CustomizeBtn"
-                press="openSettingsPane" />
+                press="openSettingsPane" 
+                id="CustomizeBtn"/>
             <VBox
                 fitContainer="true"
                 justifyContent="Center">
@@ -29,7 +30,8 @@
                                     path: 'data>/current_observation/icon',
                                     formatter: 'hss.weather.view.Formatter.WeatherIcon'
                                 }"
-                                class="WeatherIcon" />
+                                class="WeatherIcon" 
+                                id="CeatherIcon"/>
 
                                 <Label
                                     text="{= 
@@ -38,7 +40,7 @@
                                         ${ path: 'data>/current_observation/temp_f', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°F'
                                     }"
                                     class="curTemp"
-                                    id="curTemp"/>
+                                    id="CurTemp"/>
                         </VBox>
 
                         <HBox justifyContent= "SpaceBetween">
@@ -49,7 +51,7 @@
                                     ${ path: 'data>/current_observation/feelslike_f', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°F'
                                 }"
                                 class="feltTemp"
-                                id="feltTemp"/>
+                                id="FeltTemp"/>
                             <HBox>
                                 <Label
                                     text="{=
@@ -57,14 +59,16 @@
                                             (${data>/forecast/simpleforecast/forecastday/0/low/celsius} + '°C') :
                                             (${data>/forecast/simpleforecast/forecastday/0/low/fahrenheit} + '°F')
                                     }"
-                                    class="ForecastTempLow"/>
+                                    class="ForecastTempLow"
+                                    id="ForecastTempLow"/>
                                 <Label
                                     text="{=
                                         ${settings>/temp_unit} === 'C' ?
                                             (${data>/forecast/simpleforecast/forecastday/0/high/celsius} + '°C') :
                                             (${data>/forecast/simpleforecast/forecastday/0/high/fahrenheit} + '°F')
                                     }"
-                                    class="ForecastTempHigh"/>
+                                    class="ForecastTempHigh"
+                                    id="ForecastTempHigh"/>
                             </HBox>
                         </HBox>
                         <layoutData>
@@ -81,10 +85,12 @@
                             <VBox class="WindBox">
                                 <Label
                                     text="{data>/current_observation/wind_kph} km/h"
-                                    class="LabelGustStrength" />
+                                    class="LabelGustStrength" 
+                                    id="LabelGustStrength"/>
                                 <Label
                                     text="{data>/current_observation/wind_dir}"
-                                    class="LabelGustDir" />
+                                    class="LabelGustDir" 
+                                    id="LabelGustDir"/>
                             </VBox>
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />
@@ -100,6 +106,7 @@
                                 <Label
                                     text="Niederschlag (1h)"
                                     class="PrecipText"
+                                    id="PrecipText"
                                     visible="{
                                         path: 'settings>/show_humidity',
                                         formatter: 'hss.weather.view.Formatter.PrecipTextStyle'
@@ -107,6 +114,7 @@
                                 <Label
                                     text="Luftfeuchtigkeit"
                                     class="HumidityText"
+                                    id="HumidityText"
                                     visible="{settings>/show_humidity}" />
                             </VBox>
                             <hss:CircleProgress
@@ -129,20 +137,24 @@
 
                         <Label
                             text="{data>/forecast/simpleforecast/forecastday/1/date/weekday} {data>/forecast/simpleforecast/forecastday/1/date/day}.{data>/forecast/simpleforecast/forecastday/1/date/month}.{data>/forecast/simpleforecast/forecastday/1/date/year}"
-                            class="TileForecastTitle"/>
+                            class="TileForecastTitle"
+                            id="DateForcast1"/>
                         <VBox alignItems="Center">
                             <Image
                                 src="{
                                     path: 'data>/forecast/simpleforecast/forecastday/1/icon',
                                     formatter: 'hss.weather.view.Formatter.WeatherIcon'
                                 }" 
-                                class="WeatherIconSmall" />
+                                class="WeatherIconSmall" 
+                                id="IconForcast1"/>
                             <HBox>
                                 <Label
                                     class="ForecastTempLow"
+                                    id="TempLowForcast1"
                                     text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/low/fahrenheit} + '°F'}"/>
                                 <Label
                                     class="ForecastTempHigh"
+                                    id="TempHighForcast1"
                                     text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
@@ -154,20 +166,24 @@
 
                         <Label
                             text="{data>/forecast/simpleforecast/forecastday/2/date/weekday} {data>/forecast/simpleforecast/forecastday/2/date/day}.{data>/forecast/simpleforecast/forecastday/2/date/month}.{data>/forecast/simpleforecast/forecastday/2/date/year}"
-                            class="TileForecastTitle"/>
+                            class="TileForecastTitle"
+                            id="DateForcast2"/>
                         <VBox alignItems="Center">
                             <Image
                                 src="{
                                     path: 'data>/forecast/simpleforecast/forecastday/2/icon',
                                     formatter: 'hss.weather.view.Formatter.WeatherIcon'
                                 }" 
-                                class="WeatherIconSmall" />
+                                class="WeatherIconSmall" 
+                                id="IconForcast2"/>
                             <HBox>
                                 <Label
                                     class="ForecastTempLow"
+                                    id="TempLowForcast2"
                                     text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/low/fahrenheit} + '°F'}"/>
                                 <Label
                                     class="ForecastTempHigh"
+                                    id="TempHighForcast2"
                                     text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
@@ -179,20 +195,24 @@
 
                         <Label
                             text="{data>/forecast/simpleforecast/forecastday/3/date/weekday} {data>/forecast/simpleforecast/forecastday/3/date/day}.{data>/forecast/simpleforecast/forecastday/3/date/month}.{data>/forecast/simpleforecast/forecastday/3/date/year}"
-                            class="TileForecastTitle"/>
+                            class="TileForecastTitle"
+                            id="DateForcast3"/>
                         <VBox alignItems="Center">
                             <Image
                                 src="{
                                     path: 'data>/forecast/simpleforecast/forecastday/3/icon',
                                     formatter: 'hss.weather.view.Formatter.WeatherIcon'
                                 }" 
-                                class="WeatherIconSmall" />
+                                class="WeatherIconSmall" 
+                                id="IconForcast3" />
                             <HBox>
                                 <Label
                                     class="ForecastTempLow"
+                                    id="TempLowForcast3"
                                     text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/low/fahrenheit} + '°F'}"/>
                                 <Label
                                     class="ForecastTempHigh"
+                                    id="TempHighForcast3"
                                     text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
