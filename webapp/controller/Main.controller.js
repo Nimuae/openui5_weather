@@ -24,7 +24,7 @@ sap.ui.define([
 		 * The service URL to be used for test data
 		 * @type {String}
 		 */
-		SERVICE_TEST_URL: "/service/test",
+		SERVICE_TEST_URL: "test/request.json",
 
 		/**
 		 * Old settings data for cancel dialog data reset

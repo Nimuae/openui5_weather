@@ -62,32 +62,6 @@ router.post("/service/settings", require("body-parser").json(), function(req, re
 
 	res.end();
 });
-router.get("/service/test", function(req, response, next){
-	http.get(TESTDATA_URL, function(res){
-
-		//set encoding and read data from body
-		res.setEncoding('utf8');
-		var data = "";
-		res.on('data', function (chunk) {
-			data += chunk;
-		});
-		res.on('end', function () {
-			try{
-				DATA = JSON.parse(data);
-				response.send(DATA);
-			}catch(e){
-				console.error("Error", e);
-				log(e);
-			}
-		});
-
-	}).on("error", function(e){
-		var d = new Date().toUTCString();
-		
-		console.error("[" + d + "] " + e.code + ": ", e);
-		log(e.code + ": " + e.hostname);
-	});
-});
 
 //add router to app as middleware for data requests
 app.use(router);
