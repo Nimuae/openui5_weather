@@ -31,7 +31,7 @@
                                     formatter: 'hss.weather.view.Formatter.WeatherIcon'
                                 }"
                                 class="WeatherIcon" 
-                                id="CeatherIcon"/>
+                                id="WeatherIcon"/>
 
                                 <Label
                                     text="{= 
@@ -78,6 +78,7 @@
                     <VBox>
                         <HBox alignItems="Center" class="Tile TileGust">
                             <hss:Compass
+                                id="Compass"
                                 direction="{
                                     path: 'data>/current_observation/wind_degrees',
                                     formatter: 'hss.weather.view.Formatter.InvertWindDir'

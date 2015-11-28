@@ -422,8 +422,8 @@
             "fahrenheit": "34",
             "celsius": "1"
           },
-          "conditions": "Regen möglich",
-          "icon": "chancerain",
+          "conditions": "Nebel",
+          "icon": "nt_fog",
           "icon_url": "http://icons.wxug.com/i/c/k/chancerain.gif",
           "skyicon": "",
           "pop": 40,

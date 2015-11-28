@@ -13,20 +13,33 @@ hss.weather.test.Actions = new sap.ui.test.Opa5({
 				value: value
 			}),
 			success: function(oControl){
-				sap.ui.test.Opa5.assert.ok(true, "Found the Control: " + oControl)
+				sap.ui.test.Opa5.assert.ok(true, "Found the Control: '" + oControl + "'")
 			},
-			errorMessage: "Did not find the control with the property " + value
+			errorMessage: "Did not find the control with the property '" + value + "'"
 		});
 	},
 
 	iSearchById: function(id){
 		return this.waitFor({
-			id: new RegExp("town"),
+			id: new RegExp(id),
 			success: function(oControl){
-				sap.ui.test.Opa5.assert.ok(true, "Found Control: " + oControl + " with ID: " + id);
+				sap.ui.test.Opa5.assert.ok(true, "Found Control: " + oControl + " with ID: '" + id + "'");
 			},
-			errorMessage: "Did not find the control with the corresponding ID " + id
+			errorMessage: "Did not find the control with the corresponding ID '" + id + "'"
 		});
-	}
+	},
+
+	// iClickOnIcon: function(id){
+	// 	return this.waitFor({
+	// 		id: new RegExp(id),
+	// 		success: function(oIcon){
+	// 			sap.ui.test.Opa5.assert.ok(true, "Found Icon");
+	// 			oIcon.firePress();
+
+	// 		},
+	// 		errorMessage: "Did not find icon with matching id (" + id +")"
+	// 	});
+	// }
+
 });
 
