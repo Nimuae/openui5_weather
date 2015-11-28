@@ -1,161 +1,225 @@
 <core:View
     xmlns:core="sap.ui.core"
     xmlns:mvc="sap.ui.core.mvc" 
+    xmlns:l="sap.ui.layout"
     xmlns="sap.m"
     controllerName="hss.weather.controller.Main"
-    xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-
+    xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    xmlns:hss="hss.weather.control">
     <Page
-        backgroundDesign="Solid"
+        class="MainPage"
         showHeader="false">
         <content>
             <core:Icon
                 src="sap-icon://action-settings"
-                class="CustomizeBtn" />
-            <TileContainer>
-                <tiles>
-                    <CustomTile
-                        class="sapMTile CustomTile">
-                        <VBox
-                            fitContainer="true"
-                            justifyContent="SpaceBetween">
+                class="CustomizeBtn"
+                press="openSettingsPane" 
+                id="CustomizeBtn"/>
+            <VBox
+                fitContainer="true"
+                justifyContent="Center">
+                <HBox
+                    justifyContent="Center" >
+
+                    <VBox justifyContent="SpaceBetween" class="TileTemp Tile">
+                        <Label text="{settings>/city}" class="town" id="town"/>
+
+                        <VBox alignItems="Center">
+                            <Image
+                                src="{
+                                    path: 'data>/current_observation/icon',
+                                    formatter: 'hss.weather.view.Formatter.WeatherIcon'
+                                }"
+                                class="WeatherIcon" 
+                                id="WeatherIcon"/>
+
+                                <Label
+                                    text="{= 
+                                        ${settings>/temp_unit} === 'C' ?
+                                        ${ path: 'data>/current_observation/temp_c', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°C' :
+                                        ${ path: 'data>/current_observation/temp_f', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°F'
+                                    }"
+                                    class="curTemp"
+                                    id="CurTemp"/>
+                        </VBox>
+
+                        <HBox justifyContent= "SpaceBetween">
                             <Label
-                                text="Wiesloch"
-                                class="City" />
-                            <HBox
-                                justifyContent="SpaceBetween">
-                                <HBox
-                                    class="Temp">
-                                    <Label
-                                        text="{conditions>/current_observation/temp_c}"
-                                        class="Number" />
-                                    <Label
-                                        text="°C"
-                                        class="Unit" />
-                                </HBox>
-                                <Image
-                                    src="./icons/sunny35.svg"
-                                    class="Icon" />
-                            </HBox>
+                                text="Gefühlt: {= 
+                                    ${settings>/temp_unit} === 'C' ?
+                                    ${ path: 'data>/current_observation/feelslike_c', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°C' :
+                                    ${ path: 'data>/current_observation/feelslike_f', formatter: 'hss.weather.view.Formatter.RoundTemp'} + '°F'
+                                }"
+                                class="feltTemp"
+                                id="FeltTemp"/>
                             <HBox>
                                 <Label
-                                    text="Gefühlt:" />
-                                 <Label
-                                    text="{conditions>/current_observation/feelslike_c}"
-                                    class="Number" />
-                                 <Label
-                                    text="°C"
-                                    class="Unit" />
+                                    text="{=
+                                        ${settings>/temp_unit} === 'C' ?
+                                            (${data>/forecast/simpleforecast/forecastday/0/low/celsius} + '°C') :
+                                            (${data>/forecast/simpleforecast/forecastday/0/low/fahrenheit} + '°F')
+                                    }"
+                                    class="ForecastTempLow"
+                                    id="ForecastTempLow"/>
+                                <Label
+                                    text="{=
+                                        ${settings>/temp_unit} === 'C' ?
+                                            (${data>/forecast/simpleforecast/forecastday/0/high/celsius} + '°C') :
+                                            (${data>/forecast/simpleforecast/forecastday/0/high/fahrenheit} + '°F')
+                                    }"
+                                    class="ForecastTempHigh"
+                                    id="ForecastTempHigh"/>
                             </HBox>
-                        </VBox>
-                    </CustomTile>
-                    <CustomTile
-                        class="sapMTile CustomTile">
-                        <VBox
-                            fitContainer="true"
-                            justifyContent="SpaceBetween">
-                            <Label
-                                text="Wiesloch"
-                                class="City" />
-                            <HBox
-                                justifyContent="SpaceBetween">
-                                <HBox
-                                    class="Temp">
-                                    <Label
-                                        text="{conditions>/current_observation/temp_c}"
-                                        class="Number" />
-                                    <Label
-                                        text="°C"
-                                        class="Unit" />
-                                </HBox>
-                                <Image
-                                    src="{conditions>/current_observation/icon_url}"
-                                    class="Icon" />
-                            </HBox>
+                        </HBox>
+                        <layoutData>
+                            <l:GridData spanL="6" spanM="6" spanS="12" />
+                        </layoutData>
+                    </VBox>
+                    <VBox>
+                        <HBox alignItems="Center" class="Tile TileGust">
+                            <hss:Compass
+                                id="Compass"
+                                direction="{
+                                    path: 'data>/current_observation/wind_degrees',
+                                    formatter: 'hss.weather.view.Formatter.InvertWindDir'
+                                }" />
+                            <VBox class="WindBox">
+                                <Label
+                                    text="{data>/current_observation/wind_kph} km/h"
+                                    class="LabelGustStrength" 
+                                    id="LabelGustStrength"/>
+                                <Label
+                                    text="{data>/current_observation/wind_dir}"
+                                    class="LabelGustDir" 
+                                    id="LabelGustDir"/>
+                            </VBox>
+                            <layoutData>
+                                <l:GridData spanL="6" spanM="6" spanS="12" />
+                            </layoutData>
+                        </HBox>
+                        <HBox class="Tile TileGust" alignItems="Center" justifyContent="SpaceBetween">
+                            <hss:Rainometer
+                                size="85"
+                                value="{data>/current_observation/precip_today_metric}"
+                                showValue="true"
+                                unit="mm" />
+                            <VBox alignItems="Center">
+                                <Label
+                                    text="Niederschlag (1h)"
+                                    class="PrecipText"
+                                    id="PrecipText"
+                                    visible="{
+                                        path: 'settings>/show_humidity',
+                                        formatter: 'hss.weather.view.Formatter.PrecipTextStyle'
+                                    }" />
+                                <Label
+                                    text="Luftfeuchtigkeit"
+                                    class="HumidityText"
+                                    id="HumidityText"
+                                    visible="{settings>/show_humidity}" />
+                            </VBox>
+                            <hss:CircleProgress
+                                size="85"
+                                value="{=parseInt(${data>/current_observation/relative_humidity}.replace('%', ''), 10)/100 }"
+                                visible="{settings>/show_humidity}" />
+                            <layoutData>
+                                <l:GridData spanL="6" spanM="6" spanS="12" />
+                            </layoutData>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <HBox
+                    justifyContent="Center">
+                    <VBox class="TileForecast Tile" visible="{settings>/show_forecast}">
+                        <layoutData>
+                            <l:GridData spanL="4" spanM="4" spanS="12" />
+                        </layoutData>
+
+                        <Label
+                            text="{data>/forecast/simpleforecast/forecastday/1/date/weekday} {data>/forecast/simpleforecast/forecastday/1/date/day}.{data>/forecast/simpleforecast/forecastday/1/date/month}.{data>/forecast/simpleforecast/forecastday/1/date/year}"
+                            class="TileForecastTitle"
+                            id="DateForcast1"/>
+                        <VBox alignItems="Center">
+                            <Image
+                                src="{
+                                    path: 'data>/forecast/simpleforecast/forecastday/1/icon',
+                                    formatter: 'hss.weather.view.Formatter.WeatherIcon'
+                                }" 
+                                class="WeatherIconSmall" 
+                                id="IconForcast1"/>
                             <HBox>
                                 <Label
-                                    text="Gefühlt:" />
-                                 <Label
-                                    text="{conditions>/current_observation/feelslike_c}"
-                                    class="Number" />
-                                 <Label
-                                    text="°C"
-                                    class="Unit" />
+                                    class="ForecastTempLow"
+                                    id="TempLowForcast1"
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/low/fahrenheit} + '°F'}"/>
+                                <Label
+                                    class="ForecastTempHigh"
+                                    id="TempHighForcast1"
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/1/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/1/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
-                    </CustomTile>
-                    <CustomTile
-                        class="sapMTile CustomTile">
-                        <VBox
-                            fitContainer="true"
-                            justifyContent="SpaceBetween">
-                            <Label
-                                text="Wiesloch"
-                                class="City" />
-                            <HBox
-                                justifyContent="SpaceBetween">
-                                <HBox
-                                    class="Temp">
-                                    <Label
-                                        text="{conditions>/current_observation/temp_c}"
-                                        class="Number" />
-                                    <Label
-                                        text="°C"
-                                        class="Unit" />
-                                </HBox>
-                                <Image
-                                    src="{conditions>/current_observation/icon_url}"
-                                    class="Icon" />
-                            </HBox>
+                    </VBox>
+                    <VBox class="TileForecast Tile" visible="{settings>/show_forecast}">
+                         <layoutData>
+                            <l:GridData spanL="4" spanM="4" spanS="12" />
+                        </layoutData>
+
+                        <Label
+                            text="{data>/forecast/simpleforecast/forecastday/2/date/weekday} {data>/forecast/simpleforecast/forecastday/2/date/day}.{data>/forecast/simpleforecast/forecastday/2/date/month}.{data>/forecast/simpleforecast/forecastday/2/date/year}"
+                            class="TileForecastTitle"
+                            id="DateForcast2"/>
+                        <VBox alignItems="Center">
+                            <Image
+                                src="{
+                                    path: 'data>/forecast/simpleforecast/forecastday/2/icon',
+                                    formatter: 'hss.weather.view.Formatter.WeatherIcon'
+                                }" 
+                                class="WeatherIconSmall" 
+                                id="IconForcast2"/>
                             <HBox>
                                 <Label
-                                    text="Gefühlt:" />
-                                 <Label
-                                    text="{conditions>/current_observation/feelslike_c}"
-                                    class="Number" />
-                                 <Label
-                                    text="°C"
-                                    class="Unit" />
+                                    class="ForecastTempLow"
+                                    id="TempLowForcast2"
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/low/fahrenheit} + '°F'}"/>
+                                <Label
+                                    class="ForecastTempHigh"
+                                    id="TempHighForcast2"
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/2/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/2/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
-                    </CustomTile>
-                    <CustomTile
-                        class="sapMTile CustomTile">
-                        <VBox
-                            fitContainer="true"
-                            justifyContent="SpaceBetween">
-                            <Label
-                                text="Wiesloch"
-                                class="City" />
-                            <HBox
-                                justifyContent="SpaceBetween">
-                                <HBox
-                                    class="Temp">
-                                    <Label
-                                        text="{conditions>/current_observation/temp_c}"
-                                        class="Number" />
-                                    <Label
-                                        text="°C"
-                                        class="Unit" />
-                                </HBox>
-                                <Image
-                                    src="{conditions>/current_observation/icon_url}"
-                                    class="Icon" />
-                            </HBox>
+                    </VBox>
+                    <VBox class="TileForecast Tile" visible="{settings>/show_forecast}">
+                         <layoutData>
+                            <l:GridData spanL="4" spanM="4" spanS="12" />
+                        </layoutData>
+
+                        <Label
+                            text="{data>/forecast/simpleforecast/forecastday/3/date/weekday} {data>/forecast/simpleforecast/forecastday/3/date/day}.{data>/forecast/simpleforecast/forecastday/3/date/month}.{data>/forecast/simpleforecast/forecastday/3/date/year}"
+                            class="TileForecastTitle"
+                            id="DateForcast3"/>
+                        <VBox alignItems="Center">
+                            <Image
+                                src="{
+                                    path: 'data>/forecast/simpleforecast/forecastday/3/icon',
+                                    formatter: 'hss.weather.view.Formatter.WeatherIcon'
+                                }" 
+                                class="WeatherIconSmall" 
+                                id="IconForcast3" />
                             <HBox>
                                 <Label
-                                    text="Gefühlt:" />
-                                 <Label
-                                    text="{conditions>/current_observation/feelslike_c}"
-                                    class="Number" />
-                                 <Label
-                                    text="°C"
-                                    class="Unit" />
+                                    class="ForecastTempLow"
+                                    id="TempLowForcast3"
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/low/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/low/fahrenheit} + '°F'}"/>
+                                <Label
+                                    class="ForecastTempHigh"
+                                    id="TempHighForcast3"
+                                    text="{=${settings>/temp_unit} === 'C' ? ${data>/forecast/simpleforecast/forecastday/3/high/celsius} + '°C' : ${data>/forecast/simpleforecast/forecastday/3/high/fahrenheit} + '°F'}"/>
                             </HBox>
                         </VBox>
-                    </CustomTile>
-                </tiles>
-            </TileContainer>
+                    </VBox>
+                </HBox>
+            </VBox>
         </content>
     </Page>
 </core:View>

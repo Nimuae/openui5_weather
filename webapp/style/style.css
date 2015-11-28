@@ -1,5 +1,5 @@
-.sapMTile{
-
+html{
+	//zoom: 1.7;
 }
 
 .sapMTileActive{
@@ -15,8 +15,8 @@
 
 	margin: 5px;
 
-	opacity: 0.25;
-	color: #007cc0;
+	opacity: 0;
+	color: #FAFAFA;
 
 	font-size: 1.25rem;
 
@@ -32,27 +32,179 @@
 	font-stretch: normal !important;
 }
 
-.CustomTile{
-	padding: 10px;
+.Tile{
+	background-color: #fafafa;
+	border: 2px solid #DDD;
+	padding: 0.5rem;
+	margin: 0.5rem;
+}
+.TileTemp > *{
+}
 
-	width: 20rem !important;
-	height: 20rem !important;
+.TileTemp{
+	height: calc(18rem + 4px);
+	width: 21rem;
+    background-position: right;
+    background-repeat: no-repeat;
+    background-size: 11rem;
 }
-.CustomTile .City{
-	text-align: right;
-	font-size: 1.7rem;
+
+.TileGust{
+	height: 8rem;
+	width: 21rem;
 }
-.CustomTile .Temp{
-	font-size: 2rem;
+
+.TileForecast{
+	height: 10rem;
+	width: 13.3rem;
 }
-.CustomTile .Temp .Number{
-	font-size: 4.3rem;
+.TileForecastTitle{
+	font-weight: 600 !important;
+	padding-bottom: 1rem;
+	text-align: center !important;
+	width: 100%;
 }
-.CustomTile .Temp .Unit{
-	font-size: 1.4rem;
+
+.WindBox{
+	margin-left: 2rem;
 }
-.CustomTile .Icon{
-	margin-top: 10px;
-	opacity: 0.5;
-	width: 100px;
+
+.PrecipText{
+	position: relative;
+	margin-bottom: 3rem;
+	font-weight: 600 !important;
+	font-size: 0.9rem !important;
+	left: -1rem;
+	width: 100%;
+}
+.PrecipText.HumidityHidden{
+	margin-bottom: 0;
+	font-size: 1.2rem !important;
+}
+.PrecipText:before{
+	content: "\e067";
+	font-family: "SAP-icons";
+	font-size: 0.8rem;
+	padding: 0.2rem;
+	color: #009de0;
+	padding: 5px;
+}
+.PrecipText.HumidityHidden:before{
+	content: "";
+}
+.HumidityText{
+	position: relative;
+	font-size: 0.9rem !important;
+	font-weight: 600 !important;
+	right: -0.5rem;
+}
+.HumidityText:after{
+	content: "\e066";
+	font-family: "SAP-icons";
+	font-size: 0.8rem;
+	padding: 0.2rem;
+	color: #009de0;
+	padding: 5px;
+}
+
+
+.town{
+	font-size: 2rem !important;
+	margin-top: 0.5rem;
+}
+
+
+.curTemp{
+	font-size: 3.0rem !important;
+
+	text-align: center !important;
+	width: 18rem;
+	border-top: 2px solid #666;
+	margin-top: 0.5rem;
+
+	/*color: #009de0 !important;*/
+}
+.WeatherIcon{
+	height: 8rem;
+	max-width: 8rem;
+}
+.WeatherIconSmall{
+	height: 5rem;
+	max-width: 5rem;
+}
+.ForecastTempHigh{
+	font-size: 1.0rem !important;
+
+	text-align: left !important;
+	border-top: 2px solid #666;
+	margin-top: 0.5rem;
+	padding-left: 0.5rem;
+	padding-top: 0.25rem;
+	width: 5rem;
+	font-weight: 600 !important;
+
+	color: #E03F00 !important;
+}
+.ForecastTempLow{
+	font-size: 1.0rem !important;
+
+	text-align: right !important;
+	border-top: 2px solid #666;
+	margin-top: 0.5rem;
+	padding-right: 0.5rem;
+	padding-top: 0.25rem;
+	width: 5rem;
+	font-weight: 600 !important;
+
+	color: #009de0 !important;
+}
+.ForecastTempHigh:before{
+	content: "\e1e4";
+	font-family: "SAP-icons";
+	font-size: 0.8rem;
+	padding: 0.2rem;
+}
+.ForecastTempLow:before{
+	content: "\e1e3";
+	font-family: "SAP-icons";
+	font-size: 0.8rem;
+	padding: 0.2rem;
+}
+
+.TileTemp .ForecastTempLow, .TileTemp .ForecastTempHigh{
+	border: none;
+	font-size: 1.0rem !important;
+	width: auto;
+	font-weight: 600;
+}
+
+.feltTemp{
+	font-size: 1rem !important;
+	font-weight: 600 !important;
+	margin-top: 0.5rem;
+	padding-top: 0.25rem;
+}
+.curWeather{
+	font-size: 1.2rem !important;
+}
+
+
+.ImgTempTileMarginBottom{
+	margin-bottom: 1rem;
+}
+
+.LabelGustStrength{
+	font-size: 2.0rem !important;
+}
+.LabelGustDir{
+	font-size: 1.7rem !important;
+}
+
+.MainPage {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#1a4d80+0,178299+50,2dabb3+100 */
+	background: #1a4d80; /* Old browsers */
+	background: -moz-linear-gradient(top,  #1a4d80 0%, #178299 50%, #2dabb3 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  #1a4d80 0%,#178299 50%,#2dabb3 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  #1a4d80 0%,#178299 50%,#2dabb3 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1a4d80', endColorstr='#2dabb3',GradientType=0 ); /* IE6-9 */
 }

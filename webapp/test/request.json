@@ -1,0 +1,473 @@
+{
+  "response": {
+    "version": "0.1",
+    "termsofService": "http://www.wunderground.com/weather/api/d/terms.html",
+    "features": {
+      "conditions": 1,
+      "forecast": 1
+    }
+  },
+  "current_observation": {
+    "image": {
+      "url": "http://icons.wxug.com/graphics/wu2/logo_130x80.png",
+      "title": "Weather Underground",
+      "link": "http://www.wunderground.com"
+    },
+    "display_location": {
+      "full": "Wiesloch, Germany",
+      "city": "Wiesloch",
+      "state": "",
+      "state_name": "Germany",
+      "country": "DL",
+      "country_iso3166": "DE",
+      "zip": "00000",
+      "magic": "35",
+      "wmo": "WETIE",
+      "latitude": "49.29777908",
+      "longitude": "8.70138931",
+      "elevation": "149.00000000"
+    },
+    "observation_location": {
+      "full": "Eckertsberg, Dielheim, BADEN-WURTTEMBERG",
+      "city": "Eckertsberg, Dielheim",
+      "state": "BADEN-WURTTEMBERG",
+      "country": "GERMANY",
+      "country_iso3166": "DE",
+      "latitude": "49.285679",
+      "longitude": "8.725050",
+      "elevation": "505 ft"
+    },
+    "estimated": {},
+    "station_id": "IBADENWU24",
+    "observation_time": "Last Updated on November 23, 15:58 CET",
+    "observation_time_rfc822": "Mon, 23 Nov 2015 15:58:31 +0100",
+    "observation_epoch": "1448290711",
+    "local_time_rfc822": "Mon, 23 Nov 2015 15:58:38 +0100",
+    "local_epoch": "1448290718",
+    "local_tz_short": "CET",
+    "local_tz_long": "Europe/Berlin",
+    "local_tz_offset": "+0100",
+    "weather": "Wolkig",
+    "temperature_string": "38.3 F (3.5 C)",
+    "temp_f": 38.3,
+    "temp_c": 3.5,
+    "relative_humidity": "99%",
+    "wind_string": "From the Süd at 4.5 MPH Gusting to 6.9 MPH",
+    "wind_dir": "Süd",
+    "wind_degrees": 180,
+    "wind_mph": 4.5,
+    "wind_gust_mph": "6.9",
+    "wind_kph": 7.2,
+    "wind_gust_kph": "11.1",
+    "pressure_mb": "1024",
+    "pressure_in": "30.24",
+    "pressure_trend": "0",
+    "dewpoint_string": "38 F (3 C)",
+    "dewpoint_f": 38,
+    "dewpoint_c": 3,
+    "heat_index_string": "NA",
+    "heat_index_f": "NA",
+    "heat_index_c": "NA",
+    "windchill_string": "35 F (2 C)",
+    "windchill_f": "35",
+    "windchill_c": "2",
+    "feelslike_string": "35 F (2 C)",
+    "feelslike_f": "35",
+    "feelslike_c": "2",
+    "visibility_mi": "6.2",
+    "visibility_km": "10.0",
+    "solarradiation": "--",
+    "UV": "0",
+    "precip_1hr_string": "0.00 in ( 0 mm)",
+    "precip_1hr_in": "0.00",
+    "precip_1hr_metric": " 0",
+    "precip_today_string": "0.00 in (0 mm)",
+    "precip_today_in": "0.00",
+    "precip_today_metric": "0",
+    "icon": "mostlycloudy",
+    "icon_url": "http://icons.wxug.com/i/c/k/mostlycloudy.gif",
+    "forecast_url": "http://www.wunderground.com/global/stations/WETIE.html",
+    "history_url": "http://www.wunderground.com/weatherstation/WXDailyHistory.asp?ID=IBADENWU24",
+    "ob_url": "http://www.wunderground.com/cgi-bin/findweather/getForecast?query=49.285679,8.725050",
+    "nowcast": ""
+  },
+  "forecast": {
+    "txt_forecast": {
+      "date": "15:25 CET",
+      "forecastday": [
+        {
+          "period": 0,
+          "icon": "partlycloudy",
+          "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+          "title": "Montag",
+          "fcttext": "Teilweise bedeckt. Tiefsttemperatur 27F.",
+          "fcttext_metric": "Teilweise bedeckt. Tiefsttemperatur -2C.",
+          "pop": "20"
+        },
+        {
+          "period": 1,
+          "icon": "nt_partlycloudy",
+          "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+          "title": "Montag Nacht",
+          "fcttext": "Teilweise bedeckt. Es ist ein wenig Schneetreiben möglich. Tiefsttemperatur 27F. Wind aus SSO mit 5 bis 10 mph.",
+          "fcttext_metric": "Teilweise bedeckt. Es ist ein wenig Schneetreiben möglich. Tiefsttemperatur -2C. Wind aus SSO mit 10 bis 15 km/h.",
+          "pop": "20"
+        },
+        {
+          "period": 2,
+          "icon": "mostlycloudy",
+          "icon_url": "http://icons.wxug.com/i/c/k/mostlycloudy.gif",
+          "title": "Dienstag",
+          "fcttext": "Meistens bewölkt. Höchsttemperatur 40F. Wind aus SSO mit 5 bis 10 mph.",
+          "fcttext_metric": "Meistens bewölkt. Höchsttemperatur 4C. Wind aus SSO mit 10 bis 15 km/h.",
+          "pop": "20"
+        },
+        {
+          "period": 3,
+          "icon": "nt_snow",
+          "icon_url": "http://icons.wxug.com/i/c/k/nt_snow.gif",
+          "title": "Dienstag Nacht",
+          "fcttext": "Regen gemischt mit Schnee. Tiefsttemperatur 34F. Wind aus SW mit 10 bis 15 mph. Niederschl.-Risiko 70 %.",
+          "fcttext_metric": "Regen gemischt mit Schnee. Tiefsttemperatur 1C. Wind aus SW mit 15 bis 25 km/h. Niederschl.-Risiko 80 %. Schneeakkumulation von weniger als < 2 cm.",
+          "pop": "70"
+        },
+        {
+          "period": 4,
+          "icon": "chancerain",
+          "icon_url": "http://icons.wxug.com/i/c/k/chancerain.gif",
+          "title": "Mittwoch",
+          "fcttext": "Schauer. Höchsttemperatur 41F. Wind aus SW mit 10 bis 15 mph. Regenrisiko 70 %.",
+          "fcttext_metric": "Schauer. Höchsttemperatur 5C. Wind aus SW mit 10 bis 15 km/h. Regenrisiko 70 %.",
+          "pop": "70"
+        },
+        {
+          "period": 5,
+          "icon": "nt_chancerain",
+          "icon_url": "http://icons.wxug.com/i/c/k/nt_chancerain.gif",
+          "title": "Mittwoch Nacht",
+          "fcttext": "In der Nacht Schauer. Tiefsttemperatur 36F. Wind aus W und wechselhaft. Regenrisiko 40 %.",
+          "fcttext_metric": "In der Nacht Schauer. Tiefsttemperatur 2C. Wind aus W und wechselhaft. Regenrisiko 40 %.",
+          "pop": "40"
+        },
+        {
+          "period": 6,
+          "icon": "chancerain",
+          "icon_url": "http://icons.wxug.com/i/c/k/chancerain.gif",
+          "title": "Donnerstag",
+          "fcttext": "Morgens Schauer. Höchsttemperatur 42F. Wind aus NNW mit 5 bis 10 mph. Regenrisiko 40 %.",
+          "fcttext_metric": "Morgens Schauer. Höchsttemperatur 6C. Wind aus NNW mit 10 bis 15 km/h. Regenrisiko 50 %.",
+          "pop": "40"
+        },
+        {
+          "period": 7,
+          "icon": "nt_partlycloudy",
+          "icon_url": "http://icons.wxug.com/i/c/k/nt_partlycloudy.gif",
+          "title": "Donnerstag Nacht",
+          "fcttext": "Teilweise bedeckt. Tiefsttemperatur 34F. Wind aus NNO und wechselhaft.",
+          "fcttext_metric": "Teilweise bedeckt. Tiefsttemperatur 1C. Wind aus NNO und wechselhaft.",
+          "pop": "10"
+        }
+      ]
+    },
+    "simpleforecast": {
+      "forecastday": [
+        {
+          "date": {
+            "epoch": "1448301600",
+            "pretty": "07:00 PM CET am 23. November 2015",
+            "day": 23,
+            "month": 11,
+            "year": 2015,
+            "yday": 326,
+            "hour": 19,
+            "min": "00",
+            "sec": 0,
+            "isdst": "0",
+            "monthname": "November",
+            "monthname_short": "Nov",
+            "weekday_short": "Mo",
+            "weekday": "Montag",
+            "ampm": "PM",
+            "tz_short": "CET",
+            "tz_long": "Europe/Berlin"
+          },
+          "period": 1,
+          "high": {
+            "fahrenheit": "39",
+            "celsius": "3"
+          },
+          "low": {
+            "fahrenheit": "27",
+            "celsius": "-3"
+          },
+          "conditions": "Teils Wolkig",
+          "icon": "partlycloudy",
+          "icon_url": "http://icons.wxug.com/i/c/k/partlycloudy.gif",
+          "skyicon": "",
+          "pop": 20,
+          "qpf_allday": {
+            "in": 0,
+            "mm": 0
+          },
+          "qpf_day": {
+            "in": null,
+            "mm": null
+          },
+          "qpf_night": {
+            "in": 0,
+            "mm": 0
+          },
+          "snow_allday": {
+            "in": 0,
+            "cm": 0
+          },
+          "snow_day": {
+            "in": null,
+            "cm": null
+          },
+          "snow_night": {
+            "in": 0,
+            "cm": 0
+          },
+          "maxwind": {
+            "mph": 11,
+            "kph": 18,
+            "dir": "",
+            "degrees": 0
+          },
+          "avewind": {
+            "mph": 2,
+            "kph": 4,
+            "dir": "Süd",
+            "degrees": 184
+          },
+          "avehumidity": 90,
+          "maxhumidity": 0,
+          "minhumidity": 0
+        },
+        {
+          "date": {
+            "epoch": "1448388000",
+            "pretty": "07:00 PM CET am 24. November 2015",
+            "day": 24,
+            "month": 11,
+            "year": 2015,
+            "yday": 327,
+            "hour": 19,
+            "min": "00",
+            "sec": 0,
+            "isdst": "0",
+            "monthname": "November",
+            "monthname_short": "Nov",
+            "weekday_short": "Di",
+            "weekday": "Dienstag",
+            "ampm": "PM",
+            "tz_short": "CET",
+            "tz_long": "Europe/Berlin"
+          },
+          "period": 2,
+          "high": {
+            "fahrenheit": "40",
+            "celsius": "4"
+          },
+          "low": {
+            "fahrenheit": "34",
+            "celsius": "1"
+          },
+          "conditions": "Wolkig",
+          "icon": "mostlycloudy",
+          "icon_url": "http://icons.wxug.com/i/c/k/mostlycloudy.gif",
+          "skyicon": "",
+          "pop": 20,
+          "qpf_allday": {
+            "in": 0.16,
+            "mm": 4
+          },
+          "qpf_day": {
+            "in": 0,
+            "mm": 0
+          },
+          "qpf_night": {
+            "in": 0.16,
+            "mm": 4
+          },
+          "snow_allday": {
+            "in": 0.2,
+            "cm": 0.5
+          },
+          "snow_day": {
+            "in": 0,
+            "cm": 0
+          },
+          "snow_night": {
+            "in": 0.2,
+            "cm": 0.5
+          },
+          "maxwind": {
+            "mph": 10,
+            "kph": 16,
+            "dir": "SSO",
+            "degrees": 167
+          },
+          "avewind": {
+            "mph": 7,
+            "kph": 11,
+            "dir": "SSO",
+            "degrees": 167
+          },
+          "avehumidity": 75,
+          "maxhumidity": 0,
+          "minhumidity": 0
+        },
+        {
+          "date": {
+            "epoch": "1448474400",
+            "pretty": "07:00 PM CET am 25. November 2015",
+            "day": 25,
+            "month": 11,
+            "year": 2015,
+            "yday": 328,
+            "hour": 19,
+            "min": "00",
+            "sec": 0,
+            "isdst": "0",
+            "monthname": "November",
+            "monthname_short": "Nov",
+            "weekday_short": "Mi",
+            "weekday": "Mittwoch",
+            "ampm": "PM",
+            "tz_short": "CET",
+            "tz_long": "Europe/Berlin"
+          },
+          "period": 3,
+          "high": {
+            "fahrenheit": "41",
+            "celsius": "5"
+          },
+          "low": {
+            "fahrenheit": "36",
+            "celsius": "2"
+          },
+          "conditions": "Regen möglich",
+          "icon": "chancerain",
+          "icon_url": "http://icons.wxug.com/i/c/k/chancerain.gif",
+          "skyicon": "",
+          "pop": 70,
+          "qpf_allday": {
+            "in": 0.13,
+            "mm": 3
+          },
+          "qpf_day": {
+            "in": 0.11,
+            "mm": 3
+          },
+          "qpf_night": {
+            "in": 0.02,
+            "mm": 1
+          },
+          "snow_allday": {
+            "in": 0,
+            "cm": 0
+          },
+          "snow_day": {
+            "in": 0,
+            "cm": 0
+          },
+          "snow_night": {
+            "in": 0,
+            "cm": 0
+          },
+          "maxwind": {
+            "mph": 15,
+            "kph": 24,
+            "dir": "SW",
+            "degrees": 221
+          },
+          "avewind": {
+            "mph": 10,
+            "kph": 16,
+            "dir": "SW",
+            "degrees": 221
+          },
+          "avehumidity": 89,
+          "maxhumidity": 0,
+          "minhumidity": 0
+        },
+        {
+          "date": {
+            "epoch": "1448560800",
+            "pretty": "07:00 PM CET am 26. November 2015",
+            "day": 26,
+            "month": 11,
+            "year": 2015,
+            "yday": 329,
+            "hour": 19,
+            "min": "00",
+            "sec": 0,
+            "isdst": "0",
+            "monthname": "November",
+            "monthname_short": "Nov",
+            "weekday_short": "Do",
+            "weekday": "Donnerstag",
+            "ampm": "PM",
+            "tz_short": "CET",
+            "tz_long": "Europe/Berlin"
+          },
+          "period": 4,
+          "high": {
+            "fahrenheit": "42",
+            "celsius": "6"
+          },
+          "low": {
+            "fahrenheit": "34",
+            "celsius": "1"
+          },
+          "conditions": "Nebel",
+          "icon": "nt_fog",
+          "icon_url": "http://icons.wxug.com/i/c/k/chancerain.gif",
+          "skyicon": "",
+          "pop": 40,
+          "qpf_allday": {
+            "in": 0.02,
+            "mm": 1
+          },
+          "qpf_day": {
+            "in": 0.02,
+            "mm": 1
+          },
+          "qpf_night": {
+            "in": 0,
+            "mm": 0
+          },
+          "snow_allday": {
+            "in": 0,
+            "cm": 0
+          },
+          "snow_day": {
+            "in": 0,
+            "cm": 0
+          },
+          "snow_night": {
+            "in": 0,
+            "cm": 0
+          },
+          "maxwind": {
+            "mph": 10,
+            "kph": 16,
+            "dir": "NNW",
+            "degrees": 332
+          },
+          "avewind": {
+            "mph": 6,
+            "kph": 10,
+            "dir": "NNW",
+            "degrees": 332
+          },
+          "avehumidity": 87,
+          "maxhumidity": 0,
+          "minhumidity": 0
+        }
+      ]
+    }
+  }
+}

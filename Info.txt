@@ -1,4 +1,4 @@
-Vorschlag zum Aufbau der Inhalte der jew. Tiles.
+﻿Vorschlag zum Aufbau der Inhalte der jew. Tiles.
 Reihenfolge ist egal. Änderungen willkommen :)
 
 
@@ -15,9 +15,16 @@ Tile 4
 Vorschau 
 
 -----------------------------------------------------------------------------------------
+Konfiguration eventuell mittels Expression Binding und eines Control Models
+
+-----------------------------------------------------------------------------------------
+
+EIGENES CONTROL FÜR KOMPASS?
+
+-----------------------------------------------------------------------------------------
 
 Links zu den Icons:
-http://www.flaticon.com/categories/weather/
+http://www.danvierich.de/weather/
 
 Link zur Wetterseite:
 http://www.wunderground.com/cgi-bin/findweather/getForecast?query=Walldorf

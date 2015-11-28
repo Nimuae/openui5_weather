@@ -3,10 +3,8 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
-
-		<!-- https://openui5.hana.ondemand.com/1.30.8/resources/sap-ui-core.js -->
-		<!-- //localhost/openui5-sdk/resources/sap-ui-core.js -->
-		<script src="//localhost/openui5-sdk/resources/sap-ui-core.js"
+		
+		<script src="resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
 				data-sap-ui-libs="sap.ui.core, sap.m"
 				data-sap-ui-xx-bindingSyntax="complex"
@@ -20,7 +18,7 @@
 		<script>
 			jQuery.sap.require("sap.m.App");
 			
-			var oApp = new sap.m.App({
+			var oApp = new sap.m.App("MainApp", {
 				pages: [
 					sap.ui.view("viewDisplay", {
 						type: "XML",

@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+		
+		<script src="/resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.core, sap.m"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-resourceroots='{"hss.weather": "./../"}'
+				data-sap-ui-preload="async"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<link rel="stylesheet" href="../style/style.css" />
+		
+		<script>
+			jQuery.sap.require("sap.m.App");
+			jQuery.sap.require("sap.m.Page");
+			jQuery.sap.require("hss.weather.control.Rainometer");
+			jQuery.sap.require("hss.weather.control.CircleProgress");
+			jQuery.sap.require("hss.weather.control.Compass");
+			
+			var oApp = new sap.m.App({
+				pages: [
+					new sap.m.Page({
+						title: "Rainometer Test",
+						backgroundDesign: "Solid",
+						content: [
+							oRain = new hss.weather.control.Rainometer({
+								value: "{/value}"
+							}),
+							oBtnMore = new sap.m.Button({
+								icon: "sap-icon://add",
+								press: function(oEvent){
+									this.getModel().setProperty("/value", this.getModel().getProperty("/value") + 10);
+								}
+							}),
+							oBtnLess = new sap.m.Button({
+								icon: "sap-icon://less",
+								press: function(oEvent){
+									this.getModel().setProperty("/value", this.getModel().getProperty("/value") - 10);
+								}
+							}),
+							oProgress = new hss.weather.control.CircleProgress({
+								value: "{=${/value} / 100}"
+							}),
+							oCompass = new hss.weather.control.Compass({
+								direction: 270
+							})
+						]
+					})
+				]
+			});
+			oApp.setModel(new sap.ui.model.json.JSONModel({
+				value: 25
+			}));
+			oApp.placeAt("content");
+		</script>
+		
+	</head>
+	<body class="sapUiBody" role="application" id="content">
+	</body>
+</html>
