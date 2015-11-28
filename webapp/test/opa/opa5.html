@@ -9,8 +9,6 @@
 			>
 		</script>
 		<link rel="stylesheet" href="../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
-
-		<!--<script type="javascript" src="modules/display.js"> -->
 		<script>
 			jQuery.sap.require("sap.ui.thirdparty.qunit");
 			jQuery.sap.require("sap.ui.test.Opa5");
@@ -24,7 +22,8 @@
 			    actions : hss.weather.test.opa.Actions,
 			    assertions : hss.weather.test.opa.Assertions
 			});
-
+			
+			//Run OPA5 Tests for weather dashboard
 			hss.weather.test.opa.modules.Display();
 		</script>
 	</head>

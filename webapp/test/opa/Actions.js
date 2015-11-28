@@ -4,6 +4,14 @@ jQuery.sap.require("sap.ui.test.opaQunit");
 jQuery.sap.declare("hss.weather.test.opa.Actions");
 
 hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
+	/**
+	 * Searches for control with matching property
+	 * @param  {String} viewName      Name of view
+	 * @param  {String} controlType   Control Type after which will be searched
+	 * @param  {String} name          Property
+	 * @param  {String} value         Value of the Property
+	 * @return {[type]} waitFor       [description]
+	 */
 	iSearchControlWithMatchingProperty: function(viewName, controlType, name, value){
 		return this.waitFor({
 			viewName: viewName,
@@ -19,6 +27,11 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 		});
 	},
 
+	/**
+	 * Searches control by id
+	 * @param  {String} id        Id of Control after which will be searched
+	 * @return {[type]} waitFor   [description]
+	 */
 	iSearchById: function(id){
 		return this.waitFor({
 			id: new RegExp(id),

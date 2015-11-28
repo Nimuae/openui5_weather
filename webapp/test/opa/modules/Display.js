@@ -118,7 +118,7 @@ hss.weather.test.opa.modules.Display = function () {
 
 		//Assertions
 		// Then.iSeeMatchingProperty("ForecastTempHigh", "text", "3°C");
-		Then.iFindMatchingImageName("WeatherIcon", "src", "./icons/SVG/sw-03.svg")
+		Then.iFindMatchingImageSource("WeatherIcon", "src", "./icons/SVG/sw-03.svg")
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -249,7 +249,7 @@ hss.weather.test.opa.modules.Display = function () {
 		When.iSearchById("IconForcast1");
 
 		//Assertions
-		Then.iFindMatchingImageName("IconForcast1", "src", "./icons/SVG/sw-03.svg")
+		Then.iFindMatchingImageSource("IconForcast1", "src", "./icons/SVG/sw-03.svg")
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -328,7 +328,7 @@ hss.weather.test.opa.modules.Display = function () {
 		When.iSearchById("IconForcast2");
 
 		//Assertions
-		Then.iFindMatchingImageName("IconForcast2", "src", "./icons/SVG/sw-21.svg")
+		Then.iFindMatchingImageSource("IconForcast2", "src", "./icons/SVG/sw-21.svg")
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -407,7 +407,7 @@ hss.weather.test.opa.modules.Display = function () {
 		When.iSearchById("IconForcast3");
 
 		//Assertions
-		Then.iFindMatchingImageName("IconForcast3", "src", "./icons/SVG/sw-10.svg")
+		Then.iFindMatchingImageSource("IconForcast3", "src", "./icons/SVG/sw-10.svg")
 		Then.iTeardownMyAppFrame();
 	});
 
