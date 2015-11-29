@@ -38,14 +38,26 @@ sap.ui.define([
 		 * @return {void} Nothing
 		 */
 		onInit: function(){
-			if(jQuery.sap.getUriParameters().get("test")){
+			var bTest = jQuery.sap.getUriParameters().get("test");
+			
+			var oSettingsModel;
+			if(bTest){
 				this.SERVICE_URL = this.SERVICE_TEST_URL;
+
+				oSettingsModel = new sap.ui.model.json.JSONModel({
+					"city": "Wiesloch",
+					"temp_unit": "C",
+					"show_forecast": true,
+					"show_precip": true,
+					"show_humidity": true
+				});
+			}else{
+				oSettingsModel = new sap.ui.model.json.JSONModel(this.SETTINGS_URL);
 			}
 
 			var oConditionsModel = new sap.ui.model.json.JSONModel(this.SERVICE_URL);
-			this.getView().setModel(oConditionsModel, "data");
 
-			var oSettingsModel = new sap.ui.model.json.JSONModel(this.SETTINGS_URL);
+			this.getView().setModel(oConditionsModel, "data");
 			this.getView().setModel(oSettingsModel, "settings");
 
 			var delay = 1000 * 60 * 30;
