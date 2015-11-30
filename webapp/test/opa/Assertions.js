@@ -8,10 +8,10 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 
 	/**
 	 * Checks if the property matches 
-	 * @param  {[type]} id       Id of the control
-	 * @param  {[type]} name     Property
-	 * @param  {[type]} value    Value of property
-	 * @return {[type]} waitFor  [description]
+	 * @param  {String} id       Id of the control
+	 * @param  {String} name     Property
+	 * @param  {String} value    Value of property
+	 * @return {jQuery.promise} waitFor The jQuery.promise object for event handling
 	 */
 	iSeeMatchingProperty: function(id, name, value){
 		return this.waitFor({
@@ -22,9 +22,9 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 			}),
 			success: function(oControl){
 				oCtrl = oControl;
-				sap.ui.test.Opa5.assert.ok(true, "Saw matching property '" + value + "'");
+				sap.ui.test.Opa5.assert.ok(true, "Saw matching property '" + name + "' = '" + value + "'");
 			},
-			errorMessage: "Did not find matching property -- Expected: '" + value + "'"
+			errorMessage: "Did not find matching property '" + name + "' -- Expected: '" + value + "'"
 		});
 	},
 
@@ -33,7 +33,7 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 	 * @param  {String} id       Id of the control
 	 * @param  {String} name     Property
 	 * @param  {String} value    Value of property
-	 * @return {[type]} waitFor  [description]
+	 * @return {jQuery.promise} waitFor The jQuery.promise object for event handling
 	 */
 	iFindMatchingImageSource: function(id, name, value){
 		return this.waitFor({

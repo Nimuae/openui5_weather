@@ -10,7 +10,7 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 	 * @param  {String} controlType   Control Type after which will be searched
 	 * @param  {String} name          Property
 	 * @param  {String} value         Value of the Property
-	 * @return {[type]} waitFor       [description]
+	 * @return {jQuery.promise} waitFor The jQuery.promise object for event handling
 	 */
 	iSearchControlWithMatchingProperty: function(viewName, controlType, name, value){
 		return this.waitFor({
@@ -30,7 +30,7 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 	/**
 	 * Searches control by id
 	 * @param  {String} id        Id of Control after which will be searched
-	 * @return {[type]} waitFor   [description]
+	 * @return {jQuery.promise} waitFor The jQuery.promise object for event handling
 	 */
 	iSearchById: function(id){
 		return this.waitFor({
@@ -42,17 +42,18 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 		});
 	},
 
-	// iClickOnIcon: function(id){
-	// 	return this.waitFor({
-	// 		id: new RegExp(id),
-	// 		success: function(oIcon){
-	// 			sap.ui.test.Opa5.assert.ok(true, "Found Icon");
-	// 			oIcon.firePress();
-
-	// 		},
-	// 		errorMessage: "Did not find icon with matching id (" + id +")"
-	// 	});
-	// }
+	iClickOnControlWithId: function(id){
+		return this.waitFor({
+			id: new RegExp(id),
+			success: function(aControls){
+				if(aControls && aControls[0]){
+					sap.ui.test.Opa5.assert.ok(true, "Found Control with ID '/" + id + "/'");
+					aControls[0].firePress();
+				}
+			},
+			errorMessage: "Did not find control with matching id (" + id +")"
+		});
+	}
 
 });
 

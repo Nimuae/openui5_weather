@@ -129,7 +129,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "GUST STRENGTH - Find high gust strengh label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'LabelGustStrength'
-	* Expected value: Gefühlt: '7.2 km/h'
+	* Expected value: '7.2 km/h'
 	**/
 
 	opaTest("GUST STRENGTH - Find gust strengh label and see matching property", function (Given, When, Then){
@@ -148,7 +148,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "GUST STRENGTH - Find high gust strengh label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'LabelGustDir'
-	* Expected value: Gefühlt: 'Süd'
+	* Expected value: 'Süd'
 	**/
 
 	opaTest("GUST DIRECTION - Find gust direction label and see matching property", function (Given, When, Then){
@@ -174,7 +174,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "PRECIPT - Find precipt label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'PrecipText'
-	* Expected value: Gefühlt: 'Niederschlag (1h)'
+	* Expected value: 'Niederschlag (1h)'
 	**/
 
 	opaTest("PRECIPT - Find precipt label and see matching property", function (Given, When, Then){
@@ -193,7 +193,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "HUMIDITY - Find humidity label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'HumidityText'
-	* Expected value: Gefühlt: 'Luftfeuchtigkeit'
+	* Expected value: 'Luftfeuchtigkeit'
 	**/
 
 	opaTest("HUMIDITY - Find humidity label and see matching property", function (Given, When, Then){
@@ -208,8 +208,28 @@ hss.weather.test.opa.modules.Display = function () {
 		Then.iTeardownMyAppFrame();
 	});
 
+	/**
+	* Opa Test "HUMIDITY - Find humidity circle progress"
+	* Searches for circle progress by id and checks the value
+	* Search for: label with id 'HumidityText'
+	* Expected value: '0.99'
+	**/
+
+	opaTest("HUMIDITY - Find humidity circle progress", function (Given, When, Then){
+		//Arrangements
+		Given.iStartMyAppInAFrame("/index.html?test=true");
+
+		//Actions
+		When.iSearchById("CircleProgressHumidity");
+
+		//Assertions
+		Then.iSeeMatchingProperty("CircleProgressHumidity", "visible", true);
+		Then.iSeeMatchingProperty("CircleProgressHumidity", "value", 0.99);
+		Then.iTeardownMyAppFrame();
+	});
+
 	// ###############################################################
-	// --> Check if rainometer and circleprogress is there ... how?
+	// --> Check if rainometer is there
 	// ###############################################################
 	
 	// All OPA5 tests regarding forcast Tile 1
@@ -219,7 +239,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "FORECAST DAY - Find day label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'DateForcast1'
-	* Expected value: Gefühlt: 'Dienstag 24.11.2015'
+	* Expected value: 'Dienstag 24.11.2015'
 	**/
 
 	opaTest("FORECAST DAY - Find day label and see matching property", function (Given, When, Then){
@@ -249,7 +269,7 @@ hss.weather.test.opa.modules.Display = function () {
 		When.iSearchById("IconForcast1");
 
 		//Assertions
-		Then.iFindMatchingImageSource("IconForcast1", "src", "./icons/SVG/sw-03.svg")
+		Then.iFindMatchingImageSource("IconForcast1", "src", "./icons/SVG/sw-03.svg");
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -257,7 +277,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "FORECAST LOW TEMP - Find low temp label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'TempLowForcast1'
-	* Expected value: Gefühlt: '1°C'
+	* Expected value: '1°C'
 	**/
 
 	opaTest("FORECAST LOW TEMP - Find low temp label and see matching property", function (Given, When, Then){
@@ -276,7 +296,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "FORECAST HIGH TEMP - Find high temp label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'TempHighForcast1'
-	* Expected value: Gefühlt: '4°C'
+	* Expected value: '4°C'
 	**/
 
 	opaTest("FORECAST HIGH TEMP - Find high temp label and see matching property", function (Given, When, Then){
@@ -298,7 +318,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "FORECAST DAY - Find day label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'DateForcast2'
-	* Expected value: Gefühlt: 'Mittwoch 25.11.2015'
+	* Expected value: 'Mittwoch 25.11.2015'
 	**/
 
 	opaTest("FORECAST DAY - Find day label and see matching property", function (Given, When, Then){
@@ -328,7 +348,7 @@ hss.weather.test.opa.modules.Display = function () {
 		When.iSearchById("IconForcast2");
 
 		//Assertions
-		Then.iFindMatchingImageSource("IconForcast2", "src", "./icons/SVG/sw-21.svg")
+		Then.iFindMatchingImageSource("IconForcast2", "src", "./icons/SVG/sw-21.svg");
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -336,7 +356,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "FORECAST LOW TEMP - Find low temp label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'TempLowForcast2'
-	* Expected value: Gefühlt: '2°C'
+	* Expected value: '2°C'
 	**/
 
 	opaTest("FORECAST LOW TEMP - Find low temp label and see matching property", function (Given, When, Then){
@@ -355,7 +375,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "FORECAST HIGH TEMP - Find high temp label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'TempHighForcast2'
-	* Expected value: Gefühlt: '5°C'
+	* Expected value: '5°C'
 	**/
 
 	opaTest("FORECAST HIGH TEMP - Find high temp label and see matching property", function (Given, When, Then){
@@ -377,7 +397,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "FORECAST DAY - Find day label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'DateForcast3'
-	* Expected value: Gefühlt: 'Donnerstag 26.11.2015'
+	* Expected value: 'Donnerstag 26.11.2015'
 	**/
 
 	opaTest("FORECAST DAY - Find day label and see matching property", function (Given, When, Then){
@@ -415,7 +435,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "FORECAST LOW TEMP - Find low temp label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'TempLowForcast3'
-	* Expected value: Gefühlt: '1°C'
+	* Expected value: '1°C'
 	**/
 
 	opaTest("FORECAST LOW TEMP - Find low temp label and see matching property", function (Given, When, Then){
@@ -434,7 +454,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Opa Test "FORECAST HIGH TEMP - Find high temp label and see matching property"
 	* Searches for label by id and checks the text
 	* Search for: label with id 'TempHighForcast3'
-	* Expected value: Gefühlt: '6°C'
+	* Expected value: '6°C'
 	**/
 
 	opaTest("FORECAST HIGH TEMP - Find high temp label and see matching property", function (Given, When, Then){
@@ -449,19 +469,19 @@ hss.weather.test.opa.modules.Display = function () {
 		Then.iTeardownMyAppFrame();
 	});
 
-	// module("Custom Settings");
+	module("Custom Settings");
 
-	// opaTest("FORECAST HIGH TEMP - Find high temp label and see matching property", function (Given, When, Then){
-	// 	//Arrangements
-	// 	Given.iStartMyAppInAFrame("/index.html?test=true");
+	opaTest("FORECAST HIGH TEMP - Find high temp label and see matching property", function (Given, When, Then){
+		//Arrangements
+		Given.iStartMyAppInAFrame("/index.html?test=true");
 
-	// 	//Actions
-	// 	When.iClickOnIcon("CustomizeBtn");
+		//Actions
+		When.iClickOnControlWithId("CustomizeBtn");
 
-	// 	//Assertions
+		//Assertions
 
-	// 	// Then.iTeardownMyAppFrame();
-	// });
+		// Then.iTeardownMyAppFrame();
+	});
 
 
 
