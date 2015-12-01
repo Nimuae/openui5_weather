@@ -496,7 +496,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected: dialog with it 'SettingsPane'
 	**/
 	
-	opaTest("CUSTONMIZE BUTTON- Find customize button by id, click on it and search for dialog by id", function (Given, When, Then){
+	opaTest("CUSTOMIZE BUTTON - Find customize button by id, click on it and search for dialog by id", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -566,7 +566,19 @@ hss.weather.test.opa.modules.Display = function () {
 
 	// check if message toast appears after saving custom settings
 
+	// opaTest("CUSTOMIZE DIALOG - Open dialog, change interval and save", function (Given, When, Then){
+	// 	//Arrangements
+	// 	Given.iStartMyAppInAFrame("/index.html?test=true");
 
+	// 	//Actions
+	// 	When.iClickOnControlWithId("CustomizeBtn");
+	// 	When.iClickOnRadioButtonWithIndex("RbGroup", 0);
+	// 	When.iClickOnControlWithId("BtnSave");
+
+	// 	//Assertions
+	// 	Then.iSeeMatchingProperty("CurTemp", "text", "4°C");
+	// 	Then.iTeardownMyAppFrame();
+	// });
 
 	
 

@@ -137,5 +137,22 @@ hss.weather.view.Formatter = {
 		}
 
 		return true;
+	},
+
+	/**
+	 * @param {int} t Timestamp to be converted to format HH:mm
+	 */
+	MakeTimeFromInterval: function(t){
+		var h = Math.floor(t / (60 * 60 * 1000));
+		var m = (t - (h * (60 * 60 * 1000))) / (60 * 1000);
+
+		function padDateNumber(num){
+		    if(num < 10){
+		        return "0" + num;
+		    }
+		    return String(num);
+		}
+
+		return padDateNumber(h) + ":" + padDateNumber(m);
 	}
 };

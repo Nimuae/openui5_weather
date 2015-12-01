@@ -23,6 +23,12 @@ html{
 	cursor: pointer !important;
 }
 
+.CircleProgressInterval{
+	position: absolute !important;
+    left: 2px;
+    top: 2px;
+}
+
 .CustomizeBtn:hover{
 	opacity: 1.0;
 }

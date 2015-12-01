@@ -9,7 +9,11 @@ sap.ui.core.Control.extend("hss.weather.control.CircleProgress", {
         properties: {
             value: { type: "float", defaultValue: 0 },
             showValue: { type: "boolean", defaultValue: true },
-            size: { type: "int", defaultValue: 100 }
+            size: { type: "int", defaultValue: 100 },
+            thickness: { type: "int", defaultValue: 0 },
+            emptyFill: { type: "string", defaultValue: "#666" },
+            lineCap: { type: "string", defaultValue: "round" },
+            fill: { type: "object", defaultValue: { gradient: ["#009de0", "#00b0e8"] }}
         }
     },
 
@@ -53,13 +57,11 @@ sap.ui.core.Control.extend("hss.weather.control.CircleProgress", {
             value: value,
             size: this.getSize(),
             animation: false,
-            emptyFill: "#666",
-            lineCap: "round",
+            emptyFill: this.getEmptyFill(),
+            lineCap: this.getLineCap(),
             startAngle: Math.PI/-2,
-            thickness: this.getSize() / 10,
-            fill: {
-                gradient: ["#009de0", "#00b0e8"]
-            }
+            thickness: this.getThickness() === 0 ? this.getSize() / 10 : this.getThickness(),
+            fill: this.getFill()
         });
     }
 });

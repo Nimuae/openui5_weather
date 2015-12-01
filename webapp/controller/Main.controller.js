@@ -64,7 +64,7 @@ sap.ui.define([
 			if(jQuery.sap.getUriParameters().get("debug")){
 				delay = 5000;
 			}
-			setInterval(jQuery.proxy(this.refreshData, this), delay);
+			this.oInterval = setInterval(jQuery.proxy(this.refreshData, this), delay);
 		},
 
 		/**
@@ -195,6 +195,27 @@ sap.ui.define([
 			}
 
 			oSource.getModel("settings").setProperty("/temp_unit", unit);
+		},
+
+		onTimePickerChanged: function(oEvent){
+			var valid = oEvent.getParameters().valid;
+			var val = oEvent.getParameters().value || "00:00";
+			var oTimePicker = oEvent.getSource();
+
+			var oBinding = oTimePicker.getBinding("value");
+			if(oBinding){
+				var t = 0;
+				var matches = val.match(/([0-9]{2})\:([0-9]{2})/);
+				if(matches){
+					var h = matches[1] || 0;
+					var m = matches[2] || 0;
+
+					t += parseInt(h, 10) * 60 * 60 * 1000;
+					t += parseInt(m, 10) * 60 * 1000;
+				}
+
+				oBinding.getModel().setProperty(oBinding.sPath, t);
+			}
 		}
 	});
 });

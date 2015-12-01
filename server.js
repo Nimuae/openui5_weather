@@ -40,7 +40,8 @@ router.get("/service/settings", function(req, res, next){
 		temp_unit: settings.temp_unit || "C",
 		show_forecast: !!settings.show_forecast,
 		show_precip: !!settings.show_precip,
-		show_humidity: !!settings.show_humidity
+		show_humidity: !!settings.show_humidity,
+		interval: settings.interval || 0
 	});
 });
 router.post("/service/settings", require("body-parser").json(), function(req, res, next){
@@ -53,6 +54,7 @@ router.post("/service/settings", require("body-parser").json(), function(req, re
 		show_forecast: req.body.show_forecast,
 		show_precip: req.body.show_precip,
 		show_humidity: req.body.show_humidity,
+		interval: req.body.interval
 	});
 
 	//did the city name change?
@@ -142,7 +144,8 @@ function writeSettings(o){
 //set an interval to update weather data from the web service and store it
 var INTERVAL = (process.argv.indexOf("-i") !== -1) ? parseInt(process.argv[process.argv.indexOf("-i") + 1], 10) : 2000; //take argument or update every 30 minutes
 console.log("Updating every", INTERVAL, "ms", "(DEBUG)", DEBUG);
+var settings = readSettings();
 
-setInterval(function(){
+var oInterval = setInterval(function(){
 	getWeatherData();
-}, DEBUG ? INTERVAL : 1000 * 60 * 30);
+}, DEBUG ? INTERVAL : (settings ? settings.interval || 1000 * 60 * 30 : 1000 * 60 * 30));
