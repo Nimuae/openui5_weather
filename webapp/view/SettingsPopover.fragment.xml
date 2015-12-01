@@ -33,16 +33,16 @@
                             columnsM="1">
                             <f:content>
                                 <Label text="Stadt" />
-                                <Input value="{settings>/city}" valueLiveUpdate="true" />
+                                <Input value="{settings>/city}" valueLiveUpdate="true" id="CustTown"/>
                                 <Label text="Temperatur" />
-                                <RadioButtonGroup columns="2" editable="true" select="onRadioButtonChange">
+                                <RadioButtonGroup columns="2" editable="true" select="onRadioButtonChange" id="RbGroup">
                                     <RadioButton selected="{=${settings>/temp_unit} === 'C'}" id="RB_C" text="Celsius" />
                                     <RadioButton selected="{=${settings>/temp_unit} === 'F'}" id="RB_F" text="Fahrenheit" />
                                 </RadioButtonGroup>
                                 <Label text="Wettervorhersage" />
-                                <Switch state="{settings>/show_forecast}" customTextOn="An" customTextOff="Aus" />
+                                <Switch state="{settings>/show_forecast}" customTextOn="An" customTextOff="Aus" id="CustForecast"/>
                                 <Label text="Luftfeuchtigkeit anzeigen" />
-                                <Switch state="{settings>/show_humidity}" customTextOn="An" customTextOff="Aus" />
+                                <Switch state="{settings>/show_humidity}" customTextOn="An" customTextOff="Aus" id="CustHumidity"/>
                             </f:content>
                         </f:SimpleForm>
                     </l:content>
@@ -51,8 +51,8 @@
             <footer>
                 <Toolbar>
                     <ToolbarSpacer />
-                    <Button text="Speichern" type="Accept" press="onSave"/>
-                    <Button text="Abbrechen" type="Reject" press="onCancel"/>
+                    <Button text="Speichern" type="Accept" press="onSave" id ="BtnSave"/>
+                    <Button text="Abbrechen" type="Reject" press="onCancel" id="BtnReject"/>
                 </Toolbar>
             </footer>
         </Page>

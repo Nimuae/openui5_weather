@@ -22,7 +22,7 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 			}),
 			success: function(oControl){
 				oCtrl = oControl;
-				sap.ui.test.Opa5.assert.ok(true, "Saw matching property '" + name + "' = '" + value + "'");
+				sap.ui.test.Opa5.assert.ok(true, "Saw matching property (" + value + ")");
 			},
 			errorMessage: "Did not find matching property '" + name + "' -- Expected: '" + value + "'"
 		});
@@ -43,9 +43,19 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 				value: value
 			}),
 			success: function(oImage){
-				sap.ui.test.Opa5.assert.ok(true, "Found matching image name '" + value + "'");
+				sap.ui.test.Opa5.assert.ok(true, "Found matching image name (" + value + ")");
 			},
 			errorMessage: "Did not find matching image name -- Expected: '" + value + "'"
+		});
+	},
+
+	iSeeDialog: function(id){
+		return this.waitFor({
+			id: new RegExp(id),
+			success: function(oDialog){
+				sap.ui.test.Opa5.assert.ok(true, "Found dialog with matching id (" + id + ")");
+			},
+			errorMessage: "Did not find dialog with matching id (" + id  +")"
 		});
 	}
 });

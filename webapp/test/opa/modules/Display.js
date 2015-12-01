@@ -163,9 +163,9 @@ hss.weather.test.opa.modules.Display = function () {
 		Then.iTeardownMyAppFrame();
 	});
 
-	// ###############################################################
+	// ##############################################################################################################################
 	// --> Check if icon is visible ... how?
-	// ###############################################################
+	// ##############################################################################################################################
 	
 	// All OPA5 tests regarding the gust tile
 	module("Precip/Humidity Tile");
@@ -228,9 +228,27 @@ hss.weather.test.opa.modules.Display = function () {
 		Then.iTeardownMyAppFrame();
 	});
 
-	// ###############################################################
-	// --> Check if rainometer is there
-	// ###############################################################
+	/**
+	* Opa Test "RAINOMETER - Find rainometer"
+	* Searches for rainometer by id and checks value and unit
+	* Search for: label with id 'RainometerPrecip'
+	* Expected value: '0.0', unit: 'mm'
+	**/
+
+	opaTest("RAINOMETER - Find rainometer", function (Given, When, Then){
+		//Arrangements
+		Given.iStartMyAppInAFrame("/index.html?test=true");
+
+		//Actions
+		When.iSearchById("RainometerPrecip");
+
+		//Assertions
+		Then.iSeeMatchingProperty("RainometerPrecip", "visible", true);
+		Then.iSeeMatchingProperty("RainometerPrecip", "value", 0.0);
+		Then.iSeeMatchingProperty("RainometerPrecip", "unit", "mm");
+		Then.iTeardownMyAppFrame();
+	});
+
 	
 	// All OPA5 tests regarding forcast Tile 1
 	module("Forcast Tile 1");
@@ -471,7 +489,14 @@ hss.weather.test.opa.modules.Display = function () {
 
 	module("Custom Settings");
 
-	opaTest("FORECAST HIGH TEMP - Find high temp label and see matching property", function (Given, When, Then){
+	/**
+	* Opa Test "CUSTONMIZE BUTTON- Find customize button by id, click on it and search for dialog"
+	* Searches for button by id, clicks on button and searches for dialog by id
+	* Search for: label with id 'CustomizeBtn'
+	* Expected: dialog with it 'SettingsPane'
+	**/
+	
+	opaTest("CUSTONMIZE BUTTON- Find customize button by id, click on it and search for dialog by id", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -479,9 +504,67 @@ hss.weather.test.opa.modules.Display = function () {
 		When.iClickOnControlWithId("CustomizeBtn");
 
 		//Assertions
-
-		// Then.iTeardownMyAppFrame();
+		Then.iSeeDialog("SettingsPane");
+		Then.iTeardownMyAppFrame();
 	});
+
+	opaTest("CUSTOMIZE DIALOG - Open dialog, change town and save", function (Given, When, Then){
+		//Arrangements
+		Given.iStartMyAppInAFrame("/index.html?test=true");
+
+		//Actions
+		When.iClickOnControlWithId("CustomizeBtn");
+		When.iChangeInputValue("CustTown", "Walldorf");
+		When.iClickOnControlWithId("BtnSave");
+
+		//Assertions
+		Then.iSeeMatchingProperty("town", "text", "Walldorf");
+		Then.iTeardownMyAppFrame();
+	});
+
+	opaTest("CUSTOMIZE DIALOG - Open dialog, click on radiobutton Fahrenheit and save", function (Given, When, Then){
+		//Arrangements
+		Given.iStartMyAppInAFrame("/index.html?test=true");
+
+		//Actions
+		When.iClickOnControlWithId("CustomizeBtn");
+		When.iClickOnRadioButtonWithIndex("RbGroup", 1);
+		When.iClickOnControlWithId("BtnSave");
+
+		//Assertions
+		Then.iSeeMatchingProperty("CurTemp", "text", "38°F");
+		Then.iTeardownMyAppFrame();
+	});
+
+	opaTest("CUSTOMIZE DIALOG - Open dialog, click on radiobutton Celcius and save", function (Given, When, Then){
+		//Arrangements
+		Given.iStartMyAppInAFrame("/index.html?test=true");
+
+		//Actions
+		When.iClickOnControlWithId("CustomizeBtn");
+		When.iClickOnRadioButtonWithIndex("RbGroup", 0);
+		When.iClickOnControlWithId("BtnSave");
+
+		//Assertions
+		Then.iSeeMatchingProperty("CurTemp", "text", "4°C");
+		Then.iTeardownMyAppFrame();
+	});
+
+	// opaTest("CUSTOMIZE DIALOG - Open dialog, change state of forecast switch and save", function (Given, When, Then){
+	// 	//Arrangements
+	// 	Given.iStartMyAppInAFrame("/index.html?test=true");
+
+	// 	//Actions
+	// 	When.iClickOnControlWithId("CustomizeBtn");
+	// 	When.iChangeStateOfSwitch("CustForecast", false);
+	// 	When.iClickOnControlWithId("BtnSave");
+
+	// 	//Assertions
+	// 	Then.iSeeMatchingProperty("HBoxForecast", "visible", false);
+	// 	Then.iTeardownMyAppFrame();
+	// });
+
+	// check if message toast appears after saving custom settings
 
 
 

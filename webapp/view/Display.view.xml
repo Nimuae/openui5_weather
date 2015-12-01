@@ -132,8 +132,8 @@
                 </HBox>
 
                 <HBox
-                    justifyContent="Center">
-                    <VBox class="TileForecast Tile" visible="{settings>/show_forecast}">
+                    justifyContent="Center" visible="{settings>/show_forecast}" id="HBoxForecast">
+                    <VBox class="TileForecast Tile" >
                         <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
@@ -162,7 +162,7 @@
                             </HBox>
                         </VBox>
                     </VBox>
-                    <VBox class="TileForecast Tile" visible="{settings>/show_forecast}">
+                    <VBox class="TileForecast Tile">
                          <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
@@ -191,7 +191,7 @@
                             </HBox>
                         </VBox>
                     </VBox>
-                    <VBox class="TileForecast Tile" visible="{settings>/show_forecast}">
+                    <VBox class="TileForecast Tile">
                          <layoutData>
                             <l:GridData spanL="4" spanM="4" spanS="12" />
                         </layoutData>
