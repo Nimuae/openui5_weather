@@ -49,7 +49,8 @@ sap.ui.define([
 					"temp_unit": "C",
 					"show_forecast": true,
 					"show_precip": true,
-					"show_humidity": true
+					"show_humidity": true,
+					"interval": 2500
 				});
 			}else{
 				oSettingsModel = new sap.ui.model.json.JSONModel(this.SETTINGS_URL);
@@ -60,11 +61,11 @@ sap.ui.define([
 			this.getView().setModel(oConditionsModel, "data");
 			this.getView().setModel(oSettingsModel, "settings");
 
-			var delay = 1000 * 60 * 30;
+			var delay = oSettingsModel.getProperty("/interval") || 1000 * 60 * 30;
 			if(jQuery.sap.getUriParameters().get("debug")){
 				delay = 5000;
 			}
-			this.oInterval = setInterval(jQuery.proxy(this.refreshData, this), delay);
+			this.startRefreshTimer(delay);
 		},
 
 		/**
@@ -73,6 +74,19 @@ sap.ui.define([
 		 */
 		refreshData: function(){
 			this.getView().getModel("data").loadData(this.SERVICE_URL);
+		},
+
+		/**
+		 * Start the interval and save the handle in an internal variable
+		 * @param  {int} delay The delay in ms
+		 * @return {handle}       The interval handle
+		 */
+		startRefreshTimer: function(delay){
+			if(!delay){
+				delay = this.getView().getModel("settings").getProperty("/interval") || 1000 * 60 * 30;
+			}
+			clearInterval(this.oInterval);
+			return (this.oInterval = setInterval(jQuery.proxy(this.refreshData, this), delay));
 		},
 
 		/**
@@ -104,6 +118,7 @@ sap.ui.define([
 		 */
 		onSave: function(){
 			this._settingsDialog.close();
+			var self = this;
 
 			var data = this.getView().getModel("settings").getData();
 			var bChanged = this.checkDataChanged();
@@ -115,6 +130,7 @@ sap.ui.define([
 					data: JSON.stringify(data),
 					contentType: "application/json"
 				}).success(function(d){
+					self.startRefreshTimer();
 					sap.m.MessageToast.show("Änderungen wurden erfolgreich gespeichert.");
 				}).fail(function(jqXHR){
 					sap.m.MessageToast.show("Fehler beim Speichern: " + jqXHR.statusText);

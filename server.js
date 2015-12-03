@@ -138,11 +138,16 @@ function readSettings(){
 }
 
 function writeSettings(o){
+	clearInterval(oInterval);
+	oInterval = setInterval(function(){
+		getWeatherData();
+	}, DEBUG ? INTERVAL : (o ? o.interval || 1000 * 60 * 30 : 1000 * 60 * 30));
+
 	fs.writeFileSync(SETTINGS_FILE, JSON.stringify(o));
 }
 
 //set an interval to update weather data from the web service and store it
-var INTERVAL = (process.argv.indexOf("-i") !== -1) ? parseInt(process.argv[process.argv.indexOf("-i") + 1], 10) : 2000; //take argument or update every 30 minutes
+INTERVAL = (process.argv.indexOf("-i") !== -1) ? parseInt(process.argv[process.argv.indexOf("-i") + 1], 10) : 2000; //take argument or update every 30 minutes
 console.log("Updating every", INTERVAL, "ms", "(DEBUG)", DEBUG);
 var settings = readSettings();
 
