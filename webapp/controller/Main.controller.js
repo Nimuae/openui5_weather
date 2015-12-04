@@ -52,20 +52,22 @@ sap.ui.define([
 					"show_humidity": true,
 					"interval": 2500
 				});
+				this.startRefreshTimer(2500);
 			}else{
 				oSettingsModel = new sap.ui.model.json.JSONModel(this.SETTINGS_URL);
+
+				var delay = null;
+				if(jQuery.sap.getUriParameters().get("debug")){
+					delay = 5000;
+				}
+
+				oSettingsModel.attachEvent("requestCompleted", jQuery.proxy(this.startRefreshTimer, this, delay));
 			}
 
 			var oConditionsModel = new sap.ui.model.json.JSONModel(this.SERVICE_URL);
 
 			this.getView().setModel(oConditionsModel, "data");
 			this.getView().setModel(oSettingsModel, "settings");
-
-			var delay = oSettingsModel.getProperty("/interval") || 1000 * 60 * 30;
-			if(jQuery.sap.getUriParameters().get("debug")){
-				delay = 5000;
-			}
-			this.startRefreshTimer(delay);
 		},
 
 		/**
