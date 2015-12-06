@@ -59,10 +59,12 @@ router.post("/service/settings", require("body-parser").json(), function(req, re
 
 	//did the city name change?
 	if((settings.city || "Wiesloch") !== (req.body.city || "Wiesloch")){
-		getWeatherData();
+		getWeatherData(null, function(){
+			res.send({ city: true });
+		});
+	}else{
+		res.end();
 	}
-
-	res.end();
 });
 
 //add router to app as middleware for data requests
@@ -78,7 +80,7 @@ var server = app.listen(3000, function(){
 });
 
 
-function getWeatherData(options){
+function getWeatherData(options, callback){
 	var reqURI = buildRequestURI(options || {});
 
 	var msg = "[" + (new Date().toUTCString()) + "] Fetching weather data from \"" + reqURI + "\"";
@@ -98,6 +100,9 @@ function getWeatherData(options){
 			try{
 				randomizer = new Randomizer();
 				DATA = JSON.parse(data, DEBUG ? randomizer.randomize : function(k, v) { return v; });
+				if(callback){
+					callback(DATA);
+				}
 			}catch(e){
 				console.error("Error", e);
 				log(e);

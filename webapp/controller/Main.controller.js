@@ -130,8 +130,13 @@ sap.ui.define([
 					url: this.SETTINGS_URL,
 					method: "POST",
 					data: JSON.stringify(data),
-					contentType: "application/json"
+					contentType: "application/json",
+					dataType: "json"
 				}).success(function(d){
+					if(d && !!d.city){
+						//only load new data if the city changed
+						self.refreshData();
+					}
 					self.startRefreshTimer();
 					sap.m.MessageToast.show("Änderungen wurden erfolgreich gespeichert.");
 				}).fail(function(jqXHR){
