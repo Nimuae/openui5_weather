@@ -34,31 +34,24 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 			controlType: "sap.ui.core.Control",
 			check : function (aControls) {
        			for(var i = 0; i < aControls.length; i++){
-       				if(new RegExp(id).test(aControls[i].getId()) && !aControls[i].getVisible()){
-       					return true;
+       				if (new RegExp(id).test(aControls[i].getId())) {
+	       				if(!aControls[i].getVisible()){
+	       					// Control found and not visible.
+	       					return true;
+	       				} else {
+	       					// Control found and visible.
+	       					return false;
+	       				}
        				}
        			}
-       			return false;
+       			// No control with that id found.
+       			return true;
     		},
 			success: function(oControl){
 				sap.ui.test.Opa5.assert.ok(true, "Did not find control");
 			},
 			errorMessage: "Found control"
 		});
-
-
-
-		// return this.waitFor({
-		// 	id: new RegExp(id),
-		// 	matchers: new sap.ui.test.matchers.Properties({
-		// 		visible: false
-		// 	}),
-		// 	success: function(oControl){
-		// 		oCtrl = oControl;
-		// 		sap.ui.test.Opa5.assert.ok(true, "Did not find matching control");
-		// 	},
-		// 	errorMessage: "Find matching control"
-		// });
 	},
 
 	/**
@@ -95,8 +88,6 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 	iSeeToastMessage: function(){
 		return this.waitFor({
 			pollingInterval : 100,
-			// viewName: viewName,
-			// controlType: controlType, //e.g sap.m.Label
 			check : function () {
        			return !!sap.ui.test.Opa5.getJQuery()(".sapMMessageToast").length;
     		},

@@ -66,8 +66,10 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 			success: function(oInput){
 				if(oInput && oInput[0]){
 					oInput[0].setValue(value);
+					sap.ui.test.Opa5.assert.ok(true, "Found Control with ID (" + id + ") and changed value to " + value );
 				}
-			}
+			},
+			errorMessage: "Did not find control with matching ID"
 		});
 	},
 
