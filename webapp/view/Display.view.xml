@@ -17,7 +17,9 @@
                 id="CustomizeBtn"/>
             <VBox
                 fitContainer="true"
-                justifyContent="Center">
+                justifyContent="Center"
+                busy="{=!!!${data>/current_observation/temp_c}}"
+                busyIndicatorDelay="0">
                 <HBox
                     justifyContent="Center" >
 

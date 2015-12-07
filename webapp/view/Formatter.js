@@ -144,7 +144,7 @@ hss.weather.view.Formatter = {
 	 */
 	MakeTimeFromInterval: function(t){
 		var h = Math.floor(t / (60 * 60 * 1000));
-		var m = (t - (h * (60 * 60 * 1000))) / (60 * 1000);
+		var m = Math.floor((t - (h * (60 * 60 * 1000))) / (60 * 1000));
 
 		function padDateNumber(num){
 		    if(num < 10){

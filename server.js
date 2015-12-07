@@ -16,7 +16,7 @@ if(DEBUG){
 TESTDATA_URL = "http://localhost:3000/test/request.json";
 
 API = "19420d53f811294e";
-DATA = {};
+DATA = undefined;
 LOGS = __dirname + "/log";
 HISTORY = __dirname + "/history";
 DATA_DIR = __dirname + "/data";
@@ -30,7 +30,16 @@ console.log("Sending Requests to \"" + buildRequestURI() + "\"");
 
 //create routes for retrieval of stored data
 router.get("/service", function(req, res, next){
-	res.send(DATA);
+	if(req.query.debug && req.query.noData){
+		res.send({ errorMessage: "Keine Daten vorhanden." });
+		return;
+	}
+
+	if(!DATA){
+		res.status(500).send({ errorMessage: "Keine Daten vorhanden." });
+	}else{
+		res.send(DATA);
+	}
 });
 router.get("/service/settings", function(req, res, next){
 	var settings = readSettings();
@@ -59,8 +68,13 @@ router.post("/service/settings", require("body-parser").json(), function(req, re
 
 	//did the city name change?
 	if((settings.city || "Wiesloch") !== (req.body.city || "Wiesloch")){
-		getWeatherData(null, function(){
+		getWeatherData(null, function(d){
+			DATA = d;
 			res.send({ city: true });
+		}, function(e){
+			res.status(404).send({
+				errorMessage: "Stadt wurde nicht gefunden."
+			});
 		});
 	}else{
 		res.send({});
@@ -80,7 +94,7 @@ var server = app.listen(3000, function(){
 });
 
 
-function getWeatherData(options, callback){
+function getWeatherData(options, callback, errorCallback){
 	var reqURI = buildRequestURI(options || {});
 
 	var msg = "[" + (new Date().toUTCString()) + "] Fetching weather data from \"" + reqURI + "\"";
@@ -99,13 +113,16 @@ function getWeatherData(options, callback){
 			console.log("Received all data.");
 			try{
 				randomizer = new Randomizer();
-				DATA = JSON.parse(data, DEBUG ? randomizer.randomize : function(k, v) { return v; });
+				var d = JSON.parse(data, DEBUG ? randomizer.randomize : function(k, v) { return v; });
 				if(callback){
-					callback(DATA);
+					callback(d);
 				}
 			}catch(e){
 				console.error("Error", e);
 				log(e);
+				if(errorCallback){
+					errorCallback(e);
+				}
 			}
 		});
 
@@ -114,6 +131,10 @@ function getWeatherData(options, callback){
 		
 		console.error("[" + d + "] " + e.code + ": ", e);
 		log(e.code + ": " + e.hostname);
+
+		if(errorCallback){
+			errorCallback(e);
+		}
 	});
 }
 
@@ -157,5 +178,7 @@ console.log("Updating every", INTERVAL, "ms", "(DEBUG)", DEBUG);
 var settings = readSettings();
 
 var oInterval = setInterval(function(){
-	getWeatherData();
+	getWeatherData(null, function(d){
+		DATA = d;
+	});
 }, DEBUG ? INTERVAL : (settings ? settings.interval || 1000 * 60 * 30 : 1000 * 60 * 30));
