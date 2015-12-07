@@ -63,7 +63,7 @@ router.post("/service/settings", require("body-parser").json(), function(req, re
 			res.send({ city: true });
 		});
 	}else{
-		res.end();
+		res.send({});
 	}
 });
 
