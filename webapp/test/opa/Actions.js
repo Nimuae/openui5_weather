@@ -53,6 +53,7 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 			success: function(aControls){
 				if(aControls && aControls[0]){
 					sap.ui.test.Opa5.assert.ok(true, "Found Control with ID (" + id + ")");
+					// aControls[0].$().trigger("tap");
 					aControls[0].firePress();
 				}
 			},

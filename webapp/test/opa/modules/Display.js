@@ -400,15 +400,32 @@ hss.weather.test.opa.modules.Display = function () {
 		When.iClickOnControlWithId("CustomizeBtn");
 		When.iChangeInputValue("CustInterval", "10:00");
 		When.iClickOnControlWithId("BtnSave");
-
 		When.iClickOnControlWithId("CustomizeBtn");
 
 		//Assertions
 		Then.iSeeMatchingProperty("CustInterval", "value", "10:00");
-
 		Then.iTeardownMyAppFrame();
 	});
 
+	// /** 21
+	// * CUSTOMIZE DIALOG - Intervall
+	// * Open dialog, change interval, cancel, open dialog again and check intervall value
+	// * Expected: Confirmation Dialog
+	// **/
 
-// open dialog an cancel
+	// opaTest("CUSTOMIZE DIALOG - Open dialog and cancel", function (Given, When, Then){
+	// 	//Arrangements
+	// 	Given.iStartMyAppInAFrame("/index.html?test=true");
+
+	// 	//Actions
+	// 	When.iClickOnControlWithId("CustomizeBtn");
+	// 	When.iChangeInputValue("CustInterval", "20:00");
+	// 	When.iClickOnControlWithId("BtnSave");
+	// 	When.iClickOnControlWithId("CustomizeBtn");
+	// 	When.iChangeInputValue("CustInterval", "00:20");
+	// 	When.iClickOnControlWithId("BtnReject");
+
+	// 	//Assertions
+	// 	Then.iTeardownMyAppFrame();
+	// });
 };
