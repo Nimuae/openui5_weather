@@ -220,6 +220,11 @@ sap.ui.define([
 			oSource.getModel("settings").setProperty("/temp_unit", unit);
 		},
 
+		/**
+		 * Convert time picker's data to a millisecond-timestamp and write it to the model
+		 * @param  {sap.ui.base.Event} oEvent The UI event object
+		 * @return {void}        Nothing
+		 */
 		onTimePickerChanged: function(oEvent){
 			var valid = oEvent.getParameters().valid;
 			var val = oEvent.getParameters().value || "00:00";
