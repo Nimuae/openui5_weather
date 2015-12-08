@@ -252,7 +252,7 @@ hss.weather.test.opa.modules.Display = function () {
 		When.iSearchById("IconForcast3");
 
 		//Assertions
-		Then.iFindMatchingImageSource("IconForcast3", "src", "./icons/SVG/sw-10.svg")
+		Then.iFindMatchingImageSource("IconForcast3", "src", "./icons/SVG/sw-10.svg");
 		Then.iTeardownMyAppFrame();
 	});
 

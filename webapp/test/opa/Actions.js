@@ -43,7 +43,7 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 	},
 
 	/**
-	 * [iClickOnControlWithId description]
+	 * CLicks on a control wit a certain id
 	 * @param  {String} id 			Id of Control after which will be searched
 	 * @return {jQuery.promise}     waitFor The jQuery.promise object for event handling
 	 */
@@ -61,6 +61,12 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 		});
 	},
 
+	/**
+	 * Changes the value of an input
+	 * @param  {String} id    		Id of Control after which will be searched
+	 * @param  {String} value 		New value
+	 * @return {jQuery.promise} 	waitFor The jQuery.promise object for event handling
+	 */
 	iChangeInputValue: function(id, value){
 		return this.waitFor({
 			id: new RegExp(id),
@@ -74,6 +80,13 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 		});
 	},
 
+	/**
+	 * Checks a radiobutton in a radiogroup with a certain id
+	 * @param  {String} id    		Id of Control after which will be searched
+	 * @param  {int}    index 		Index of the radiobutton which should be checked
+	 * @return {jQuery.promise}		waitFor The jQuery.promise object for event handling
+	 */
+	
 	iClickOnRadioButtonWithIndex: function(id, index){
 		return this.waitFor({
 			id: new RegExp(id),
@@ -87,6 +100,12 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 		});
 	},
 
+	/**
+	 * Changes state of a switch with a certain id
+	 * @param  {String} id    		Id of Control after which will be searched
+	 * @param  {String} state 		State which should be set
+	 * @return {jQuery.promise}		waitFor The jQuery.promise object for event handling
+	 */
 	iChangeStateOfSwitch: function(id, state){
 		return this.waitFor({
 			id: new RegExp(id),

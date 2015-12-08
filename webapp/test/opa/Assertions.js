@@ -11,7 +11,7 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 	 * @param  {String} id       Id of the control
 	 * @param  {String} name     Property
 	 * @param  {String} value    Value of property
-	 * @return {jQuery.promise} waitFor The jQuery.promise object for event handling
+	 * @return {jQuery.promise}  waitFor The jQuery.promise object for event handling
 	 */
 	iSeeMatchingProperty: function(id, name, value){
 		return this.waitFor({
@@ -28,6 +28,11 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 		});
 	},
 
+	/**
+	 * Chechls whether the control is visible or not
+	 * @param  {String} id 			Id of the control
+	 * @return {jQuery.promise}		waitFor The jQuery.promise object for event handling
+	 */
 	iDoNotSeeControl: function(id){
 		return this.waitFor({
 			pollingInterval : 100,
@@ -59,7 +64,7 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 	 * @param  {String} id       Id of the control
 	 * @param  {String} name     Property
 	 * @param  {String} value    Value of property
-	 * @return {jQuery.promise} waitFor The jQuery.promise object for event handling
+	 * @return {jQuery.promise}  waitFor The jQuery.promise object for event handling
 	 */
 	iFindMatchingImageSource: function(id, name, value){
 		return this.waitFor({
@@ -75,6 +80,11 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 		});
 	},
 
+	/**
+	 * [iSeeDialog description]
+	 * @param  {String} id 			Id of the control
+	 * @return {jQuery.promise}    	waitFor The jQuery.promise object for event handling
+	 */
 	iSeeDialog: function(id){
 		return this.waitFor({
 			id: new RegExp(id),
@@ -85,6 +95,10 @@ hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 		});
 	},
 
+	/**
+	 * Checks whether the toastmessage is visible 
+	 * @return {jQuery.promise} waitFor The jQuery.promise object for event handling
+	 */
 	iSeeToastMessage: function(){
 		return this.waitFor({
 			pollingInterval : 100,
