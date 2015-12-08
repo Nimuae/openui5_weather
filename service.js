@@ -62,16 +62,18 @@ module.exports = function(){
 			});
 		});
 		router.post("/service/settings", require("body-parser").json(), function(req, res, next){
-			var settings = self.readSettings();
-
-			self.writeSettings({
+			var settings = {
 				city: req.body.city,
 				temp_unit: req.body.temp_unit,
 				show_forecast: req.body.show_forecast,
 				show_precip: req.body.show_precip,
 				show_humidity: req.body.show_humidity,
 				interval: req.body.interval
-			});
+			};
+
+			if(!req.query.test){
+				self.writeSettings(settings);
+			}
 
 			//did the city name change?
 			if((settings.city || "Wiesloch") !== (req.body.city || "Wiesloch")){
@@ -244,7 +246,7 @@ module.exports = function(){
 			self.getWeatherData(null, function(d){
 				self.DATA = d;
 			});
-		}, settings.interval || 1000 * 60 * 30);
+		}, settings.interval);
 
 		fs.writeFileSync(self.SETTINGS_FILE, JSON.stringify(settings));
 	};

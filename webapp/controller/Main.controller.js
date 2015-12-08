@@ -27,6 +27,12 @@ sap.ui.define([
 		SERVICE_TEST_URL: "test/request.json",
 
 		/**
+		 * The service URL to send settings requests to
+		 * @type {String}
+		 */
+		SETTINGS_TEST_URL: "/service/settings?test=true",
+
+		/**
 		 * Old settings data for cancel dialog data reset
 		 * @type {Object}
 		 */
@@ -43,6 +49,7 @@ sap.ui.define([
 			var oSettingsModel;
 			if(bTest){
 				this.SERVICE_URL = this.SERVICE_TEST_URL;
+				this.SETTINGS_URL = this.SETTINGS_TEST_URL;
 
 				oSettingsModel = new sap.ui.model.json.JSONModel({
 					"city": "Wiesloch",
