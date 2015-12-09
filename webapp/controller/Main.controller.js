@@ -57,9 +57,9 @@ sap.ui.define([
 					"show_forecast": true,
 					"show_precip": true,
 					"show_humidity": true,
-					"interval": 2500
+					"interval": 30 * 60 * 1000
 				});
-				this.startRefreshTimer(2500);
+				this.startRefreshTimer(30 * 60 * 1000);
 			}else{
 				oSettingsModel = new sap.ui.model.json.JSONModel(this.SETTINGS_URL);
 
