@@ -58,7 +58,7 @@ module.exports = function(){
 				show_forecast: !!settings.show_forecast,
 				show_precip: !!settings.show_precip,
 				show_humidity: !!settings.show_humidity,
-				interval: settings.interval || 0
+				interval: settings.interval || 30 * 60 * 1000
 			});
 		});
 		router.post("/service/settings", require("body-parser").json(), function(req, res, next){
@@ -200,10 +200,17 @@ module.exports = function(){
 	 * @return {Object} An object containing key-value-pairs for settings
 	 */
 	self.readSettings = function(){
-		if(!fs.existsSync(self.SETTINGS_FILE)){
-			return {};
+		var settings;
+		try{
+			settings = JSON.parse(fs.readFileSync(self.SETTINGS_FILE, { encoding: "utf-8" }) || "{}");
+		}catch(e){
+			settings = {
+				show_forecast: true,
+				show_precip: true,
+				show_humidity: true
+			};
 		}
-		var settings = JSON.parse(fs.readFileSync(self.SETTINGS_FILE, { encoding: "utf-8" }) || "{}");
+
 		return {
 			city: settings.city || "Wiesloch",
 			temp_unit: settings.temp_unit || "C",
