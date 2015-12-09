@@ -32,7 +32,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected value: './icons/SVG/sw-03.svg'
 	**/
 
-	opaTest("CURRENT WEATHER ICON: Find icon and check image name", function (Given, When, Then){
+	opaTest("WEATHER TILE: Find current weather icon and check image name", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -69,7 +69,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected value: 'true'
 	**/
 
-	opaTest("GUST COMPASS - Find compass", function (Given, When, Then){
+	opaTest("GUST TILE - Find compass", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -96,7 +96,6 @@ hss.weather.test.opa.modules.Display = function () {
 		//Assertions
 		Then.iSeeMatchingProperty("PrecipText", "text", "Niederschlag (1h)");
 		Then.iSeeMatchingProperty("HumidityText", "text", "Luftfeuchtigkeit");
-
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -107,7 +106,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected value: '0.99'
 	**/
 
-	opaTest("HUMIDITY - Find humidity circle progress", function (Given, When, Then){
+	opaTest("PRECIP HUMIDITY TILE - Find humidity circle progress", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -127,7 +126,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected value: '0.0', unit: 'mm'
 	**/
 
-	opaTest("RAINOMETER - Find rainometer", function (Given, When, Then){
+	opaTest("PRECIP HUMIDITY TILE - Find rainometer", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -168,7 +167,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected value: './icons/SVG/sw-03.svg'
 	**/
 
-	opaTest("FORCAST WEATHER ICON: Find icon and check image name", function (Given, When, Then){
+	opaTest("FORECAST 1: Find weather icon and check image name", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -206,7 +205,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected value: './icons/SVG/sw-21.svg'
 	**/
 
-	opaTest("FORCAST WEATHER ICON: Find icon and check image name", function (Given, When, Then){
+	opaTest("FORECAST 2: Find weather icon and check image name", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -244,7 +243,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected value: './icons/SVG/sw-10.svg'
 	**/
 
-	opaTest("FORCAST WEATHER ICON: Find icon and check image name", function (Given, When, Then){
+	opaTest("FORECAST 3: Find weather icon and check image name", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -265,7 +264,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected: dialog with it 'SettingsPane'
 	**/
 	
-	opaTest("CUSTONMIZE BUTTON- Find customize button by id, click on it and search for dialog by id", function (Given, When, Then){
+	opaTest("CUSTONMIZE - Find customize button by id, click on it and search for dialog by id", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -284,7 +283,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Changes value of Input ('CustTown') to 'Walldorf'
 	**/
 
-	opaTest("CUSTOMIZE DIALOG - Open dialog, change town and save", function (Given, When, Then){
+	opaTest("CUSTOMIZE - Open dialog, change town and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -305,7 +304,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Search for: label with id 'CustomizeBtn'
 	**/
 
-	opaTest("CUSTOMIZE DIALOG - Open dialog, click on radiobutton Fahrenheit and save", function (Given, When, Then){
+	opaTest("CUSTOMIZE - Open dialog, click on radiobutton Fahrenheit and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -317,7 +316,7 @@ hss.weather.test.opa.modules.Display = function () {
 		//Assertions
 		Then.iSeeToastMessage();
 		Then.iSeeMatchingProperty("CurTemp", "text", "38°F");
-
+		Then.iTeardownMyAppFrame();
 	});
 
 	/** 17
@@ -326,7 +325,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Search for: label with id 'CustomizeBtn'
 	**/
 
-	opaTest("CUSTOMIZE DIALOG - Open dialog, click on radiobutton Celcius and save", function (Given, When, Then){
+	opaTest("CUSTOMIZE - Open dialog, click on radiobutton Celcius and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -350,7 +349,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected: forecast should not be shown
 	**/
 
-	opaTest("CUSTOMIZE DIALOG - Open dialog, change state of forecast switch and save", function (Given, When, Then){
+	opaTest("CUSTOMIZE - Open dialog, change state of forecast switch and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -371,7 +370,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected: humidity should not be shown
 	**/
 
-	opaTest("CUSTOMIZE DIALOG - Open dialog, change state of humidity switch and save", function (Given, When, Then){
+	opaTest("CUSTOMIZE - Open dialog, change state of humidity switch and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -392,7 +391,7 @@ hss.weather.test.opa.modules.Display = function () {
 	* Expected: '10:00'
 	**/
 
-	opaTest("CUSTOMIZE DIALOG - Intervall", function (Given, When, Then){
+	opaTest("CUSTOMIZE - Intervall", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
 
@@ -406,26 +405,4 @@ hss.weather.test.opa.modules.Display = function () {
 		Then.iSeeMatchingProperty("CustInterval", "value", "10:00");
 		Then.iTeardownMyAppFrame();
 	});
-
-	// /** 21
-	// * CUSTOMIZE DIALOG - Intervall
-	// * Open dialog, change interval, cancel, open dialog again and check intervall value
-	// * Expected: Confirmation Dialog
-	// **/
-
-	// opaTest("CUSTOMIZE DIALOG - Open dialog and cancel", function (Given, When, Then){
-	// 	//Arrangements
-	// 	Given.iStartMyAppInAFrame("/index.html?test=true");
-
-	// 	//Actions
-	// 	When.iClickOnControlWithId("CustomizeBtn");
-	// 	When.iChangeInputValue("CustInterval", "20:00");
-	// 	When.iClickOnControlWithId("BtnSave");
-	// 	When.iClickOnControlWithId("CustomizeBtn");
-	// 	When.iChangeInputValue("CustInterval", "00:20");
-	// 	When.iClickOnControlWithId("BtnReject");
-
-	// 	//Assertions
-	// 	Then.iTeardownMyAppFrame();
-	// });
 };
