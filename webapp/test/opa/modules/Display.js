@@ -94,7 +94,7 @@ hss.weather.test.opa.modules.Display = function () {
 		Given.iStartMyAppInAFrame("/index.html?test=true"); 
 
 		//Assertions
-		Then.iSeeMatchingProperty("PrecipText", "text", "Niederschlag (1h)");
+		Then.iSeeMatchingProperty("PrecipText", "text", "Niederschlag");
 		Then.iSeeMatchingProperty("HumidityText", "text", "Luftfeuchtigkeit");
 		Then.iTeardownMyAppFrame();
 	});

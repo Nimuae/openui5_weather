@@ -126,11 +126,15 @@ sap.ui.define([
 		 * @return {void} Nothing
 		 */
 		onSave: function(){
-			this._settingsDialog.close();
 			var self = this;
 
 			var data = this.getView().getModel("settings").getData();
 			var bChanged = this.checkDataChanged();
+
+			if(data.city === ""){
+				sap.m.MessageToast.show("Bitte einen Stadtnamen angeben.");
+				return;
+			}
 			if(bChanged){
 				//send request
 				$.ajax({
@@ -146,8 +150,10 @@ sap.ui.define([
 					}
 					self.startRefreshTimer();
 					sap.m.MessageToast.show("Änderungen wurden erfolgreich gespeichert.");
+					self._settingsDialog.close();
 				}).fail(function(jqXHR){
 					sap.m.MessageToast.show("Fehler beim Speichern: " + jqXHR.statusText);
+					self._settingsDialog.close();
 				});
 			}else{
 				this._settingsDialog.close();

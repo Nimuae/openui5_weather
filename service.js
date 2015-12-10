@@ -62,6 +62,12 @@ module.exports = function(){
 			});
 		});
 		router.post("/service/settings", require("body-parser").json(), function(req, res, next){
+			if(req.query.test){
+				res.send({});
+				return;
+			}
+
+			var cityOld = self.readSettings().city;
 			var settings = {
 				city: req.body.city,
 				temp_unit: req.body.temp_unit,
@@ -70,13 +76,11 @@ module.exports = function(){
 				show_humidity: req.body.show_humidity,
 				interval: req.body.interval
 			};
-
-			if(!req.query.test){
-				self.writeSettings(settings);
-			}
+			
+			self.writeSettings(settings);
 
 			//did the city name change?
-			if((settings.city || "Wiesloch") !== (req.body.city || "Wiesloch")){
+			if(cityOld !== req.body.city){
 				self.getWeatherData(null, function(d){
 					DATA = d;
 					res.send({ city: true });
@@ -168,6 +172,11 @@ module.exports = function(){
 		var city = self.readSettings().city || "Wiesloch";
 
 		var uri = self.SERVICE_URL;
+		
+		//special case for best data for Wiesloch
+		if(city === "Wiesloch"){
+			uri = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/pws:IWIESLOC4.json";
+		}
 
 		if(self.DEBUG){
 			uri = self.DEBUG_SERVICE_URL;

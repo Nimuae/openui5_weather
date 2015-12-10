@@ -108,7 +108,7 @@
                                 unit="mm" />
                             <VBox alignItems="Center">
                                 <Label
-                                    text="Niederschlag (1h)"
+                                    text="Niederschlag"
                                     class="PrecipText"
                                     id="PrecipText"
                                     visible="{
