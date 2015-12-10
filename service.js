@@ -53,12 +53,12 @@ module.exports = function(){
 			var settings = self.readSettings();
 
 			res.send({
-				city: settings.city || "Wiesloch",
-				temp_unit: settings.temp_unit || "C",
+				city: settings.city,
+				temp_unit: settings.temp_unit,
 				show_forecast: !!settings.show_forecast,
 				show_precip: !!settings.show_precip,
 				show_humidity: !!settings.show_humidity,
-				interval: settings.interval || 30 * 60 * 1000
+				interval: settings.interval
 			});
 		});
 		router.post("/service/settings", require("body-parser").json(), function(req, res, next){
@@ -82,7 +82,7 @@ module.exports = function(){
 			//did the city name change?
 			if(cityOld !== req.body.city){
 				self.getWeatherData(null, function(d){
-					DATA = d;
+					self.DATA = d;
 					res.send({ city: true });
 				}, function(e){
 					res.status(404).send({
