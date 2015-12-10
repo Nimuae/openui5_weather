@@ -156,6 +156,10 @@ hss.weather.view.Formatter = {
 		return padDateNumber(h) + ":" + padDateNumber(m);
 	},
 
+	/**
+	 * Make overlay from current weather icon
+	 * @param {String} icon The icon retrieved from the service
+	 */
 	RainometerOverlay: function(icon){
 		if(!icon){
 			return "";
