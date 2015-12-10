@@ -12,7 +12,7 @@ sap.ui.core.Control.extend("hss.weather.control.CircleProgress", {
             size: { type: "int", defaultValue: 100 },
             thickness: { type: "int", defaultValue: 0 },
             emptyFill: { type: "string", defaultValue: "#666" },
-            lineCap: { type: "string", defaultValue: "round" },
+            lineCap: { type: "string", defaultValue: "butt" },
             fill: { type: "object", defaultValue: { gradient: ["#009de0", "#00b0e8"] }}
         }
     },

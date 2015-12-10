@@ -154,5 +154,20 @@ hss.weather.view.Formatter = {
 		}
 
 		return padDateNumber(h) + ":" + padDateNumber(m);
+	},
+
+	RainometerOverlay: function(icon){
+		if(!icon){
+			return "";
+		}
+		var snow_icons = [
+			"chanceflurries", "flurries", "chancesnow", "snow",
+			"nt_chanceflurries", "nt_flurries", "nt_chancesnow", "nt_snow"
+		];
+		var overlay = "icons/raindrop.svg";
+		if(snow_icons.indexOf(icon) !== -1){
+			overlay = "icons/snowflake_new.svg";
+		}
+		return overlay;
 	}
 };

@@ -9,7 +9,8 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
             value: { type: "float", defaultValue: 0.0 },
             unit: { type: "string", defaultValue: "%" },
             showValue: { type: "boolean", defaultValue: false },
-            size: { type: "int", defaultValue: 100 }
+            size: { type: "int", defaultValue: 100 },
+            overlay: { type: "string", defaultValue: "icons/raindrop.svg" }
         }
     },
 
@@ -40,8 +41,10 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
 
             //outer > inner > overlay
             oRm.addClass("RainometerOverlay");
+            oRm.addStyle("background-image", "url('" + oControl.getOverlay() + "')");
             oRm.write("<div");
             oRm.writeClasses();
+            oRm.writeStyles();
             oRm.write(">");
 
             oRm.write("</div>"); //closing tag overlay

@@ -105,7 +105,11 @@
                                 size="85"
                                 value="{data>/current_observation/precip_today_metric}"
                                 showValue="true"
-                                unit="mm" />
+                                unit="mm"
+                                overlay="{
+                                    path: 'data>/current_observation/icon',
+                                    formatter: 'hss.weather.view.Formatter.RainometerOverlay'
+                                }" />
                             <VBox alignItems="Center">
                                 <Label
                                     text="Niederschlag"

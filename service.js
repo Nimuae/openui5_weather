@@ -174,9 +174,9 @@ module.exports = function(){
 		var uri = self.SERVICE_URL;
 		
 		//special case for best data for Wiesloch
-		if(city === "Wiesloch"){
-			uri = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/pws:IWIESLOC4.json";
-		}
+		// if(city === "Wiesloch"){
+		// 	uri = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/pws:IWIESLOC4.json";
+		// }
 
 		if(self.DEBUG){
 			uri = self.DEBUG_SERVICE_URL;
