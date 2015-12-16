@@ -1,7 +1,12 @@
+jQuery.sap.declare("hss.weather.test.opa.Actions");
+
 jQuery.sap.require("sap.ui.thirdparty.qunit");
 jQuery.sap.require("sap.ui.test.Opa5");
 jQuery.sap.require("sap.ui.test.opaQunit");
-jQuery.sap.declare("hss.weather.test.opa.Actions");
+
+/**
+ *  @author  Tanja Weiser
+ */
 
 hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 	/**
@@ -86,7 +91,6 @@ hss.weather.test.opa.Actions = new sap.ui.test.Opa5({
 	 * @param  {int}    index 		Index of the radiobutton which should be checked
 	 * @return {jQuery.promise}		waitFor The jQuery.promise object for event handling
 	 */
-	
 	iClickOnRadioButtonWithIndex: function(id, index){
 		return this.waitFor({
 			id: new RegExp(id),

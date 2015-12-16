@@ -1,8 +1,12 @@
+jQuery.sap.declare("hss.weather.test.opa.Assertions");
+
 jQuery.sap.require("sap.ui.thirdparty.qunit");
 jQuery.sap.require("sap.ui.test.Opa5");
 jQuery.sap.require("sap.ui.test.opaQunit");
-jQuery.sap.declare("hss.weather.test.opa.Assertions");
 
+/**
+ *  @author  Tanja Weiser
+ */
 
 hss.weather.test.opa.Assertions = new sap.ui.test.Opa5({
 

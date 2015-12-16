@@ -1,7 +1,12 @@
+jQuery.sap.declare("hss.weather.test.opa.modules.Display");
+
 jQuery.sap.require("sap.ui.thirdparty.qunit");
 jQuery.sap.require("sap.ui.test.Opa5");
 jQuery.sap.require("sap.ui.test.opaQunit");
-jQuery.sap.declare("hss.weather.test.opa.modules.Display");
+
+/**
+ *  @author  Tanja Weiser
+ */
 
 hss.weather.test.opa.modules.Display = function () {
 	//All OPA5 tests regarding the current weather tile
@@ -9,9 +14,8 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 1
 	* WEATHER TILE - Check Labels
-	* Searches for label by id and checks the text
+	* Search label and check text.
 	**/
-
 	opaTest("WEATHER TILE - Check Labels", function(Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true"); 
@@ -27,11 +31,10 @@ hss.weather.test.opa.modules.Display = function () {
 	
 	/** 2
 	* CURRENT WEATHER ICON: Find icon and check image name
-	* Searches for image by id and checks the image name
-	* Search for: image with id 'WeatherIcon'
+	* Search for Image by Id and check image name
+	* Id: 'WeatherIcon'
 	* Expected value: './icons/SVG/sw-03.svg'
 	**/
-
 	opaTest("WEATHER TILE: Find current weather icon and check image name", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -49,9 +52,8 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 3
 	* GUST TILE - Check Labels
-	* Searches for label by id and checks the text
+	* Search for label by Id and check text.
 	**/
-
 	opaTest("GUST TILE - Check Labels", function(Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true"); 
@@ -64,11 +66,10 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 4
 	* GUST COMPASS - Find compass
-	* Searches for compass by id and checks the visibility
-	* Search for: label with id 'Compass'
+	* Search for compass by Id and check visibility
+	* Id: 'Compass'
 	* Expected value: 'true'
 	**/
-
 	opaTest("GUST TILE - Find compass", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -86,9 +87,8 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 5
 	* PRECIP HUMIDITY TILE - Check Labels
-	* Searches for label by id and checks the text
+	* Search label by id and check text
 	**/
-
 	opaTest("PRECIP HUMIDITY TILE - Check Labels", function(Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true"); 
@@ -101,11 +101,10 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 6
 	* HUMIDITY - Find humidity circle progress
-	* Searches for circle progress by id and checks the value
-	* Search for: label with id 'HumidityText'
+	* Search circle progress by id and check value.
+	* Id: 'HumidityText'
 	* Expected value: '0.99'
 	**/
-
 	opaTest("PRECIP HUMIDITY TILE - Find humidity circle progress", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -121,11 +120,10 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 7
 	* RAINOMETER - Find rainometer
-	* Searches for rainometer by id and checks value and unit
-	* Search for: label with id 'RainometerPrecip'
+	* Search for rainometer by id and check value and unit.
+	* Id: 'RainometerPrecip'
 	* Expected value: '0.0', unit: 'mm'
 	**/
-
 	opaTest("PRECIP HUMIDITY TILE - Find rainometer", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -146,9 +144,8 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 8
 	* FORECAST 1 - Check Labels
-	* Searches for label by id and checks the text
+	* Search label by id and check text.
 	**/
-
 	opaTest("FORECAST 1 - Check Labels", function(Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true"); 
@@ -162,8 +159,8 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 9
 	* FORCAST WEATHER ICON: Find icon and check image name
-	* Searches for image by id and checks the image name
-	* Search for: image with id 'IconForcast1'
+	* Search image by id and check image name.
+	* Id: 'IconForcast1'
 	* Expected value: './icons/SVG/sw-03.svg'
 	**/
 
@@ -184,9 +181,8 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 10
 	* FORECAST 2 - Check Labels
-	* Searches for label by id and checks the text
+	* Search label by id and check text.
 	**/
-
 	opaTest("FORECAST 2 - Check Labels", function(Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true"); 
@@ -200,11 +196,10 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 11
 	* FORCAST WEATHER ICON: Find icon and check image name
-	* Searches for image by id and checks the image name
-	* Search for: image with id 'IconForcast2'
+	* Search image by id and check image name.
+	* Id: 'IconForcast2'
 	* Expected value: './icons/SVG/sw-21.svg'
 	**/
-
 	opaTest("FORECAST 2: Find weather icon and check image name", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -222,9 +217,8 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 12
 	* FORECAST 3 - Check Labels
-	* Searches for label by id and checks the text
+	* Search label by id and check text.
 	**/
-
 	opaTest("FORECAST 3 - Check Labels", function(Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true"); 
@@ -238,11 +232,10 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 13
 	* FORCAST WEATHER ICON: Find icon and check image name
-	* Searches for image by id and checks the image name
-	* Search for: image with id 'IconForcast3'
+	* Search image by id and check image name.
+	* Id: 'IconForcast3'
 	* Expected value: './icons/SVG/sw-10.svg'
 	**/
-
 	opaTest("FORECAST 3: Find weather icon and check image name", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -259,11 +252,10 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 14
 	* CUSTONMIZE BUTTON- Find customize button by id, click on it and search for dialog
-	* Searches for button by id, clicks on button and searches for dialog by id
-	* Search for: label with id 'CustomizeBtn'
-	* Expected: dialog with it 'SettingsPane'
+	* Search button by id, click on button and search dialog by id.
+	* Id: 'CustomizeBtn'
+	* Expected: dialog with id 'SettingsPane'
 	**/
-	
 	opaTest("CUSTONMIZE - Find customize button by id, click on it and search for dialog by id", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -278,11 +270,9 @@ hss.weather.test.opa.modules.Display = function () {
 
 	/** 15
 	* CUSTOMIZE DIALOG - Open dialog, change town and save
-	* Open dialog, change town value and save
-	* Search for: label with id 'CustomizeBtn'
+	* Open dialog, change town value and save.
 	* Changes value of Input ('CustTown') to 'Walldorf'
 	**/
-
 	opaTest("CUSTOMIZE - Open dialog, change town and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -301,9 +291,8 @@ hss.weather.test.opa.modules.Display = function () {
 	/** 16
 	* CUSTOMIZE DIALOG - Open dialog, click on radiobutton Fahrenheit and save
 	* Open dialog, change temperature unit to 'Fahrenheit' and save
-	* Search for: label with id 'CustomizeBtn'
+	* Changes temperature unit to °F
 	**/
-
 	opaTest("CUSTOMIZE - Open dialog, click on radiobutton Fahrenheit and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -322,9 +311,7 @@ hss.weather.test.opa.modules.Display = function () {
 	/** 17
 	* CUSTOMIZE DIALOG - Open dialog, click on radiobutton Celcius and save
 	* Open dialog, change temperature unit to 'Celsius' and save
-	* Search for: label with id 'CustomizeBtn'
 	**/
-
 	opaTest("CUSTOMIZE - Open dialog, click on radiobutton Celcius and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -348,7 +335,6 @@ hss.weather.test.opa.modules.Display = function () {
 	* Open dialog, change state of forecast switch and save
 	* Expected: forecast should not be shown
 	**/
-
 	opaTest("CUSTOMIZE - Open dialog, change state of forecast switch and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -369,7 +355,6 @@ hss.weather.test.opa.modules.Display = function () {
 	* Open dialog, change state of forecast switch and save
 	* Expected: humidity should not be shown
 	**/
-
 	opaTest("CUSTOMIZE - Open dialog, change state of humidity switch and save", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");
@@ -390,7 +375,6 @@ hss.weather.test.opa.modules.Display = function () {
 	* Open dialog, change interval, save, open dialog again and check intervall value
 	* Expected: '10:00'
 	**/
-
 	opaTest("CUSTOMIZE - Intervall", function (Given, When, Then){
 		//Arrangements
 		Given.iStartMyAppInAFrame("/index.html?test=true");

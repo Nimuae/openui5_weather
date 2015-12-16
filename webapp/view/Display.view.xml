@@ -1,3 +1,5 @@
+<!-- @author Dominic Holzwarth, Max Krupp, Tanja Weiser -->
+
 <core:View
     xmlns:core="sap.ui.core"
     xmlns:mvc="sap.ui.core.mvc" 
