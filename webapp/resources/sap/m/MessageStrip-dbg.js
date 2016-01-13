@@ -21,7 +21,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	 * Each message can have a close button, so that it can be removed from the UI if needed.
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public

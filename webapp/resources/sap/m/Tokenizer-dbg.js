@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @class
 	 * Tokenizer displays multiple tokens
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -971,7 +971,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				type : Tokenizer.TokenChangeType.TokensChanged
 			});
 			
-			if (this.getParent() &&  this.getParent() instanceof sap.m.MultiInput) {
+			if (this.getParent() &&  this.getParent() instanceof sap.m.MultiInput && !this.getParent()._bUseDialog) {
+				// not set focus to MultiInput in phone mode 
 				var $oParent = this.getParent().$();
 				$oParent.find("input").focus();
 			}

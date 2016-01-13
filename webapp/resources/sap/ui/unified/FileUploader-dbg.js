@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -680,9 +680,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this.oFilePath.setEnabled(bEnabled);
 		this.oBrowse.setEnabled(bEnabled);
 		if (bEnabled) {
-			this.$("fu").removeAttr('disabled');
+			jQuery(this.oFileUpload).removeAttr('disabled');
 		} else {
-			this.$("fu").attr('disabled', 'disabled');
+			jQuery(this.oFileUpload).attr('disabled', 'disabled');
 		}
 		return this;
 	};

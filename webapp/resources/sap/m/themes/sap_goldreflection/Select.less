@@ -30,7 +30,8 @@
 }
 
 .sapMSlt:not(.sapMSltDisabled),
-.sapMSlt:not(.sapMSltDisabled) > .sapMSltLabel {
+.sapMSlt:not(.sapMSltDisabled) > .sapMSltLabel,
+.sapMSltIconOnly:not(.sapMSltDisabled) .sapMSltIcon {
 	cursor: pointer;
 }
 
@@ -78,6 +79,9 @@
 .sapMSltIcon {
 	position: absolute;
 	display: block;
+
+	/* prevent IE to focus the icon (non-focusable element) */
+	pointer-events: none;
 }
 
 .sapMSltAutoAdjustedWidth .sapMSltIcon {

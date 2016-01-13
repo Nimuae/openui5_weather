@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	 * @implements sap.m.IBar
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -203,26 +203,15 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	 * @private
 	 */
 	Bar.prototype._updatePosition = function(bContentLeft, bContentMiddle, bContentRight) {
-
-		if (!bContentLeft && !bContentRight) {
-
-			this._$MidBarPlaceHolder.css({ width : '100%'});
+		if (!bContentLeft && !bContentRight && bContentMiddle) {
 			return;
-
 		}
-
 		if (bContentLeft && !bContentMiddle && !bContentRight) {
-
-			this._$LeftBar.css({ width : '100%'});
 			return;
-
 		}
 
 		if (!bContentLeft && !bContentMiddle && bContentRight) {
-
-			this._$RightBar.css({ width : '100%'});
 			return;
-
 		}
 
 		var iBarWidth = this.$().outerWidth(true);

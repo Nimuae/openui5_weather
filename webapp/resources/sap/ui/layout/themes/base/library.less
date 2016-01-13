@@ -719,6 +719,13 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiGrid td > .sapUiFormTitle {
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapUiHLayout");
+
+/* fix for BCP: 1580166858
+ * HorizontalLayout inside table cell doesn't respect the width of the cell but the width of the control that is inside it
+ */
+.sapMListTblCell .sapUiHLayout {
+	width: 100%;
+}
 /* END "HorizontalLayout.less" */
 
 /* START "ResponsiveFlowLayout.less" */

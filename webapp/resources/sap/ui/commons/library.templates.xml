@@ -3190,6 +3190,7 @@
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
 	nodes: [], // sap.ui.commons.TreeNode
+	selectedForNodes: [], // sap.ui.commons.TreeNode
 	ariaDescribedBy: [], // sap.ui.core.Control
 	ariaLabelledBy: [], // sap.ui.core.Control
 	toggleOpenState: [function (oEvent) {
@@ -3208,6 +3209,7 @@
 	icon=""
 	isSelected="false"
 	selectable="true"
+	selectedForNodes=""
 	ariaDescribedBy=""
 	ariaLabelledBy=""
 	toggleOpenState=""

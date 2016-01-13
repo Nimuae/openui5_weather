@@ -994,7 +994,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.32.7
+ * @version 1.32.9
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -1019,7 +1019,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.32.7";
+		var apiVersion = "1.32.9";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -1077,7 +1077,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.32.7";
+		var v = "1.32.9";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15776,7 +15776,7 @@ $.ui.position = {
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -16224,7 +16224,7 @@ $.ui.position = {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @namespace
 	 * @public
 	 * @static
@@ -16991,6 +16991,13 @@ $.ui.position = {
 
 				var iTime = jQuery.sap.now(),
 					oMeasurement = new Measurement( sId, sInfo, iTime, 0, aCategories);
+
+				// create timeline entries if available
+				/*eslint-disable no-console */
+				if (console.time) {
+					console.time(sInfo + " - " + sId);
+				}
+				/*eslint-enable no-console */
 	//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
 
 				if (oMeasurement) {
@@ -17087,6 +17094,7 @@ $.ui.position = {
 				}
 
 				var iTime = jQuery.sap.now();
+
 				var oMeasurement = this.mMeasurements[sId];
 	//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
 
@@ -17114,6 +17122,12 @@ $.ui.position = {
 				}
 
 				if (oMeasurement) {
+					// end timeline entry
+					/*eslint-disable no-console */
+					if (console.time && oMeasurement) {
+						console.timeEnd(oMeasurement.info + " - " + sId);
+					}
+					/*eslint-enable no-console */
 					return this.getMeasurement(sId);
 				} else {
 					return false;
@@ -17558,10 +17572,10 @@ $.ui.position = {
 				if (!window.performance) {
 					return;
 				}
-				if (window.performance.webkitSetResourceTimingBufferSize) {
-					window.performance.webkitSetResourceTimingBufferSize(iSize);
-				} else if (window.performance.setResourceTimingBufferSize){
+				if (window.performance.setResourceTimingBufferSize){
 					window.performance.setResourceTimingBufferSize(iSize);
+				} else if (window.performance.webkitSetResourceTimingBufferSize) {
+					window.performance.webkitSetResourceTimingBufferSize(iSize);
 				}
 			};
 
@@ -19830,14 +19844,14 @@ $.ui.position = {
 			}
 
 			var fnError = function() {
-				jQuery(oLink).attr("sap-ui-ready", "false");
+				jQuery(oLink).attr("data-sap-ui-ready", "false");
 				if (fnErrorCallback) {
 					fnErrorCallback();
 				}
 			};
 
 			var fnLoad = function() {
-				jQuery(oLink).attr("sap-ui-ready", "true");
+				jQuery(oLink).attr("data-sap-ui-ready", "true");
 				if (fnLoadCallback) {
 					fnLoadCallback();
 				}
@@ -19896,7 +19910,7 @@ $.ui.position = {
 				if (!oIEStyleSheetNode) {
 					// create a style sheet to add additional style sheet. But for this the Replace logic will not work any more
 					// the callback functions are not used in this case
-					// the sap-ui-ready attribute will not be set -> maybe problems with ThemeCheck
+					// the data-sap-ui-ready attribute will not be set -> maybe problems with ThemeCheck
 					oIEStyleSheetNode = document.createStyleSheet();
 				}
 				// add up to 30 style sheets to every of this style sheets. (result is a tree of style sheets)
@@ -19985,9 +19999,6 @@ $.ui.position = {
 			});
 		});
 	}
-
-	// ************** Include Traces *****************
-	jQuery.sap.require("jquery.sap.trace" + "" /* Make dynamic dependency */);
 
 	// *********** feature detection, enriching jQuery.support *************
 	// this might go into its own file once there is more stuff added

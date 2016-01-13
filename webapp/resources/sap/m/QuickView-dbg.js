@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @extends sap.m.QuickViewBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -412,8 +412,14 @@ sap.ui.define([
 				// Marks items aggregation as changed and invalidate popover to trigger rendering
 				this._bItemsChanged = true;
 
-				if (this._bRendered && this._oPopover) {
-					this._oPopover.invalidate();
+				if (this._oPopover) {
+					if (arguments[0] != "pages") {
+						this._oPopover[sFuncName].apply(this._oPopover, arguments);
+					}
+
+					if (this._bRendered) {
+						this._oPopover.invalidate();
+					}
 				}
 
 				if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {

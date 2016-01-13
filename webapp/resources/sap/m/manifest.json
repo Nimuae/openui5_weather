@@ -6,7 +6,7 @@
     "type": "library",
     "embeds": [],
     "applicationVersion": {
-      "version": "1.32.7"
+      "version": "1.32.9"
     },
     "title": "SAPUI5 library with controls specialized for mobile devices.",
     "description": "SAPUI5 library with controls specialized for mobile devices.",
@@ -28,7 +28,7 @@
       "minUI5Version": "1.32",
       "libs": {
         "sap.ui.core": {
-          "minVersion": "1.32.7"
+          "minVersion": "1.32.9"
         }
       }
     }

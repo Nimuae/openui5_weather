@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -364,6 +364,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		} else {
 			this.setProperty("type", type);
 		}
+		return this;
+	};
+
+	/**
+	 * Redefinition of sap.m.ListItemBase.setUnread: Unread is not supported for FeedListItem
+	 * @public
+	 * @param {boolean} new value for property unread is ignored
+	 */
+	FeedListItem.prototype.setUnread = function(bValue) {
+		this.setProperty("unread", false);
 		return this;
 	};
 

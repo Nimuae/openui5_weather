@@ -4,8 +4,6 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-// Overlay for resource: sap/ui/core/support/plugins/Debugging.js
-
 // Provides class sap.ui.core.support.plugins.Debugging
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 	function(jQuery, Plugin) {

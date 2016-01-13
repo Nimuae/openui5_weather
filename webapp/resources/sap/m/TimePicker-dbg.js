@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @extends sap.m.MaskInput
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -305,6 +305,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * and <code>dateValue</code> properties with the input field.
 		 *
 		 * @private
+		 * @returns {boolean} true if <code>change</code> event was called, false otherwise.
 		 */
 		TimePicker.prototype._handleInputChange = function () {
 			var sValue = this._$Input.val(),
@@ -347,6 +348,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			if (oPicker) {
 				oPicker.getContent()[0].setTimeValues(oDate);
 			}
+			return true;
 		};
 
 		/**
@@ -354,14 +356,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 *
 		 * @override
 		 * @param {jQuery.Event} oEvent Event object
+		 * @returns {boolean} true if <code>change</code> event was called, false otherwise.
 		 */
 		TimePicker.prototype.onChange = function(oEvent) {
 			// don't call InputBase onChange because this calls setValue what would trigger a new formatting
 
 			// check the control is editable or not
 			if (this.getEditable() && this.getEnabled()) {
-				this._handleInputChange();
+				return this._handleInputChange();
 			}
+			return false;
 		};
 
 		/**
@@ -1081,6 +1085,29 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 */
 		TimePicker.prototype._initMask = function() {
 			this._oTimeSemanticMaskHelper = new TimeSemanticMaskHelper(this);
+		};
+
+		/**
+		 * Fires the change event for the listeners
+		 *
+		 * @protected
+		 * @param {String} sValue value of the input.
+		 * @param {Object} [oParams] extra event parameters.
+		 */
+		TimePicker.prototype.fireChangeEvent = function(sValue, oParams) {
+			if (sValue) {
+				sValue = sValue.trim();
+			}
+
+			if (sValue !== this._sLastChangeValue) {
+				//fire only when there is a change from a meaningful value or to a meaningful value
+				//not when the value changes from null to ""
+				if (sValue || this._sLastChangeValue) {
+					InputBase.prototype.fireChangeEvent.call(this, sValue, oParams);
+				}
+
+				this._sLastChangeValue = sValue;
+			}
 		};
 
 		var TimeSemanticMaskHelper = function(oTimePicker) {

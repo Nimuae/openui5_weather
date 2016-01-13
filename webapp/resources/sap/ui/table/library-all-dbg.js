@@ -55,7 +55,7 @@ sap.ui.define("sap/ui/table/TablePersoController",['jquery.sap.global', 'sap/ui/
 	 * @extends sap.ui.base.ManagedObject
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @since 1.21.1
 	 *
 	 * @constructor
@@ -1732,14 +1732,14 @@ sap.ui.define("sap/ui/table/library",['jquery.sap.global',
 	 * @namespace
 	 * @name sap.ui.table
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @public
 	 */
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.table",
-		version: "1.32.7",
+		version: "1.32.9",
 		dependencies : ["sap.ui.core","sap.ui.unified"],
 		types: [
 			"sap.ui.table.NavigationMode",
@@ -1768,7 +1768,7 @@ sap.ui.define("sap/ui/table/library",['jquery.sap.global',
 	/**
 	 * Navigation mode of the table
 	 *
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -1793,7 +1793,7 @@ sap.ui.define("sap/ui/table/library",['jquery.sap.global',
 	/**
 	 * Selection behavior of the table
 	 *
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -1824,7 +1824,7 @@ sap.ui.define("sap/ui/table/library",['jquery.sap.global',
 	/**
 	 * Selection mode of the table
 	 *
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -1861,7 +1861,7 @@ sap.ui.define("sap/ui/table/library",['jquery.sap.global',
 	/**
 	 * Sort order of a column
 	 *
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -1886,7 +1886,7 @@ sap.ui.define("sap/ui/table/library",['jquery.sap.global',
 	/**
 	 * VisibleRowCountMode of the table
 	 *
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -2083,7 +2083,7 @@ sap.ui.define("sap/ui/table/Column",['jquery.sap.global', 'sap/ui/core/Element',
 	 * @class
 	 * The column allows to define column specific properties that will be applied when rendering the table.
 	 * @extends sap.ui.core.Element
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -3002,7 +3002,7 @@ sap.ui.define("sap/ui/table/ColumnMenu",['jquery.sap.global', 'sap/ui/core/Rende
 	 * @class
 	 * The column menu provides all common actions that can be performed on a column.
 	 * @extends sap.ui.unified.Menu
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -3515,7 +3515,7 @@ sap.ui.define("sap/ui/table/Row",['jquery.sap.global', 'sap/ui/core/Element', '.
 	 * @class
 	 * The row.
 	 * @extends sap.ui.core.Element
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -3732,7 +3732,7 @@ sap.ui.define("sap/ui/table/Table",['jquery.sap.global', 'sap/ui/core/Control', 
 	 *
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -5413,6 +5413,10 @@ sap.ui.define("sap/ui/table/Table",['jquery.sap.global', 'sap/ui/core/Control', 
 				if ($this.hasClass("sapUiTableVScr")) {
 					$this.removeClass("sapUiTableVScr");
 				}
+
+				if (this._sScrollBarTimer != undefined) {
+					jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
+				}
 			} else {
 				// in case of scrollbar mode show or hide the scrollbar dependening on the
 				// calculated steps:
@@ -5434,33 +5438,36 @@ sap.ui.define("sap/ui/table/Table",['jquery.sap.global', 'sap/ui/core/Control', 
 						bDoResize = true;
 					}
 				}
+
+				// update the scrollbar only if it is required
+				if (bOnAfterRendering || bForceUpdateVSb || iSteps !== this._oVSb.getSteps() || this.getFirstVisibleRow() !== this._oVSb.getScrollPosition()) {
+					jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
+					this._sScrollBarTimer = undefined;
+					// TODO: in case of bForceUpdateVSb the scrolling doesn't work anymore
+					//       height changes of the scrollbar should not require a re-rendering!
+					this._sScrollBarTimer = jQuery.sap.delayedCall(bOnAfterRendering ? 0 : 250, this, function() {
+						// When the scrollbar timer is planned iSteps might be 0 because the binding might not have data yet.
+						// This can even happen with JSON ListBinding if setProperty is called on a collection
+						// Make sure to get the current length from the binding.
+						var iSteps = 0;
+						if (oBinding) {
+							// the binding might have changed by the time the function gets called
+							iSteps = Math.max(0, (oBinding.getLength() || 0) - this.getVisibleRowCount());
+						}
+
+						if ($this) {
+							$this.toggleClass("sapUiTableVScr", iSteps > 0);
+						}
+
+						this._oVSb.setSteps(iSteps);
+						if (this._oVSb.getDomRef()) {
+							this._oVSb.rerender();
+						}
+						this._oVSb.setScrollPosition(this.getFirstVisibleRow());
+						this._sScrollBarTimer = undefined;
+					});
+				}
 			}
-
-			// update the scrollbar only if it is required
-			if (bOnAfterRendering || bForceUpdateVSb || iSteps !== this._oVSb.getSteps() || this.getFirstVisibleRow() !== this._oVSb.getScrollPosition()) {
-				jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
-				// TODO: in case of bForceUpdateVSb the scrolling doesn't work anymore
-				//       height changes of the scrollbar should not require a re-rendering!
-				this._sScrollBarTimer = jQuery.sap.delayedCall(bOnAfterRendering ? 0 : 250, this, function() {
-					// When the scrollbar timer is planned iSteps might be 0 because the binding might not have data yet.
-					// This can even happen with JSON ListBinding if setProperty is called on a collection
-					// Make sure to get the current length from the binding.
-					var iSteps = 0;
-					if (oBinding) {
-						// the binding might have changed by the time the function gets called
-						iSteps = Math.max(0, (oBinding.getLength() || 0) - this.getVisibleRowCount());
-					}
-
-					this._oVSb.setSteps(iSteps);
-					if (this._oVSb.getDomRef()) {
-						this._oVSb.rerender();
-					}
-					this._oVSb.setScrollPosition(this.getFirstVisibleRow());
-
-				});
-
-			}
-
 		} else {
 			// check for paging mode or scrollbar mode
 			if (this._oPaginator && this.getNavigationMode() === sap.ui.table.NavigationMode.Paginator) {
@@ -6100,7 +6107,7 @@ sap.ui.define("sap/ui/table/Table",['jquery.sap.global', 'sap/ui/core/Control', 
 		var $tableHeaders = $this.find(".sapUiTableCtrlFirstCol > th");
 
 		var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
-		if (bHasRowHeader) {
+		if (bHasRowHeader && $tableHeaders.length > 0) {
 			var oHiddenElement = $tableHeaders.get(0);
 			iInvisibleColWidth = oHiddenElement.getBoundingClientRect().right - oHiddenElement.getBoundingClientRect().left;
 			$tableHeaders = $tableHeaders.not(":nth-child(1)");
@@ -6236,7 +6243,8 @@ sap.ui.define("sap/ui/table/Table",['jquery.sap.global', 'sap/ui/core/Control', 
 			var iHeight = Math.max($colHeaderContainer.height(), $jqo.height());
 			
 			// Height of one row within the header
-			var iRegularHeight = iHeight / iHeaderRowCount;
+			// avoid half pixels
+			var iRegularHeight = Math.floor(iHeight / iHeaderRowCount);
 			if (this._bjQueryLess18) {
 				$cols.height(iRegularHeight);
 				$jqo.height(iHeight);
@@ -9951,7 +9959,7 @@ sap.ui.define("sap/ui/table/TreeTable",['jquery.sap.global', './Table', 'sap/ui/
 	 * @class
 	 * The TreeTable Control.
 	 * @extends sap.ui.table.Table
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -10754,7 +10762,7 @@ sap.ui.define("sap/ui/table/AnalyticalColumn",['jquery.sap.global', './Column', 
 	 * @extends sap.ui.table.Column
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -11127,7 +11135,7 @@ sap.ui.define("sap/ui/table/AnalyticalColumnMenu",['jquery.sap.global', './Colum
 	 * @extends sap.ui.table.ColumnMenu
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -11254,7 +11262,7 @@ sap.ui.define("sap/ui/table/AnalyticalTable",['jquery.sap.global', './Analytical
 	 * @see http://scn.sap.com/docs/DOC-44986
 	 *
 	 * @extends sap.ui.table.Table
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -12700,7 +12708,7 @@ sap.ui.define("sap/ui/table/DataTable",['jquery.sap.global', 'sap/ui/core/Contro
 		 *
 		 *
 		 * @extends sap.ui.core.Control
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public

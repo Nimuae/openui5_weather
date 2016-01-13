@@ -16,7 +16,8 @@ module.exports = function(){
 	self.SERVICE_URL = "http://api.wunderground.com/api/{API}/{options}/conditions/forecast/q/Germany/{city}.json";
 	self.DEBUG_SERVICE_URL = "http://localhost:3000/test/request.json?api={API}&city={city}";
 
-	self.API = "19420d53f811294e";
+	self.APIKEY_FILE = "API.key";
+	self.API = null;
 	self.DATA = undefined;
 	self.LOGS = __dirname + "/log";
 	self.HISTORY = __dirname + "/history";
@@ -35,6 +36,7 @@ module.exports = function(){
 	self.setup = function(router, bDbg){
 		self.setDebug(bDbg);
 		self.log("Sending Requests to \"" + self.buildRequestURI() + "\"");
+
 
 		router.get("/service", function(req, res, next){
 			if(req.query.debug && req.query.noData){
@@ -117,6 +119,23 @@ module.exports = function(){
 	};
 
 	/**
+	 * Get the API key needed for performing API calls.
+	 * Reads it from the in APIKEY_FILE specified file and returns it.
+	 * @return {String} the cached API key or, if not yet done, read from the file
+	 */
+	self.getAPIKey = function(){
+		if(!self.API){
+			try{
+				self.API = fs.readFileSync(self.APIKEY_FILE, { encoding: "utf-8" });
+			}catch(e){
+				console.error("[ERROR] API key file could not be opened. (\"" + self.APIKEY_FILE + "\")");
+				process.exit(0);
+			}
+		}
+		return self.API;
+	};
+
+	/**
 	 * Perform an HTTP-Request to the webservice and save retrieved data or pass it to a callback function
 	 * @param  {Object}   options       Some request options, e.g. response language
 	 * @param  {Function} callback      A success callback
@@ -182,7 +201,7 @@ module.exports = function(){
 			uri = self.DEBUG_SERVICE_URL;
 		}
 
-		uri = uri.replace("{API}", self.API).replace("{city}", city).replace("{options}", sOptions);
+		uri = uri.replace("{API}", self.getAPIKey()).replace("{city}", city).replace("{options}", sOptions);
 
 		return uri;
 	};

@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -164,7 +164,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 */
 		BusyDialog.prototype.open = function () {
 			jQuery.sap.log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
-			this._oDialog.open();
+
+			//if the code is not ready yet (new sap.m.BusyDialog().open()) wait 50ms and then try ot open it.
+			if (!document.body || !sap.ui.getCore().isInitialized()) {
+				setTimeout(function() {
+					this.open();
+				}.bind(this), 50);
+			} else {
+				this._oDialog.open();
+			}
+
 			return this;
 		};
 

@@ -347,6 +347,7 @@ sap.ui.define("sap/m/BarRenderer",['jquery.sap.global', './BarInPageEnabler'],
 		oRM.addClass('sapMBarLeft');
 		oRM.addClass('sapMBarContainer');
 		oRM.writeClasses();
+		writeWidthIfContentOccupiesWholeArea("left", oRM, oControl);
 		oRM.write(">");
 
 		this.renderAllControls(oControl.getContentLeft(), oRM, oControl);
@@ -360,7 +361,13 @@ sap.ui.define("sap/m/BarRenderer",['jquery.sap.global', './BarInPageEnabler'],
 		oRM.write(">");
 		if (oControl.getEnableFlexBox()) {
 			oControl._oflexBox = oControl._oflexBox || new sap.m.HBox(oControl.getId() + "-BarPH", {alignItems: "Center"}).addStyleClass("sapMBarPH").setParent(oControl, null, true);
+			var bContentLeft = !!oControl.getContentLeft().length,
+				bContentMiddle = !!oControl.getContentMiddle().length,
+				bContentRight = !!oControl.getContentRight().length;
+			if (bContentMiddle && !bContentLeft && !bContentRight) {
+				oControl._oflexBox.addStyleClass("sapMBarFlexBoxWidth100");
 
+			}
 			oControl.getContentMiddle().forEach(function(oMidContent) {
 				oControl._oflexBox.addItem(oMidContent);
 			});
@@ -370,6 +377,7 @@ sap.ui.define("sap/m/BarRenderer",['jquery.sap.global', './BarInPageEnabler'],
 			oRM.write("<div id='" + oControl.getId() + "-BarPH' ");
 			oRM.addClass('sapMBarPH');
 			oRM.addClass('sapMBarContainer');
+			writeWidthIfContentOccupiesWholeArea("middle", oRM, oControl);
 			oRM.writeClasses();
 			oRM.write(">");
 
@@ -388,6 +396,7 @@ sap.ui.define("sap/m/BarRenderer",['jquery.sap.global', './BarInPageEnabler'],
 			oRM.addClass("sapMRTL");
 		}
 		oRM.writeClasses();
+		writeWidthIfContentOccupiesWholeArea("right", oRM, oControl);
 		oRM.write(">");
 
 		this.renderAllControls(oControl.getContentRight(), oRM, oControl);
@@ -428,6 +437,43 @@ sap.ui.define("sap/m/BarRenderer",['jquery.sap.global', './BarInPageEnabler'],
 
 		return mContexts[sDesign] || mContexts.Default;
 	};
+
+	/**
+	 * Adds width style to 100% in case of the given content container is the only container with content amongst the three (left, middle, right)
+	 * @param {string} sArea The content container - one of the left, middle or right
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oControl the Bar instance
+	 * @private
+	 */
+	function writeWidthIfContentOccupiesWholeArea(sArea, oRm, oControl) {
+		var bContentLeft = !!oControl.getContentLeft().length,
+			bContentMiddle = !!oControl.getContentMiddle().length,
+			bContentRight = !!oControl.getContentRight().length;
+
+		function writeAndUpdate() {
+			oRm.addStyle("width", "100%");
+			oRm.writeStyles();
+		}
+		switch (sArea.toLowerCase()) {
+			case "left":
+				if (bContentLeft && !bContentMiddle && !bContentRight) {
+					writeAndUpdate();
+				}
+				break;
+			case "middle":
+				if (bContentMiddle && !bContentLeft && !bContentRight) {
+					writeAndUpdate();
+				}
+				break;
+			case "right" :
+				if (bContentRight && !bContentLeft && !bContentMiddle) {
+					writeAndUpdate();
+				}
+				break;
+			default:
+				jQuery.sap.log.error("Cannot determine which of the three content aggregations is alone");
+		}
+	}
 
 
 
@@ -5051,7 +5097,34 @@ sap.ui.define("sap/m/ListItemBaseRenderer",['jquery.sap.global', 'sap/ui/core/Ic
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
 	};
-	
+
+	/**
+	 * Adds the classes needed to recognize the element as focusable.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered
+	 * @protected
+	 */
+	ListItemBaseRenderer.addFocusableClasses = function(rm, oLI) {
+		if (sap.ui.Device.system.desktop) {
+			rm.addClass("sapMLIBFocusable");
+			this.addLegacyOutlineClass(rm, oLI);
+		}
+	};
+
+	/**
+	 * Adds the classes for legacy browsers, which do not support normal outlines.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered
+	 * @protected
+	 */
+	ListItemBaseRenderer.addLegacyOutlineClass = function(rm, oLI) {
+		if (sap.ui.Device.browser.msie) {
+			rm.addClass("sapMLIBLegacyOutline");
+		}
+	};
+
 	/**
 	 * Creates an invisible aria node for the given message bundle text  
 	 * in the static UIArea and returns its id for ARIA announcements
@@ -5249,6 +5322,8 @@ sap.ui.define("sap/m/ListItemBaseRenderer",['jquery.sap.global', 'sap/ui/core/Ic
 			rm.addClass("sapMLIBUnread");
 		}
 
+		this.addFocusableClasses(rm, oLI);
+
 		// attributes
 		this.renderTooltip(rm, oLI);
 		this.renderTabIndex(rm, oLI);
@@ -5389,7 +5464,7 @@ sap.ui.define("sap/m/MaskInputRule",['jquery.sap.global', 'sap/ui/core/Element']
 	 *
 	 * @author SAP SE
 	 * @extends sap.ui.core.Element
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @private
 	 * @constructor
 	 * @since 1.32.0
@@ -8217,7 +8292,9 @@ sap.ui.define("sap/m/ObjectListItemRenderer",['jquery.sap.global', './ListItemBa
 
 		rm.write("</div>"); // End Top row container
 
-		rm.write('<div style="clear:both"/>');
+		if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
+			rm.write("<div style=\"clear: both;\"></div>");
+		}
 
 		// Bottom row container.
 		if (oLI._hasBottomContent()) {
@@ -8356,18 +8433,18 @@ sap.ui.define("sap/m/ObjectListItemRenderer",['jquery.sap.global', './ListItemBa
 			aLabelledByIds.push(oLI.getId() + "-numberUnit");
 		}
 
+		if (oLI.getAttributes()) {
+			oLI.getAttributes().forEach(function(attribute) {
+				aLabelledByIds.push(attribute.getId());
+			});
+		}
+
 		if (oLI.getFirstStatus()) {
 			aLabelledByIds.push(oLI.getFirstStatus().getId());
 		}
 
 		if (oLI.getSecondStatus()) {
 			aLabelledByIds.push(oLI.getSecondStatus().getId());
-		}
-
-		if (oLI.getAttributes()) {
-			oLI.getAttributes().forEach(function(attribute) {
-				aLabelledByIds.push(attribute.getId());
-			});
 		}
 
 		if (this.getAriaNodeText(oLI)) {
@@ -8411,7 +8488,7 @@ sap.ui.define("sap/m/ObjectNumberRenderer",['jquery.sap.global', 'sap/ui/core/Re
 	 * @param {sap.ui.core.Control} oON An object representation of the control that should be rendered
 	 */
 	ObjectNumberRenderer.render = function(oRm, oON) {
-		var sTooltip = oON.getTooltip_AsString(),
+		var sTooltip = oON._getEnrichedTooltip(),
 			sTextDir = oON.getTextDirection(),
 			sTextAlign = oON.getTextAlign();
 
@@ -10277,6 +10354,11 @@ sap.ui.define("sap/m/RadioButtonGroupRenderer",['jquery.sap.global'],
 			return;
 		}
 
+		// Should render only visible buttons
+		var aVisibleRBs = oRBGroup.aRBs.filter(function(oButton) {
+			return oButton.getVisible();
+		});
+
 		var iColumns = oRBGroup.getColumns();
 		var bEnabled = oRBGroup.getEnabled();
 		var sControlTextDir = oRBGroup.getTextDirection();
@@ -10298,7 +10380,7 @@ sap.ui.define("sap/m/RadioButtonGroupRenderer",['jquery.sap.global'],
 		rm.writeControlData(oRBGroup);
 		rm.addClass("sapMRbG");
 		if (iColumns > 1) {
-			if (iColumns == oRBGroup.aRBs.length) {
+			if (iColumns == aVisibleRBs.length) {
 				rm.addClass("sapMRbG1Row");
 			} else {
 				rm.addClass("sapMRbGTab");
@@ -10334,7 +10416,7 @@ sap.ui.define("sap/m/RadioButtonGroupRenderer",['jquery.sap.global'],
 
 		// columns
 		for (var c = 0; c < iColumns; c++) {
-			if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
+			if (iColumns > 1 && iColumns != aVisibleRBs.length) {
 				// if only 1 column -> no DIV necessary
 				rm.write("<div");
 				rm.addClass("sapMRbGCol");
@@ -10343,16 +10425,16 @@ sap.ui.define("sap/m/RadioButtonGroupRenderer",['jquery.sap.global'],
 			}
 
 			// render RadioButtons
-			for (var i = c; i < oRBGroup.aRBs.length; i = i + iColumns) {
-				rm.renderControl(oRBGroup.aRBs[i]);
+			for (var i = c; i < aVisibleRBs.length; i = i + iColumns) {
+				rm.renderControl(aVisibleRBs[i]);
 			}
 
-			if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
+			if (iColumns > 1 && iColumns != aVisibleRBs.length) {
 				rm.write("</div>");
 			}
 		}
 
-		if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
+		if (iColumns > 1 && iColumns != aVisibleRBs.length) {
 			// dummy Column to avoid big spaces between RadioButtons in Safari
 			rm.write('<div class="sapMRbGDummy"> </div>');
 		}
@@ -12909,7 +12991,7 @@ sap.ui.define("sap/m/TablePersoProvider",['jquery.sap.global', 'sap/ui/base/Mana
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @alias sap.m.TablePersoProvider
 	 */
 	var TablePersoProvider = ManagedObject.extend("sap.m.TablePersoProvider", /** @lends sap.m.TablePersoProvider */
@@ -13274,7 +13356,7 @@ sap.ui.define("sap/m/TableRenderer",['jquery.sap.global', 'sap/ui/core/Renderer'
 		rm.addClass("sapMListTblCell sapMListTblCellNoData");
 		rm.writeClasses();
 		rm.write(">");
-		rm.writeEscaped(oControl.getNoDataText());
+		rm.writeEscaped(oControl.getNoDataText(true));
 		rm.write("</td>");
 		
 		rm.write("</tr>");
@@ -15078,14 +15160,14 @@ sap.ui.define("sap/m/library",['jquery.sap.global', 'sap/ui/Device',
 	 * @namespace
 	 * @name sap.m
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @public
 	 */
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.m",
-		version: "1.32.7",
+		version: "1.32.9",
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.m.BackgroundDesign",
@@ -15407,6 +15489,7 @@ sap.ui.define("sap/m/library",['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @enum {string}
 	 * @public
+	 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code> and/or <code>sap.m.TimePicker</code> controls. 
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.m.DateTimeInputType = {
@@ -15414,20 +15497,21 @@ sap.ui.define("sap/m/library",['jquery.sap.global', 'sap/ui/Device',
 		/**
 		 * An input control for specifying a date value. The user can select a month, day of the month, and year.
 		 * @public
-		 * @deprecated Since version 1.22.
-		 * Instead, use dedicated sap.m.DatePicker control.
+		 * @deprecated Since version 1.22.0. Instead, use dedicated <code>sap.m.DatePicker</code> control.
 		 */
 		Date : "Date",
 
 		/**
 		 * An input control for specifying a date and time value. The user can select a month, day of the month, year, and time of day.
 		 * @public
+		 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code> and <code>sap.m.TimePicker</code> controls.
 		 */
 		DateTime : "DateTime",
 
 		/**
 		 * An input control for specifying a time value. The user can select the hour, minute, and optionally AM or PM.
 		 * @public
+		 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.TimePicker</code> control.
 		 */
 		Time : "Time"
 
@@ -17984,7 +18068,7 @@ sap.ui.define("sap/m/semantic/Segment",['jquery.sap.global', 'sap/ui/base/Metada
 	 * Constructor for a sap.m.semantic.Segment.
 	 *
 	 * @class Abstraction for a segment in a SegmentedContainer
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @private
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.Segment
@@ -18148,7 +18232,7 @@ sap.ui.define("sap/m/semantic/SegmentedContainer",['jquery.sap.global', 'sap/m/s
 	 * Constructor for a sap.m.semantic.SegmentedContainer.
 	 *
 	 * @class text
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @private
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SegmentedContainer
@@ -18425,7 +18509,7 @@ sap.ui.define("sap/m/Bar",['jquery.sap.global', './BarInPageEnabler', './library
 	 * @implements sap.m.IBar
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -18604,26 +18688,15 @@ sap.ui.define("sap/m/Bar",['jquery.sap.global', './BarInPageEnabler', './library
 	 * @private
 	 */
 	Bar.prototype._updatePosition = function(bContentLeft, bContentMiddle, bContentRight) {
-
-		if (!bContentLeft && !bContentRight) {
-
-			this._$MidBarPlaceHolder.css({ width : '100%'});
+		if (!bContentLeft && !bContentRight && bContentMiddle) {
 			return;
-
 		}
-
 		if (bContentLeft && !bContentMiddle && !bContentRight) {
-
-			this._$LeftBar.css({ width : '100%'});
 			return;
-
 		}
 
 		if (!bContentLeft && !bContentMiddle && bContentRight) {
-
-			this._$RightBar.css({ width : '100%'});
 			return;
-
 		}
 
 		var iBarWidth = this.$().outerWidth(true);
@@ -18858,7 +18931,7 @@ sap.ui.define("sap/m/BusyDialog",['jquery.sap.global', './library', 'sap/ui/core
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -19002,7 +19075,16 @@ sap.ui.define("sap/m/BusyDialog",['jquery.sap.global', './library', 'sap/ui/core
 		 */
 		BusyDialog.prototype.open = function () {
 			jQuery.sap.log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
-			this._oDialog.open();
+
+			//if the code is not ready yet (new sap.m.BusyDialog().open()) wait 50ms and then try ot open it.
+			if (!document.body || !sap.ui.getCore().isInitialized()) {
+				setTimeout(function() {
+					this.open();
+				}.bind(this), 50);
+			} else {
+				this._oDialog.open();
+			}
+
 			return this;
 		};
 
@@ -19157,7 +19239,7 @@ sap.ui.define("sap/m/BusyIndicator",['jquery.sap.global', './library', 'sap/ui/c
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -19443,7 +19525,7 @@ sap.ui.define("sap/m/Button",['jquery.sap.global', './library', 'sap/ui/core/Con
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -20161,7 +20243,7 @@ sap.ui.define("sap/m/Carousel",['jquery.sap.global', './library', 'sap/ui/core/C
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -20858,6 +20940,12 @@ sap.ui.define("sap/m/Carousel",['jquery.sap.global', './library', 'sap/ui/core/C
 	 * @param {Object} oEvent - key object
 	 */
 	Carousel.prototype.onkeydown = function(oEvent) {
+
+		// Exit the function if the event is not from the Carousel
+		if (oEvent.target != this.getDomRef()) {
+			return;
+		}
+
 		switch (oEvent.keyCode) {
 			// F7 key
 			case jQuery.sap.KeyCodes.F7:
@@ -21104,13 +21192,14 @@ sap.ui.define("sap/m/Carousel",['jquery.sap.global', './library', 'sap/ui/core/C
 	 * @private
 	 */
 	Carousel.prototype._fnSkipToIndex = function(oEvent, nIndex) {
-		oEvent.preventDefault();
 		var nNewIndex = nIndex;
 
 		// Exit the function if the event is not from the Carousel
-		if (oEvent.target !== this.$()[0]) {
+		if (oEvent.target !== this.getDomRef()) {
 			return;
 		}
+
+		oEvent.preventDefault();
 
 		// Calculate the index of the next page that will be shown
 		if (nIndex !== 0) {
@@ -21233,7 +21322,7 @@ sap.ui.define("sap/m/Column",['jquery.sap.global', './library', 'sap/ui/core/Ele
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -22228,6 +22317,16 @@ sap.ui.define("sap/m/ColumnListItemRenderer",['jquery.sap.global', './ListItemBa
 		rm.write("</div></td></tr>");
 	};
 
+	/**
+	 * Overwriting hook method of ListItemBase.
+	 * Does not render the classes for legacy outlines. Instead use the normal outlines in all cases.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm RenderManager
+	 * @param {sap.m.ListItemBase} oLI List item
+	 */
+	ColumnListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
+	};
+
 	return ColumnListItemRenderer;
 
 }, /* bExport= */ true);
@@ -22991,7 +23090,7 @@ sap.ui.define("sap/m/FeedInput",['jquery.sap.global', './library', 'sap/ui/core/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -23051,7 +23150,7 @@ sap.ui.define("sap/m/FeedInput",['jquery.sap.global', './library', 'sap/ui/core/
 			 * The default value is set language dependent.
 			 * @since 1.28
 			 */
-			buttonTooltip : {type : "string" , altTypes : ["sap.ui.core.TooltipBase"], multiple : false, group : "Data", defaultValue : "Submit"},
+			buttonTooltip : {type : "sap.ui.core.TooltipBase", group : "Accessibility", defaultValue : "Submit"},
 
 			/**
 			 * Text for Picture which will be read by screenreader.
@@ -23142,11 +23241,12 @@ sap.ui.define("sap/m/FeedInput",['jquery.sap.global', './library', 'sap/ui/core/
 		return this;
 	};
 
-	FeedInput.prototype.setButtonTooltip = function (sButtonTooltip) {
-		this.setProperty("buttonTooltip", sButtonTooltip, true);
-		this._getPostButton().setTooltip(sButtonTooltip);
+	FeedInput.prototype.setButtonTooltip = function (vButtonTooltip) {
+		this.setProperty("buttonTooltip", vButtonTooltip, true);
+		this._getPostButton().setTooltip(vButtonTooltip);
 		return this;
 	};
+
 	/////////////////////////////////// Private /////////////////////////////////////////////////////////
 
 	/**
@@ -23475,7 +23575,7 @@ sap.ui.define("sap/m/FlexBox",['jquery.sap.global', './FlexBoxStylingHelper', '.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -23970,7 +24070,7 @@ sap.ui.define("sap/m/FlexItemData",['jquery.sap.global', './FlexBoxStylingHelper
 	 * @class
 	 * Holds layout data for a FlexBox
 	 * @extends sap.ui.core.LayoutData
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -24185,7 +24285,12 @@ sap.ui.define("sap/m/GroupHeaderListItemRenderer",['jquery.sap.global', './ListI
 
 		rm.write("</label>");
 	};
-	
+
+	GroupHeaderListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
+		if (!oLI.getTable()) {
+			ListItemBaseRenderer.addLegacyOutlineClass.apply(this, arguments);
+		}
+	};
 
 	return GroupHeaderListItemRenderer;
 
@@ -24263,7 +24368,7 @@ sap.ui.define("sap/m/HBox",['jquery.sap.global', './FlexBox', './library'],
 	 * @extends sap.m.FlexBox
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -24354,7 +24459,7 @@ sap.ui.define("sap/m/IconTabBar",['jquery.sap.global', './library', 'sap/ui/core
 	 * @implements sap.m.ObjectHeaderContainer
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -24876,7 +24981,7 @@ sap.ui.define("sap/m/IconTabFilter",['jquery.sap.global', './library', 'sap/ui/c
 	 * @implements sap.m.IconTab
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -25095,7 +25200,7 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -25240,7 +25345,7 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 
 		this._iCurrentScrollLeft = oHead.scrollLeft;
 
-		this._checkOverflow(oHead, this.$());
+		this._checkOverflow();
 
 		if (oIndex !== null && oIndex !== undefined) {
 			this._scrollIntoView(this.getTabFilters()[oIndex], 0);
@@ -25303,6 +25408,9 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 			this._sResizeListenerId = null;
 		}
 
+		var oParent = this.getParent();
+		var bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
+
 		if (aItems.length > 0) {
 			if (!this.oSelectedItem || sSelectedKey && sSelectedKey !== this.oSelectedItem._getNonEmptyKey()) {
 				if (sSelectedKey) {
@@ -25316,7 +25424,8 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 				}
 
 				// no key and no item, we set the first visible item as selected if container is not explicitly set to collapsed
-				if (!this.oSelectedItem && this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpanded()) {
+				if (!this.oSelectedItem &&
+					(!bIsParentIconTabBar || bIsParentIconTabBar && oParent.getExpanded())) {
 					for (i = 0; i < aItems.length; i++) { // tab item
 						if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i].getVisible()) {
 							this.oSelectedItem = aItems[i];
@@ -25327,7 +25436,9 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 			}
 
 			//in case the selected tab is not visible anymore and the content is expanded, the selected tab will change to the first visible tab
-			if (this.oSelectedItem && !this.oSelectedItem.getVisible() && this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpanded()) {
+			if (this.oSelectedItem &&
+				!this.oSelectedItem.getVisible() &&
+				(!bIsParentIconTabBar || bIsParentIconTabBar && oParent.getExpanded())) {
 				for (i = 0; i < aItems.length; i++) { // tab item
 					if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i].getVisible()) {
 						this.oSelectedItem = aItems[i];
@@ -25391,6 +25502,9 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 			return this;
 		}
 
+		var oParent = this.getParent();
+		var bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
+
 		//if the old selected tab and the new selected tab both have no own content, which means they both use the same content from the icontabbar
 		//there is no need to rerender the content
 		//fix for xml views css: 0120061532 0001427250 2014
@@ -25399,7 +25513,9 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 			bIsContentTheSame = true;
 		}
 
-		if (this.oSelectedItem && this.oSelectedItem.getVisible() && (this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpandable() || this.oSelectedItem !== oItem )) {
+		if (this.oSelectedItem &&
+			this.oSelectedItem.getVisible() &&
+			(bIsParentIconTabBar && oParent.getExpandable() || this.oSelectedItem !== oItem)) {
 			this.oSelectedItem.$()
 					.removeClass("sapMITBSelected")
 					.removeAttr('aria-selected')
@@ -25410,23 +25526,29 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 			//click on already selected item leads to expanding/collapsing of the content (if expandable enabled)
 			if (this.oSelectedItem === oItem && !bAPIchange) {
 				//if content is not expandable nothing should happen otherwise content will be expanded/collapsed
-				if (this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpandable()) {
-					this.getParent()._toggleExpandCollapse();
+				if (bIsParentIconTabBar && oParent.getExpandable()) {
+					oParent._toggleExpandCollapse();
 				}
 			//click on other item leads to showing the right content of this item
 			} else {
 				//change the content aria-labaled by the newly selected tab;
-				if (this.getParent() instanceof sap.m.IconTabBar) {
-					this.getParent().$("content").attr('aria-labelledby', oItem.sId);
+				if (bIsParentIconTabBar) {
+					oParent.$("content").attr('aria-labelledby', oItem.sId);
 				}
 
 				// set new item
 				this.oSelectedItem = oItem;
 				this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
 
+				if (!bIsParentIconTabBar) {
+					this.oSelectedItem.$()
+						.addClass("sapMITBSelected")
+						.attr({ 'aria-selected': true });
+				}
+
 				//if the IconTabBar is not expandable and the content not expanded (which means content can never be expanded), we do not need
 				//to visualize the selection and we do not need to render the content
-				if (this.getParent() instanceof sap.m.IconTabBar && (this.getParent().getExpandable() || this.getParent().getExpanded())) {
+				if (bIsParentIconTabBar && (oParent.getExpandable() || oParent.getExpanded())) {
 					// add selected styles
 					this.oSelectedItem.$()
 							.addClass("sapMITBSelected")
@@ -25435,17 +25557,17 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 					//if item has own content, this content is shown
 					var oSelectedItemContent = this.oSelectedItem.getContent();
 					if (oSelectedItemContent.length > 0) {
-						this.getParent()._rerenderContent(oSelectedItemContent);
+						oParent._rerenderContent(oSelectedItemContent);
 					//if item has not own content, general content of the icontabbar is shown
 					} else {
 						//if the general content was already shown there is no need to rerender
 						if (!bIsContentTheSame) {
-							this.getParent()._rerenderContent(this.getParent().getContent());
+							oParent._rerenderContent(oParent.getContent());
 						}
 					}
 					//if content is not expanded, content will be expanded (first click on item always leads to expanding the right content)
-					if (!bAPIchange && this.getParent().getExpandable() && !this.getParent().getExpanded()) {
-						this.getParent()._toggleExpandCollapse(true);
+					if (!bAPIchange && oParent.getExpandable() && !oParent.getExpanded()) {
+						oParent._toggleExpandCollapse(true);
 					}
 				}
 			}
@@ -25461,14 +25583,14 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 		var sSelectedKey = this.oSelectedItem._getNonEmptyKey();
 		this.oSelectedItem = oItem;
 		this.setProperty("selectedKey", sSelectedKey, true);
-		if (this.getParent() instanceof sap.m.IconTabBar) {
-			this.getParent().setProperty("selectedKey", sSelectedKey, true);
+		if (bIsParentIconTabBar) {
+			oParent.setProperty("selectedKey", sSelectedKey, true);
 		}
 
 		if (!bAPIchange) {
 			// fire event on iconTabBar
-			if (this.getParent() instanceof sap.m.IconTabBar) {
-				this.getParent().fireSelect({
+			if (bIsParentIconTabBar) {
+				oParent.fireSelect({
 					selectedItem: this.oSelectedItem,
 					selectedKey: sSelectedKey,
 					item: this.oSelectedItem,
@@ -25501,24 +25623,27 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 	};
 
 	IconTabHeader.prototype.onAfterRendering = function() {
-		var oHeadDomRef = this.getDomRef("head"),
-			$bar = this.$();
+		var oHeadDomRef = this.getDomRef("head");
 
 		// initialize scrolling
 		if (this._oScroller) {
 			this._oScroller.setIconTabBar(this, jQuery.proxy(this._afterIscroll, this), jQuery.proxy(this._scrollPreparation, this));
 		}
 
-		if (this.oSelectedItem && this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpanded()) {
+		var oParent = this.getParent();
+		var bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
+
+		if (this.oSelectedItem &&
+			(!bIsParentIconTabBar || bIsParentIconTabBar && oParent.getExpanded())) {
 			this.oSelectedItem.$()
 					.addClass("sapMITBSelected")
 					.attr({ 'aria-selected': true });
 		}
 
 		if (this._bDoScroll) {
-			jQuery.sap.delayedCall(350, this, "_checkOverflow", [oHeadDomRef, $bar]);
+			jQuery.sap.delayedCall(350, this, "_checkOverflow");
 		} else {
-			this._checkOverflow(oHeadDomRef, $bar);
+			this._checkOverflow();
 		}
 
 		// reset scroll state after re-rendering for non-touch devices (iScroll will handle this internally)
@@ -25574,9 +25699,9 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 
 		// Change ITB content height on resize when ITB stretchContentHeight is set to true (IE9 fix)
 		if (!jQuery.support.newFlexBoxLayout &&
-			this.getParent() instanceof sap.m.IconTabBar &&
-			this.getParent().getStretchContentHeight()) {
-			this._sResizeListenerNoFlexboxSupportId = sap.ui.core.ResizeHandler.register(this.getParent().getDomRef(), jQuery.proxy(this._fnResizeNoFlexboxSupport, this));
+			bIsParentIconTabBar &&
+			oParent.getStretchContentHeight()) {
+			this._sResizeListenerNoFlexboxSupportId = sap.ui.core.ResizeHandler.register(oParent.getDomRef(), jQuery.proxy(this._fnResizeNoFlexboxSupport, this));
 			this._fnResizeNoFlexboxSupport();
 		}
 
@@ -25634,14 +25759,14 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 	};
 
 	IconTabHeader.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		var aItems = this.getItems();
+		var aItems = this.getTabFilters();
 
 		var oItem = Control.prototype.removeAggregation.apply(this, arguments);
 
 		if (oItem && oItem == this.oSelectedItem && sAggregationName == 'items') {
 
 			var iIndexOf = jQuery.inArray(oItem, aItems);
-			aItems = this.getItems();
+			aItems = this.getTabFilters();
 
 			iIndexOf = Math.max(0, Math.min(iIndexOf, aItems.length - 1));
 
@@ -25716,7 +25841,10 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 	 * @private
 	 * @returns True if scrolling is needed, otherwise false
 	 */
-	IconTabHeader.prototype._checkScrolling = function(oHead, $bar) {
+	IconTabHeader.prototype._checkScrolling = function(oHead) {
+
+		var $bar = this.$();
+
 		var bScrolling = false;
 
 		if (this._bDoScroll) { //iScroll is used, therefore we need other calculation then in desktop mode
@@ -25792,15 +25920,14 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 
 	/**
 	 * Changes the state of the scroll arrows depending on whether they are required due to overflow.
-	 *
-	 * @param oListDomRef The ul tag containing the items
-	 * @param of_back The backward scroll arrow
-	 * @param of_fw The forward scroll arrow
 	 * @private
 	 */
-	IconTabHeader.prototype._checkOverflow = function(oBarHead, $bar) {
+	IconTabHeader.prototype._checkOverflow = function() {
 
-		if (this._checkScrolling(oBarHead, $bar) && oBarHead) {
+		var oBarHead = this.getDomRef("head");
+		var $bar = this.$();
+
+		if (this._checkScrolling(oBarHead) && oBarHead) {
 			// check whether scrolling to the left is possible
 			var bScrollBack = false;
 			var bScrollForward = false;
@@ -26041,7 +26168,7 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 		this._$bar = null;
 		//update the arrows on desktop
 		if (sap.ui.Device.system.desktop) {
-			this._checkOverflow(this.getDomRef("head"), this.$());
+			this._checkOverflow();
 		}
 	};
 
@@ -26060,8 +26187,7 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 	 * @private
 	*/
 	IconTabHeader.prototype._afterIscroll = function() {
-		var oHead = this.getDomRef("head");
-		this._checkOverflow(oHead, this.$());
+		this._checkOverflow();
 		this._adjustAndShowArrow();
 	};
 
@@ -26070,8 +26196,7 @@ sap.ui.define("sap/m/IconTabHeader",['jquery.sap.global', './library', 'sap/ui/c
 	 * @private
 	*/
 	IconTabHeader.prototype._fnResize = function() {
-		var oHead = this.getDomRef("head");
-		this._checkOverflow(oHead, this.$());
+		this._checkOverflow();
 	};
 
 	/**
@@ -26259,7 +26384,7 @@ sap.ui.define("sap/m/IconTabSeparator",['jquery.sap.global', './library', 'sap/u
 	 * @implements sap.m.IconTab
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -26365,7 +26490,7 @@ sap.ui.define("sap/m/Image",['jquery.sap.global', './library', 'sap/ui/core/Cont
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -26912,7 +27037,7 @@ sap.ui.define("sap/m/InputBase",['jquery.sap.global', './library', 'sap/ui/core/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -28099,7 +28224,7 @@ sap.ui.define("sap/m/Label",['jquery.sap.global', './library', 'sap/ui/core/Cont
 	 * @implements sap.ui.core.Label,sap.ui.core.IShrinkable
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -28216,7 +28341,7 @@ sap.ui.define("sap/m/Link",['jquery.sap.global', './library', 'sap/ui/core/Contr
 	 * @implements sap.ui.core.IShrinkable
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -28520,7 +28645,7 @@ sap.ui.define("sap/m/ListItemBase",['jquery.sap.global', './library', 'sap/ui/co
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -28907,7 +29032,7 @@ sap.ui.define("sap/m/ListItemBase",['jquery.sap.global', './library', 'sap/ui/co
 		aControls.forEach(function(sControl) {
 			sControl = "_o" + sControl + "Control";
 			if (this[sControl]) {
-				this[sControl].destroy("KeepDom");
+				this[sControl].destroy(true);
 				this[sControl] = null;
 			}
 		}, this);
@@ -29383,7 +29508,7 @@ sap.ui.define("sap/m/MaskInput",['jquery.sap.global', './InputBase', './MaskInpu
 	 *
 	 * @author SAP SE
 	 * @extends sap.m.InputBase
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @private
@@ -29537,6 +29662,24 @@ sap.ui.define("sap/m/MaskInput",['jquery.sap.global', './InputBase', './MaskInpu
 	MaskInput.prototype.onkeydown = function (oEvent) {
 		InputBase.prototype.onkeydown.apply(this, arguments);
 		keyDownHandler.call(this, oEvent);
+	};
+
+	/**
+	 * Handles enter key. Shell subclasses override this method, bare in mind that [Enter] is not really handled here, but in {@link sap.m.MaskInput.prototype#onkeydown}.
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	MaskInput.prototype.onsapenter = function(oEvent) {
+		//Nothing to do, [Enter] is already handled in onkeydown part.
+	};
+
+	/**
+	 * Handles the <code>sapfocusleave</code> event of the mask input.
+	 * Shell subclasses override this method, bare in mind that <code>sapfocusleave</code> is handled by {@link sap.m.MaskInput.prototype#onfocusout}.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	MaskInput.prototype.onsapfocusleave = function(oEvent) {
 	};
 
 	MaskInput.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
@@ -30260,8 +30403,9 @@ sap.ui.define("sap/m/MaskInput",['jquery.sap.global', './InputBase', './MaskInpu
 
 		if (this._sOldInputValue !== this._oTempValue.toString()) {
 			this.setValue(sValue);
-			this.onChange({value: sValue});
-			this.fireChangeEvent(sValue);
+			if (this.onChange && !this.onChange({value: sValue})) {//if the subclass didn't fire the "change" event by itself
+				this.fireChangeEvent(sValue);
+			}
 		}
 	}
 
@@ -30381,7 +30525,7 @@ sap.ui.define("sap/m/MessagePage",['jquery.sap.global', './library', 'sap/ui/cor
 		 *		- The application is loading
 		 *	The layout is unchanged but the text varies depending on the use case.
 		 * @extends sap.ui.core.Control
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -30643,7 +30787,7 @@ sap.ui.define("sap/m/MessagePopoverItem",["jquery.sap.global", "./library", "sap
 		 * @extends sap.ui.core.Element
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -30920,7 +31064,7 @@ sap.ui.define("sap/m/NavContainer",['jquery.sap.global', './library', 'sap/ui/co
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -32622,7 +32766,7 @@ sap.ui.define("sap/m/ObjectAttribute",['jquery.sap.global', './library', 'sap/ui
 	 * @class
 	 * The ObjectAttribute control displays a text field that can be normal or active. The ObjectAttribute fires a press event when the user selects active text.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -32855,7 +32999,7 @@ sap.ui.define("sap/m/ObjectHeader",['jquery.sap.global', './library', 'sap/ui/co
 	 * @class
 	 * ObjectHeader is a display control that enables the user to easily identify a specific object. The object header title is the key identifier of the object and additional text and icons can be used to further distinguish it from other objects.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -33189,6 +33333,84 @@ sap.ui.define("sap/m/ObjectHeader",['jquery.sap.global', './library', 'sap/ui/co
 
 	};
 
+	ObjectHeader.prototype.insertAttribute = function (oAttribute, iIndex) {
+		var vResult = this.insertAggregation("attributes", oAttribute, iIndex);
+		this._registerControlListener(oAttribute);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.addAttribute = function (oAttribute) {
+		var vResult = this.addAggregation("attributes", oAttribute);
+		this._registerControlListener(oAttribute);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.removeAttribute = function (oAttribute) {
+		this._deregisterControlListener(oAttribute);
+		return this.removeAggregation("attributes", oAttribute);
+	};
+
+	ObjectHeader.prototype.removeAllAttributes = function () {
+		this.getAggregation("attributes").forEach(this._deregisterControlListener, this);
+		return this.removeAllAggregation("attributes");
+	};
+
+	ObjectHeader.prototype.destroyAttributes = function () {
+		this.getAggregation("attributes").forEach(this._deregisterControlListener, this);
+		return this.destroyAggregation("attributes");
+	};
+
+
+	ObjectHeader.prototype.insertStatus = function (oStatus, iIndex) {
+		var vResult = this.insertAggregation("attributes", oStatus, iIndex);
+		this._registerControlListener(oStatus);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.addStatus = function (oStatus) {
+		var vResult = this.addAggregation("statuses", oStatus);
+		this._registerControlListener(oStatus);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.removeStatus = function (oStatus) {
+		this._deregisterControlListener(oStatus);
+		return this.removeAggregation("statuses", oStatus);
+	};
+
+	ObjectHeader.prototype.removeAllStatuses = function () {
+		this.getAggregation("statuses").forEach(this._deregisterControlListener, this);
+		return this.removeAllAggregation("statuses");
+	};
+
+	ObjectHeader.prototype.destroyStatuses = function () {
+		this.getAggregation("statuses").forEach(this._deregisterControlListener, this);
+		return this.destroyAggregation("statuses");
+	};
+
+	/**
+	 * Every time a control is inserted in the ObjectHeader, it must be monitored for size/visibility changes
+	 * @param oControl
+	 * @private
+	 */
+	ObjectHeader.prototype._registerControlListener = function (oControl) {
+		if (oControl) {
+			oControl.attachEvent("_change", this.invalidate, this);
+		}
+	};
+
+	/**
+	 * Each time a control is removed from the ObjectHeader, detach listeners
+	 * @param oControl
+	 * @private
+	 */
+	ObjectHeader.prototype._deregisterControlListener = function (oControl) {
+		if (oControl) {
+			oControl.detachEvent("_change", this.invalidate, this);
+		}
+	};
+
+	
 	/**
 	 * Set the condensed flag
 	 * @override
@@ -33484,7 +33706,7 @@ sap.ui.define("sap/m/ObjectHeader",['jquery.sap.global', './library', 'sap/ui/co
 	 */
 	ObjectHeader.prototype.exit = function() {
 		if (sap.ui.Device.system.desktop) {
-			sap.ui.Device.media.detachHandler(this._rerenderOH, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+			sap.ui.Device.media.detachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 		}
 
 		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
@@ -33798,7 +34020,7 @@ sap.ui.define("sap/m/ObjectIdentifier",['jquery.sap.global', './library', 'sap/u
 	 * @class
 	 * The ObjectIdentifier is a display control that enables the user to easily identify a specific object. The ObjectIdentifier title is the key identifier of the object and additional text and icons can be used to further distinguish it from other objects.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34253,7 +34475,7 @@ sap.ui.define("sap/m/ObjectListItem",['jquery.sap.global', './ListItemBase', './
 	 * @class
 	 * ObjectListItem is a display control that provides summary information about an object as an item in a list. The object list item title is the key identifier of the object. Additional text and icons can be used to further distinguish it from other objects. Attributes and statuses can be used to provide additional meaning about the object to the user.
 	 * @extends sap.m.ListItemBase
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34626,8 +34848,9 @@ jQuery.sap.declare('sap.m.ObjectNumber'); // unresolved dependency added by SAPU
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Renderer'); // unlisted dependency retained
-sap.ui.define("sap/m/ObjectNumber",['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Renderer'],
-	function(jQuery, library, Control, Renderer) {
+jQuery.sap.require('sap.ui.core.ValueStateSupport'); // unlisted dependency retained
+sap.ui.define("sap/m/ObjectNumber",['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, library, Control, Renderer, ValueStateSupport) {
 	"use strict";
 
 
@@ -34641,7 +34864,7 @@ sap.ui.define("sap/m/ObjectNumber",['jquery.sap.global', './library', 'sap/ui/co
 	 * The ObjectNumber control displays number and number unit properties for an object. The number can be displayed using semantic
 	 * colors to provide additional meaning about the object to the user.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34715,8 +34938,9 @@ sap.ui.define("sap/m/ObjectNumber",['jquery.sap.global', './library', 'sap/ui/co
 		//remove the current value state css class
 		this.$().removeClass(this._sCSSPrefixObjNumberStatus + this.getState());
 
-		//do suppress rerendering
+		//do suppress re-rendering
 		this.setProperty("state", sState, true);
+		this._updateTooltipDom();
 
 		//now set the new css state class
 		this.$().addClass(this._sCSSPrefixObjNumberStatus + this.getState());
@@ -34739,6 +34963,56 @@ sap.ui.define("sap/m/ObjectNumber",['jquery.sap.global', './library', 'sap/ui/co
 
 		sAlignVal = sAlignVal || sAlign;
 		this.$().css("text-align", sAlign);
+	};
+
+	/*
+	 * Overwrite of generated function - no new JS-doc.
+	 * Property setter for the Tooltip
+	 *
+	 * @param {string|sap.ui.core.TooltipBase} vTooltip New tooltip value
+	 * @return {sap.m.ObjectNumber} <code>this</code> to allow method chaining
+	 * @public
+	 * @override
+	 */
+	ObjectNumber.prototype.setTooltip = function(vTooltip) {
+		this._refreshTooltipBaseDelegate(vTooltip);
+		this.setAggregation("tooltip", vTooltip, true);
+
+		this._updateTooltipDom();
+
+		return this;
+	};
+
+	/**
+	 * Enriches the tooltip to contain the string representation of the <code>state</code> property.
+	 * @returns {string} The enriched tooltip string
+	 * @private
+	 */
+	ObjectNumber.prototype._getEnrichedTooltip = function() {
+		var sTooltip = this.getTooltip_AsString(),
+			sToolTipAdditionalValueState = ValueStateSupport.getAdditionalText(this.getState());
+
+		sTooltip = sTooltip || "";
+		if (sToolTipAdditionalValueState) {
+			if (sTooltip) {
+				sTooltip += " ";
+			}
+			sTooltip += sToolTipAdditionalValueState;
+		}
+
+		return sTooltip;
+	};
+
+	/**
+	 * Updates the <code>title</code> attribute of the root dom element to include the <code>state</code>.
+	 * @private
+	 */
+	ObjectNumber.prototype._updateTooltipDom = function() {
+		var oONDomRef = this.getDomRef();
+
+		if (oONDomRef) {
+			jQuery(oONDomRef).attr("title", this._getEnrichedTooltip());
+		}
 	};
 
 	return ObjectNumber;
@@ -34773,7 +35047,7 @@ sap.ui.define("sap/m/ObjectStatus",['jquery.sap.global', './library', 'sap/ui/co
 	 * @class
 	 * Status information that can be either text with a value state, or an icon.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34940,7 +35214,7 @@ sap.ui.define("sap/m/OverflowToolbarButton",['sap/m/Button', 'sap/m/ButtonRender
 	 * @extends sap.m.Button
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @private
@@ -35033,7 +35307,7 @@ sap.ui.define("sap/m/P13nColumnsItem",['jquery.sap.global', './library', 'sap/ui
 	 *
 	 * @class Type for <code>columnsItems</code> aggregation in P13nColumnsPanel control.
 	 * @extends sap.ui.core.Item
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @author SAP SE 
 	 * @public
@@ -35103,7 +35377,7 @@ sap.ui.define("sap/m/P13nConditionPanel",[
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The ConditionPanel Control will be used to implement the Sorting, Filtering and Grouping panel of the new Personalization dialog.
 	 * @extends sap.m.P13nPanel
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @experimental since version 1.26 !!! THIS CONTROL IS ONLY FOR INTERNAL USE !!!
@@ -37489,7 +37763,7 @@ sap.ui.define("sap/m/P13nFilterItem",[
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Type for <code>filterItems</code> aggregation in P13nFilterPanel control.
 	 * @extends sap.ui.core.Item
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nFilterItem
@@ -37592,7 +37866,7 @@ sap.ui.define("sap/m/P13nGroupItem",[
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Type for <code>groupItems</code> aggregation in P13nGroupPanel control.
 	 * @extends sap.ui.core.Item
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nGroupItem
@@ -37667,7 +37941,7 @@ sap.ui.define("sap/m/P13nItem",['jquery.sap.global', './library', 'sap/ui/core/E
 	 * 
 	 * @class Base type for <code>items</code> aggregation in P13nPanel control.
 	 * @extends sap.ui.core.Item
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * 
 	 * @constructor
 	 * @public
@@ -37802,7 +38076,7 @@ sap.ui.define("sap/m/P13nPanel",[
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Base type for <code>panels</code> aggregation in P13nDialog control.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @since 1.26.0
@@ -37979,7 +38253,7 @@ sap.ui.define("sap/m/P13nSortItem",[
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Type for <code>sortItems</code> aggregation in P13nSortPanel control.
 	 * @extends sap.ui.core.Item
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nSortItem
@@ -38043,7 +38317,7 @@ sap.ui.define("sap/m/P13nSortPanel",[
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nSortPanel control is used to define settings for sorting in table personalization.
 	 * @extends sap.m.P13nPanel
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nSortPanel
@@ -38461,7 +38735,7 @@ sap.ui.define("sap/m/Page",['jquery.sap.global', './library', 'sap/ui/core/Contr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -38955,7 +39229,7 @@ sap.ui.define("sap/m/PagingButton",['jquery.sap.global', './Button', 'sap/ui/cor
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -39152,7 +39426,7 @@ sap.ui.define("sap/m/Panel",['jquery.sap.global', './library', 'sap/ui/core/Cont
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -39488,7 +39762,7 @@ sap.ui.define("sap/m/Popover",['jquery.sap.global', './Bar', './Button', './Inst
 		 * @implements sap.ui.core.PopupInterface
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -40508,10 +40782,12 @@ sap.ui.define("sap/m/Popover",['jquery.sap.global', './Bar', './Button', './Inst
 
 		Popover.prototype._calcVertical = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentTop = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().top : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentTop = bHasParent ? $parent[0].getBoundingClientRect().top : 0;
+			var iParentHeight = bHasParent ? $parent[0].getBoundingClientRect().height : 0;
 			var iOffsetY = this._getOffsetY();
 			var iTopSpace = iParentTop - this._marginTop + iOffsetY;
-			var iParentBottom = iParentTop + $parent.outerHeight();
+			var iParentBottom = iParentTop + iParentHeight;
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 			var iPopoverHeight = this.$().outerHeight();
 
@@ -40528,10 +40804,12 @@ sap.ui.define("sap/m/Popover",['jquery.sap.global', './Bar', './Button', './Inst
 
 		Popover.prototype._calcHorizontal = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentLeft = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().left : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentLeft = bHasParent ? $parent[0].getBoundingClientRect().left : 0;
+			var iParentWidth = bHasParent ? $parent[0].getBoundingClientRect().width : 0;
 			var iOffsetX = this._getOffsetX();
 			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
-			var iParentRight = iParentLeft + $parent.outerWidth();
+			var iParentRight = iParentLeft + iParentWidth;
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 			var iPopoverWidth = this.$().outerWidth();
 
@@ -40574,10 +40852,12 @@ sap.ui.define("sap/m/Popover",['jquery.sap.global', './Bar', './Button', './Inst
 		Popover.prototype._checkHorizontal = function () {
 			//check if there is enough space
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentLeft = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().left : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentLeft = bHasParent ? $parent[0].getBoundingClientRect().left : 0;
+			var iParentWidth = bHasParent ? $parent[0].getBoundingClientRect().width : 0;
 			var iOffsetX = this._getOffsetX();
 			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
-			var iParentRight = iParentLeft + $parent.outerWidth();
+			var iParentRight = iParentLeft + iParentWidth;
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 
 			var $this = this.$();
@@ -40591,10 +40871,12 @@ sap.ui.define("sap/m/Popover",['jquery.sap.global', './Bar', './Button', './Inst
 		Popover.prototype._checkVertical = function () {
 			//check if there is enough space
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentTop = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().top : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentTop = bHasParent ? $parent[0].getBoundingClientRect().top : 0;
+			var iParentHeight = bHasParent ? $parent[0].getBoundingClientRect().height : 0;
 			var iOffsetY = this._getOffsetY();
 			var iTopSpace = iParentTop - this._marginTop + iOffsetY;
-			var iParentBottom = iParentTop + $parent.outerHeight();
+			var iParentBottom = iParentTop + iParentHeight;
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 
 			var $this = this.$();
@@ -40613,15 +40895,18 @@ sap.ui.define("sap/m/Popover",['jquery.sap.global', './Bar', './Button', './Inst
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentLeft = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().left : 0;
-			var iParentTop = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().top : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentLeft = bHasParent ? $parent[0].getBoundingClientRect().left : 0;
+			var iParentTop = bHasParent ? $parent[0].getBoundingClientRect().top : 0;
+			var iParentWidth = bHasParent ? $parent[0].getBoundingClientRect().width : 0;
+			var iParentHeight = bHasParent ? $parent[0].getBoundingClientRect().height : 0;
 			var iOffsetX = this._getOffsetX();
 			var iOffsetY = this._getOffsetY();
 			var iTopSpace = iParentTop - this._marginTop + iOffsetY;
-			var iParentBottom = iParentTop + $parent.outerHeight();
+			var iParentBottom = iParentTop + iParentHeight;
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
-			var iParentRight = iParentLeft + $parent.outerWidth();
+			var iParentRight = iParentLeft + iParentWidth;
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 
 			//calculation for every possible position how many percent of the popover can be covered
@@ -40785,7 +41070,7 @@ sap.ui.define("sap/m/Popover",['jquery.sap.global', './Bar', './Button', './Inst
 					if (bRtl) {
 						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fOffsetX;
 					} else {
-						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fOffsetX;
+						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset + oPosParams._fOffsetX;
 					}
 					break;
 				case sap.m.PlacementType.Right:
@@ -40796,7 +41081,7 @@ sap.ui.define("sap/m/Popover",['jquery.sap.global', './Bar', './Button', './Inst
 					}
 					break;
 				case sap.m.PlacementType.Top:
-					oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset - oPosParams._fOffsetY;
+					oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset + oPosParams._fOffsetY;
 					break;
 				case sap.m.PlacementType.Bottom:
 					oPosParams._fMarginTop = oPosParams._$parent.offset().top + oPosParams._$parent.outerHeight() + this._arrowOffset + oPosParams._fOffsetY;
@@ -41710,7 +41995,7 @@ sap.ui.define("sap/m/ProgressIndicator",['jquery.sap.global', './library', 'sap/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -41877,7 +42162,7 @@ sap.ui.define("sap/m/PullToRefresh",['jquery.sap.global', './library', 'sap/ui/c
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -42224,7 +42509,7 @@ sap.ui.define("sap/m/QuickViewBase",[
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -42615,7 +42900,7 @@ sap.ui.define("sap/m/QuickViewGroup",[
 		* @extends sap.ui.core.Element
 		*
 		* @author SAP SE
-		* @version 1.32.7
+		* @version 1.32.9
 		*
 		* @constructor
 		* @public
@@ -42729,7 +43014,7 @@ sap.ui.define("sap/m/RadioButton",['jquery.sap.global', './library', 'sap/ui/cor
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -43148,7 +43433,7 @@ sap.ui.define("sap/m/RadioButtonGroup",['jquery.sap.global', './library', 'sap/u
 			 * @extends sap.ui.core.Control
 			 *
 			 * @author SAP SE
-			 * @version 1.32.7
+			 * @version 1.32.9
 			 *
 			 * @constructor
 			 * @public
@@ -43264,10 +43549,15 @@ sap.ui.define("sap/m/RadioButtonGroup",['jquery.sap.global', './library', 'sap/u
 			RadioButtonGroup.prototype.onAfterRendering = function() {
 
 				this._initItemNavigation();
+				// update ARIA information of RadioButtons with visible buttons only
+				var aVisibleRBs = this.aRBs.filter(function(oButton) {
+					return oButton.getVisible();
+				});
 
-				// update ARIA information of RadioButtons
-				for (var i = 0; i < this.aRBs.length; i++) {
-					this.aRBs[i].$().attr("aria-posinset", i + 1).attr("aria-setsize", this.aRBs.length);
+				for (var i = 0; i < aVisibleRBs.length; i++) {
+					var oRBDomRef = aVisibleRBs[i].getDomRef();
+					oRBDomRef.setAttribute("aria-posinset", i + 1);
+					oRBDomRef.setAttribute("aria-setsize", aVisibleRBs.length);
 				}
 			};
 
@@ -43402,9 +43692,6 @@ sap.ui.define("sap/m/RadioButtonGroup",['jquery.sap.global', './library', 'sap/u
 			 * @public
 			 */
 			RadioButtonGroup.prototype.addButton = function(oButton) {
-				this.addAggregation("buttons", oButton);
-				oButton.attachEvent("_change", this._handleItemChanged, this);
-
 				if (!this._bUpdateButtons && this.getSelectedIndex() === undefined) {
 					// if not defined -> select first one
 					this.setSelectedIndex(0);
@@ -43418,6 +43705,8 @@ sap.ui.define("sap/m/RadioButtonGroup",['jquery.sap.global', './library', 'sap/u
 
 				this.aRBs[iIndex] = this._createRadioButton(oButton, iIndex);
 
+				this.addAggregation("buttons",  this.aRBs[iIndex]);
+				this.aRBs[iIndex].attachEvent("_change", this._handleItemChanged, this);
 				return this;
 			};
 
@@ -43429,9 +43718,6 @@ sap.ui.define("sap/m/RadioButtonGroup",['jquery.sap.global', './library', 'sap/u
 			 * @public
 			 */
 			RadioButtonGroup.prototype.insertButton = function(oButton, iIndex) {
-				this.insertAggregation("buttons", oButton, iIndex);
-				oButton.attachEvent("_change", this._handleItemChanged, this);
-
 				if (!this.aRBs) {
 					this.aRBs = [];
 				}
@@ -43460,6 +43746,9 @@ sap.ui.define("sap/m/RadioButtonGroup",['jquery.sap.global', './library', 'sap/u
 					}
 				}
 
+				this.insertAggregation("buttons", oButton, iIndex);
+				oButton.attachEvent("_change", this._handleItemChanged, this);
+
 				return this;
 			};
 
@@ -43479,26 +43768,21 @@ sap.ui.define("sap/m/RadioButtonGroup",['jquery.sap.global', './library', 'sap/u
 					this.iIDCount++;
 				}
 
-				var oRadioButton = new sap.m.RadioButton(this.getId() + "-" + this.iIDCount);
-				oRadioButton.setText(oButton.getText());
-				oRadioButton.setTooltip(oButton.getTooltip());
-
 				// Enabled if both the group and the button are enabled
-				oRadioButton.setEnabled(this.getEnabled() && oButton.getEnabled());
-				oRadioButton.setTextDirection(oButton.getTextDirection());
-				oRadioButton.setEditable(this.getEditable() && oButton.getEditable());
-				oRadioButton.setVisible(this.getVisible() && oButton.getVisible());
-				oRadioButton.setValueState(this.getValueState());
-				oRadioButton.setGroupName(this.getId());
-				oRadioButton.setParent(this);
+				oButton.setEnabled(this.getEnabled() && oButton.getEnabled());
+				oButton.setTextDirection(oButton.getTextDirection());
+				oButton.setEditable(this.getEditable() && oButton.getEditable());
+				oButton.setVisible(this.getVisible() && oButton.getVisible());
+				oButton.setValueState(this.getValueState());
+				oButton.setGroupName(this.getId());
 
 				if (iIndex == this.getSelectedIndex()) {
-					oRadioButton.setSelected(true);
+					oButton.setSelected(true);
 				}
 
-				oRadioButton.attachEvent("select", this._handleRBSelect, this);
+				oButton.attachEvent("select", this._handleRBSelect, this);
 
-				return oRadioButton;
+				return oButton;
 			};
 
 			/**
@@ -43856,7 +44140,7 @@ sap.ui.define("sap/m/RatingIndicator",['jquery.sap.global', './library', 'sap/ui
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -44823,7 +45107,7 @@ sap.ui.define("sap/m/ScrollContainer",["jquery.sap.global", "./library", "sap/ui
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -45021,7 +45305,7 @@ sap.ui.define("sap/m/SearchField",['jquery.sap.global', './library', 'sap/ui/cor
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -45500,7 +45784,7 @@ sap.ui.define("sap/m/SegmentedButton",['jquery.sap.global', './library', 'sap/ui
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -46094,6 +46378,7 @@ sap.ui.define("sap/m/SegmentedButton",['jquery.sap.global', './library', 'sap/ui
 	 * Sets the selectedKey and is usable only when the control is initiated with the items aggregation.
 	 *
 	 * @param {string} sKey The key of the button to be selected
+	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
 	 * @override
 	 * @since 1.28.0
 	 */
@@ -46115,6 +46400,7 @@ sap.ui.define("sap/m/SegmentedButton",['jquery.sap.global', './library', 'sap/ui
 			}
 		}
 		this.setProperty("selectedKey", sKey, true);
+		return this;
 	};
 
 
@@ -46219,6 +46505,7 @@ sap.ui.define("sap/m/SegmentedButton",['jquery.sap.global', './library', 'sap/ui
 		}
 
 		this._syncSelect();
+		return this;
 	};
 
 	SegmentedButton.prototype._focusSelectedButton = function () {
@@ -46403,7 +46690,7 @@ sap.ui.define("sap/m/SegmentedButtonItem",['jquery.sap.global', './library', 'sa
 		 * @extends sap.ui.core.Item
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -46513,7 +46800,7 @@ sap.ui.define("sap/m/SelectList",['jquery.sap.global', './library', 'sap/ui/core
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -47403,7 +47690,7 @@ sap.ui.define("sap/m/Shell",['jquery.sap.global', './library', 'sap/ui/core/Cont
 	 * The Shell control can be used as root element of applications, it can contain an App or SplitApp control.
 	 * The Shell provides some overarching functionality for the overall application and takes care of visual adaptation, like a frame around the App, on desktop browser platforms.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -47624,7 +47911,7 @@ sap.ui.define("sap/m/Slider",['jquery.sap.global', './library', 'sap/ui/core/Con
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -48594,7 +48881,7 @@ sap.ui.define("sap/m/StandardListItem",['jquery.sap.global', './ListItemBase', '
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -48924,7 +49211,7 @@ sap.ui.define("sap/m/Switch",['jquery.sap.global', './library', 'sap/ui/core/Con
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -49375,7 +49662,7 @@ sap.ui.define("sap/m/Text",['jquery.sap.global', './library', 'sap/ui/core/Contr
 	 * @implements sap.ui.core.IShrinkable
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -49802,7 +50089,7 @@ sap.ui.define("sap/m/TextArea",['jquery.sap.global', './InputBase', './library']
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -50026,6 +50313,41 @@ sap.ui.define("sap/m/TextArea",['jquery.sap.global', './InputBase', './library']
 		}
 	};
 
+	// Flag for the Fiori Client on Windows Phone
+	var _bMSWebView = sap.ui.Device.os.windows_phone && (/MSAppHost\/2.0/i).test(navigator.appVersion);
+
+	/**
+	 * Special handling for the focusing issue in SAP Fiori Client on Windows Phone.
+	 *
+	 * @private
+	 */
+	TextArea.prototype.onfocusin = function(oEvent) {
+		var scrollContainer,
+			$this = this.$();
+
+		InputBase.prototype.onfocusin.apply(this, arguments);
+
+		// Workaround for the scroll-into-view bug in the WebView Windows Phone 8.1
+		// As the browser does not scroll the window as it should, scroll the parent scroll container to make the hidden text visible
+
+		function scrollIntoView() {
+			jQuery(window).scrollTop(0);
+			scrollContainer.scrollTop($this.offset().top - scrollContainer.offset().top + scrollContainer.scrollTop());
+		}
+
+		if (_bMSWebView && $this.height() + $this.offset().top > 260) {
+			for (scrollContainer = $this.parent(); scrollContainer[0]; scrollContainer = scrollContainer.parent()) {
+				if (scrollContainer.css("overflow-y") == "auto") {
+					// make sure to have enough padding to be able to scroll even the bottom control to the top of the screen
+					scrollContainer.children().css("padding-bottom", jQuery(window).height() + "px");
+					// do scroll
+					window.setTimeout(scrollIntoView, 100);
+					return;
+				}
+			}
+		}
+	};
+
 	return TextArea;
 
 }, /* bExport= */ true);
@@ -50065,7 +50387,7 @@ sap.ui.define("sap/m/Tile",['jquery.sap.global', './library', 'sap/ui/core/Contr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -50343,7 +50665,7 @@ sap.ui.define("sap/m/TileContainer",['jquery.sap.global', './library', 'sap/ui/c
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -52128,7 +52450,7 @@ sap.ui.define("sap/m/TimePickerSlider",['jquery.sap.global', 'sap/ui/core/Contro
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -53182,7 +53504,7 @@ sap.ui.define("sap/m/TimePickerSliders",['jquery.sap.global', 'sap/ui/core/Contr
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @private
@@ -53703,7 +54025,7 @@ sap.ui.define("sap/m/Title",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui
 	 * @implements sap.ui.core.IShrinkable
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @since 1.27.0
 	 *
 	 * @constructor
@@ -53846,7 +54168,7 @@ sap.ui.define("sap/m/ToggleButton",['jquery.sap.global', './Button', './library'
 	 * @extends sap.m.Button
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -53937,7 +54259,7 @@ sap.ui.define("sap/m/Token",['jquery.sap.global', './library', 'sap/ui/core/Cont
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -54291,7 +54613,7 @@ sap.ui.define("sap/m/Tokenizer",['jquery.sap.global', './library', 'sap/ui/core/
 	 * @class
 	 * Tokenizer displays multiple tokens
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -55242,7 +55564,8 @@ sap.ui.define("sap/m/Tokenizer",['jquery.sap.global', './library', 'sap/ui/core/
 				type : Tokenizer.TokenChangeType.TokensChanged
 			});
 			
-			if (this.getParent() &&  this.getParent() instanceof sap.m.MultiInput) {
+			if (this.getParent() &&  this.getParent() instanceof sap.m.MultiInput && !this.getParent()._bUseDialog) {
+				// not set focus to MultiInput in phone mode 
 				var $oParent = this.getParent().$();
 				$oParent.find("input").focus();
 			}
@@ -55380,7 +55703,7 @@ sap.ui.define("sap/m/ToolbarLayoutData",['jquery.sap.global', './library', 'sap/
 	 * @class
 	 * Defines layout data for the toolbar items.
 	 * @extends sap.ui.core.LayoutData
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -55476,7 +55799,7 @@ sap.ui.define("sap/m/ToolbarSeparator",['jquery.sap.global', './library', 'sap/u
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -55523,7 +55846,7 @@ sap.ui.define("sap/m/ToolbarSpacer",['jquery.sap.global', './library', 'sap/ui/c
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -55582,7 +55905,7 @@ sap.ui.define("sap/m/UploadCollectionItem",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -55886,7 +56209,7 @@ sap.ui.define("sap/m/UploadCollectionParameter",['jquery.sap.global', './library
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -55947,7 +56270,7 @@ sap.ui.define("sap/m/VBox",['jquery.sap.global', './FlexBox', './library'],
 	 * @extends sap.m.FlexBox
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -56031,7 +56354,7 @@ sap.ui.define("sap/m/ViewSettingsCustomTab",['jquery.sap.global', './library', '
 			 * @extends sap.ui.core.Item
 			 *
 			 * @author SAP SE
-			 * @version 1.32.7
+			 * @version 1.32.9
 			 *
 			 * @constructor
 			 * @public
@@ -56135,7 +56458,7 @@ function(jQuery, library, Control, IconPool) {
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -56167,25 +56490,30 @@ function(jQuery, library, Control, IconPool) {
 
 			/**
 			 * The list of items with key and value that can be sorted over (for example, a list of columns for a table).
+			 * @since 1.16
 			 */
 			sortItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "sortItem", bindable : "bindable"},
 
 			/**
 			 * The list of items with key and value that can be grouped on (for example, a list of columns for a table).
+			 * @since 1.16
 			 */
 			groupItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "groupItem", bindable : "bindable"},
 
 			/**
 			 * The list of items with key and value that can be filtered on (for example, a list of columns for a table). A filterItem is associated with one or more detail filters.
+			 * @since 1.16
 			 */
 			filterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "filterItem", bindable : "bindable"},
 
 			/**
 			 * The list of preset filter items that allows the selection of more complex or custom filters. These entries are displayed at the top of the filter tab.
+			 * @since 1.16
 			 */
 			presetFilterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "presetFilterItem", bindable : "bindable"},
 			/**
 			 * The list of all the custom tabs.
+			 * @since 1.30
 			 */
 			customTabs: {type: "sap.m.ViewSettingsCustomTab", multiple: true, singularName: "customTab", bindable : "bindable"}
 		},
@@ -56210,6 +56538,7 @@ function(jQuery, library, Control, IconPool) {
 
 			/**
 			 * Indicates that the user has pressed the OK button and the selected sort, group, and filter settings should be applied to the data on this page.
+			 * </br></br><b>Note:</b> Custom tabs are not converted to event parameters automatically. For custom tabs, you have to read the state of your controls inside the callback of this event.
 			 */
 			confirm : {
 				parameters : {
@@ -56582,28 +56911,26 @@ function(jQuery, library, Control, IconPool) {
 
 		// convenience, also allow strings
 		if (typeof oItem === "string") {
-			// find item with this id
-			for (; i < aItems.length; i++) {
-				if (aItems[i].getKey() === oItem) {
-					oItem = aItems[i];
-					break;
-				}
+			oItem = getViewSettingsItemByKey(aItems, oItem);
+		}
+
+		//change selected item only if it is found among the sort items
+		if (validateViewSettingsItem(oItem)) {
+			// set selected = true for this item & selected = false for all others items
+			for (i = 0; i < aItems.length; i++) {
+				aItems[i].setProperty('selected', false, true);
 			}
-		}
 
-		// set selected = true for this item & selected = false for all others items
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setSelected(false);
-		}
-		if (oItem) {
-			oItem.setSelected(true);
-		}
+			oItem.setProperty('selected', true, true);
 
-		// update the list selection
-		if (this._getDialog().isOpen()) {
-			this._updateListSelection(this._sortList, oItem);
+			// update the list selection
+			if (this._getDialog().isOpen()) {
+				this._updateListSelection(this._sortList, oItem);
+			}
+			this.setAssociation("selectedSortItem", oItem, true);
+		} else {
+			jQuery.sap.log.error("Could not set selected sort item. Item is not found: '" + oItem + "'");
 		}
-		this.setAssociation("selectedSortItem", oItem, true);
 		return this;
 	};
 
@@ -56620,28 +56947,27 @@ function(jQuery, library, Control, IconPool) {
 
 		// convenience, also allow strings
 		if (typeof oItem === "string") {
-			// find item with this id
-			for (; i < aItems.length; i++) {
-				if (aItems[i].getKey() === oItem) {
-					oItem = aItems[i];
-					break;
-				}
+			oItem = getViewSettingsItemByKey(aItems, oItem);
+		}
+
+		//change selected item only if it is found among the group items
+		if (validateViewSettingsItem(oItem)) {
+			// set selected = true for this item & selected = false for all others items
+			for (i = 0; i < aItems.length; i++) {
+				aItems[i].setProperty('selected', false, true);
 			}
+
+			oItem.setProperty('selected', true, true);
+
+			// update the list selection
+			if (this._getDialog().isOpen()) {
+				this._updateListSelection(this._groupList, oItem);
+			}
+			this.setAssociation("selectedGroupItem", oItem, true);
+		} else {
+			jQuery.sap.log.error("Could not set selected group item. Item is not found: '" + oItem + "'");
 		}
 
-		// set selected = true for this item & selected = false for all others items
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setSelected(false);
-		}
-		if (oItem) {
-			oItem.setSelected(true);
-		}
-
-		// update the list selection
-		if (this._getDialog().isOpen()) {
-			this._updateListSelection(this._groupList, oItem);
-		}
-		this.setAssociation("selectedGroupItem", oItem, true);
 		return this;
 	};
 
@@ -56658,24 +56984,28 @@ function(jQuery, library, Control, IconPool) {
 
 		// convenience, also allow strings
 		if (typeof oItem === "string") {
-			// find item with this id
-			for (; i < aItems.length; i++) {
-				if (aItems[i].getKey() === oItem) {
-					oItem = aItems[i];
-					break;
-				}
+			oItem = getViewSettingsItemByKey(aItems, oItem);
+		}
+
+		//change selected item only if it is found among the preset filter items
+		if (!oItem || validateViewSettingsItem(oItem)) {
+			// set selected = true for this item & selected = false for all others items
+			for (i = 0; i < aItems.length; i++) {
+				aItems[i].setProperty('selected', false, true);
 			}
-		}
-		// set selected = true for this item & selected = false for all others items
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setSelected(false);
-		}
-		if (oItem) {
-			oItem.setSelected(true);
+
+			if (oItem) {
+				oItem.setProperty('selected', true, true);
+			}
+
 			// clear filters (only one mode is allowed, preset filters or filters)
 			this._clearSelectedFilters();
+
+			this.setAssociation("selectedPresetFilterItem", oItem, true);
+		} else {
+			jQuery.sap.log.error("Could not set selected preset filter item. Item is not found: '" + oItem + "'");
 		}
-		this.setAssociation("selectedPresetFilterItem", oItem, true);
+
 		return this;
 	};
 
@@ -58112,6 +58442,40 @@ function(jQuery, library, Control, IconPool) {
 		this._navContainer.to(this._getPage1().getId(), "show");
 	}
 
+	/**
+	 * Gets a sap.m.ViewSettingsItem from a list of items by a given key.
+	 *
+	 * @param aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
+	 * @param sKey
+	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
+	 * @private
+	 */
+	function getViewSettingsItemByKey(aViewSettingsItems, sKey) {
+		var i, oItem = sKey;
+
+		// convenience, also allow strings
+		// find item with this key
+		for (i = 0; i < aViewSettingsItems.length; i++) {
+			if (aViewSettingsItems[i].getKey() === sKey) {
+				oItem = aViewSettingsItems[i];
+				break;
+			}
+		}
+
+		return oItem;
+	}
+
+	/**
+	 * Checks if the item is a sap.m.ViewSettingsItem.
+	 *
+	 * @param {*} oItem The item to be validated
+	 * @returns {*|boolean} Returns true if the item is a sap.m.ViewSettingsItem
+	 * @private
+	 */
+	function validateViewSettingsItem(oItem) {
+		return oItem && oItem instanceof sap.m.ViewSettingsItem;
+	}
+
 	/* =========================================================== */
 	/* end: internal methods */
 	/* =========================================================== */
@@ -58380,7 +58744,7 @@ sap.ui.define("sap/m/ViewSettingsItem",['jquery.sap.global', './library', 'sap/u
 	 * @extends sap.ui.core.Item
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -58435,7 +58799,7 @@ function (library, Control, ItemNavigation, jQuery) {
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @private
@@ -59006,7 +59370,7 @@ sap.ui.define("sap/m/WizardStep",["./library", "sap/ui/core/Control"],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -59192,7 +59556,7 @@ sap.ui.define("sap/m/ActionListItem",['jquery.sap.global', './ListItemBase', './
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -59280,7 +59644,7 @@ sap.ui.define("sap/m/App",['jquery.sap.global', './NavContainer', './library'],
 	 * @extends sap.m.NavContainer
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -59477,7 +59841,7 @@ sap.ui.define("sap/m/CheckBox",['jquery.sap.global', './Label', './library', 'sa
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -59766,7 +60130,7 @@ sap.ui.define("sap/m/ColumnListItem",['jquery.sap.global', 'sap/ui/core/Element'
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -59828,6 +60192,7 @@ sap.ui.define("sap/m/ColumnListItem",['jquery.sap.global', 'sap/ui/core/Element'
 		if (this._oPopin) {
 			this._oPopin.destroy(true);
 			this._oPopin = null;
+			this.removePopin();
 		}
 	};
 	
@@ -59961,7 +60326,7 @@ sap.ui.define("sap/m/ColumnListItem",['jquery.sap.global', 'sap/ui/core/Element'
 	// Destroys cloned headers that are generated for popin
 	sap.m.ColumnListItem.prototype._destroyClonedHeaders = function() {
 		this._aClonedHeaders.forEach(function(oClone) {
-			oClone.destroy("KeepDom");
+			oClone.destroy(true);
 		});
 
 		this._aClonedHeaders = [];
@@ -60018,7 +60383,7 @@ sap.ui.define("sap/m/CustomListItem",['jquery.sap.global', './ListItemBase', './
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -60072,7 +60437,7 @@ sap.ui.define("sap/m/CustomTile",['jquery.sap.global', './Tile', './library'],
 	 * Use the CustomTile control to display application specific content in the Tile control.
 	 * The tile width is 8.5em and height is 10em.
 	 * @extends sap.m.Tile
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -60156,7 +60521,7 @@ sap.ui.define("sap/m/DatePicker",['jquery.sap.global', './InputBase', 'sap/ui/mo
 	 * This could lead to a waiting time before a <code>DatePicker</code> is opened the first time. To prevent this, applications using the <code>DatePicker</code> should also load
 	 * the <code>sap.ui.unified</code> library.
 	 * @extends sap.m.InputBase
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -61091,7 +61456,7 @@ sap.ui.define("sap/m/DateRangeSelection",['jquery.sap.global', './DatePicker', '
 	 * the <code>sap.ui.unified</code> library.
 	 *
 	 * @extends sap.m.DatePicker
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -61868,11 +62233,12 @@ sap.ui.define("sap/m/DateTimeInput",['jquery.sap.global', './InputBase', './Inst
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.9.1
+	 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code> and/or <code>sap.m.TimePicker</code> controls. 
 	 * @alias sap.m.DateTimeInput
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -62837,7 +63203,7 @@ sap.ui.define("sap/m/DisplayListItem",['jquery.sap.global', './ListItemBase', '.
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -62895,7 +63261,7 @@ sap.ui.define("sap/m/DraftIndicator",["sap/ui/core/Control", "sap/m/Label"], fun
 	 * @abstract
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -63096,7 +63462,7 @@ sap.ui.define("sap/m/FacetFilter",['jquery.sap.global', './NavContainer', './lib
 	 * FacetFilter is used to provide filtering functionality with multiple parameters.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -65090,7 +65456,7 @@ sap.ui.define("sap/m/FacetFilterItem",['jquery.sap.global', './ListItemBase', '.
 	 * @class
 	 * Represents a value for the FacetFilterList control.
 	 * @extends sap.m.ListItemBase
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -65181,7 +65547,7 @@ sap.ui.define("sap/m/FeedListItem",['jquery.sap.global', './ListItemBase', './li
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -65525,6 +65891,16 @@ sap.ui.define("sap/m/FeedListItem",['jquery.sap.global', './ListItemBase', './li
 		return this;
 	};
 
+	/**
+	 * Redefinition of sap.m.ListItemBase.setUnread: Unread is not supported for FeedListItem
+	 * @public
+	 * @param {boolean} new value for property unread is ignored
+	 */
+	FeedListItem.prototype.setUnread = function(bValue) {
+		this.setProperty("unread", false);
+		return this;
+	};
+
 	return FeedListItem;
 
 }, /* bExport= */ true);
@@ -65559,7 +65935,7 @@ sap.ui.define("sap/m/GroupHeaderListItem",['jquery.sap.global', './ListItemBase'
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -65661,7 +66037,7 @@ sap.ui.define("sap/m/InputListItem",['jquery.sap.global', './ListItemBase', './l
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -65733,7 +66109,7 @@ sap.ui.define("sap/m/ListBase",['jquery.sap.global', './GroupHeaderListItem', '.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -66188,14 +66564,8 @@ sap.ui.define("sap/m/ListBase",['jquery.sap.global', './GroupHeaderListItem', '.
 	
 	ListBase.prototype.destroyItems = function() {
 		this._oSelectedItem = null;
-		
-		// suppress the synchronous DOM removal of the aggregation destroy
-		this.destroyAggregation("items", "KeepDom");
-		
-		// invalidate to update DOM on the next tick of the RenderManager
-		return this.invalidate();
+		return this.destroyAggregation("items");
 	};
-
 	
 	ListBase.prototype.removeAllItems = function(sAggregationName) {
 		this._oSelectedItem = null;
@@ -67460,7 +67830,7 @@ sap.ui.define("sap/m/MessageStrip",["jquery.sap.global", "./library", "sap/ui/co
 	 * Each message can have a close button, so that it can be removed from the UI if needed.
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -67646,7 +68016,7 @@ sap.ui.define("sap/m/OverflowToolbarLayoutData",['sap/m/ToolbarLayoutData', 'sap
 	 * Holds layout data for the OverflowToolbar items.
 	 * @extends sap.m.ToolbarLayoutData
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -67737,7 +68107,7 @@ sap.ui.define("sap/m/P13nFilterPanel",[
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nFilterPanel control is used to define filter-specific settings for table personalization.
 	 * @extends sap.m.P13nPanel
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nFilterPanel
@@ -68444,7 +68814,7 @@ sap.ui.define("sap/m/P13nGroupPanel",[
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nGroupPanel control is used to define group-specific settings for table personalization.
 	 * @extends sap.m.P13nPanel
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nGroupPanel
@@ -68940,7 +69310,7 @@ sap.ui.define("sap/m/QuickViewCard",[
 	 * @extends sap.m.QuickViewBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -69063,7 +69433,7 @@ sap.ui.define("sap/m/QuickViewGroupElement",[
 		* @extends sap.ui.core.Element
 		*
 		* @author SAP SE
-		* @version 1.32.7
+		* @version 1.32.9
 		*
 		* @constructor
 		* @public
@@ -69281,7 +69651,7 @@ sap.ui.define("sap/m/QuickViewPage",[
 			* @extends sap.ui.core.Control
 			*
 			* @author SAP SE
-			* @version 1.32.7
+			* @version 1.32.9
 			*
 			* @constructor
 			* @public
@@ -69840,7 +70210,7 @@ sap.ui.define("sap/m/StandardTile",['jquery.sap.global', './Tile', './library', 
 	 * @extends sap.m.Tile
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -69993,7 +70363,7 @@ sap.ui.define("sap/m/Table",['jquery.sap.global', './ListBase', './library'],
 	 * @extends sap.m.ListBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -70506,7 +70876,7 @@ sap.ui.define("sap/m/Toolbar",['jquery.sap.global', './BarInPageEnabler', './Too
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -71219,7 +71589,7 @@ sap.ui.define("sap/m/ViewSettingsCustomItem",['jquery.sap.global', './ViewSettin
 	 * @extends sap.m.ViewSettingsItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -71341,7 +71711,7 @@ sap.ui.define("sap/m/ViewSettingsFilterItem",['jquery.sap.global', './ViewSettin
 	 * @extends sap.m.ViewSettingsItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -71406,7 +71776,7 @@ sap.ui.define("sap/m/Wizard",[
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -72303,7 +72673,7 @@ sap.ui.define("sap/m/semantic/SemanticConfiguration",['jquery.sap.global', 'sap/
 	 * Constructor for a sap.m.semantic.SemanticConfiguration.
 	 *
 	 * @class Defines the visual properties and positioning for each supported semantic type
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @private
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SemanticConfiguration
@@ -72836,7 +73206,7 @@ sap.ui.define("sap/m/semantic/SemanticControl",["sap/m/semantic/SemanticConfigur
 	 * @abstract
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -73022,7 +73392,7 @@ sap.ui.define("sap/m/semantic/ShareMenu",['jquery.sap.global', 'sap/ui/base/Meta
 	 * ShareMenu is a special menu that is represented by (1) an actionSheet with the menu items and (2) a button that opens the actionSheet.
 	 * If the menu has only one item, then that item appears in place of the button that opens the actionSheet.
 	 *
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @private
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.ShareMenu
@@ -73402,7 +73772,7 @@ sap.ui.define("sap/m/List",['jquery.sap.global', './ListBase', './library'],
 	 * @extends sap.m.ListBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -73496,7 +73866,7 @@ sap.ui.define("sap/m/OverflowToolbarAssociativePopover",['./Popover', './Popover
 	 * @extends sap.ui.core.Popover
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @private
@@ -73705,7 +74075,7 @@ sap.ui.define("sap/m/P13nColumnsPanel",[
 	 * @class The P13nColumnsPanel control is used to define column-specific settings for table personalization.
 	 * @extends sap.m.P13nPanel
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @since 1.26.0
@@ -75607,7 +75977,7 @@ sap.ui.define("sap/m/semantic/SemanticButton",['sap/m/semantic/SemanticControl',
 	 * @abstract
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -75702,7 +76072,7 @@ sap.ui.define("sap/m/semantic/SemanticToggleButton",['sap/m/semantic/SemanticBut
 	 * @abstract
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -75815,7 +76185,7 @@ sap.ui.define("sap/m/semantic/SendEmailAction",['sap/m/semantic/SemanticButton']
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -75856,7 +76226,7 @@ sap.ui.define("sap/m/semantic/SendMessageAction",['sap/m/semantic/SemanticButton
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -75897,7 +76267,7 @@ sap.ui.define("sap/m/semantic/ShareInJamAction",['sap/m/semantic/SemanticButton'
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -75939,7 +76309,7 @@ sap.ui.define("sap/m/semantic/SortAction",['sap/m/semantic/SemanticButton'], fun
 	 * @implements sap.m.semantic.ISort
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -75987,7 +76357,7 @@ sap.ui.define("sap/m/FacetFilterList",['jquery.sap.global', './List', './library
 	 * @class
 	 * FacetFilterList represents a list of values for the FacetFilter control.
 	 * @extends sap.m.List
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -76648,7 +77018,7 @@ sap.ui.define("sap/m/GrowingList",['jquery.sap.global', './List', './library'],
 	 * @extends sap.m.List
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -76749,7 +77119,7 @@ sap.ui.define("sap/m/OverflowToolbar",['jquery.sap.global', './library', 'sap/m/
 		 * @extends sap.ui.core.Toolbar
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -76947,6 +77317,12 @@ sap.ui.define("sap/m/OverflowToolbar",['jquery.sap.global', './library', 'sap/m/
 					}
 				}
 			}, this);
+
+			// If the system is a phone sometimes due to specificity in the flex the content can be rendered 1px larger that it should be.
+			// This causes a overflow of the last element/button
+			if (sap.ui.Device.system.phone) {
+				this._iContentSize -= 1;
+			}
 
 			this._bControlsInfoCached = true;
 		};
@@ -77644,7 +78020,7 @@ sap.ui.define("sap/m/semantic/AddAction",['sap/m/semantic/SemanticButton'], func
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -77684,7 +78060,7 @@ sap.ui.define("sap/m/semantic/CancelAction",['sap/m/semantic/SemanticButton'], f
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -77725,7 +78101,7 @@ sap.ui.define("sap/m/semantic/DiscussInJamAction",['sap/m/semantic/SemanticButto
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -77766,7 +78142,7 @@ sap.ui.define("sap/m/semantic/EditAction",['sap/m/semantic/SemanticButton'], fun
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -77807,7 +78183,7 @@ sap.ui.define("sap/m/semantic/FavoriteAction",['sap/m/semantic/SemanticToggleBut
 	 * @extends sap.m.semantic.SemanticToggleButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -77848,7 +78224,7 @@ sap.ui.define("sap/m/semantic/FilterAction",['sap/m/semantic/SemanticButton'], f
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -77894,7 +78270,7 @@ sap.ui.define("sap/m/semantic/FlagAction",['sap/m/semantic/SemanticToggleButton'
 	 * @extends sap.m.semantic.SemanticToggleButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -77935,7 +78311,7 @@ sap.ui.define("sap/m/semantic/ForwardAction",['sap/m/semantic/SemanticButton'], 
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -77976,7 +78352,7 @@ sap.ui.define("sap/m/semantic/GroupAction",['sap/m/semantic/SemanticButton'], fu
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -78022,7 +78398,7 @@ sap.ui.define("sap/m/semantic/MainAction",['sap/m/semantic/SemanticButton'], fun
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -78070,7 +78446,7 @@ sap.ui.define("sap/m/semantic/MessagesIndicator",['sap/m/semantic/SemanticButton
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -78111,7 +78487,7 @@ sap.ui.define("sap/m/semantic/MultiSelectAction",['sap/m/semantic/SemanticToggle
 	 * @extends sap.m.semantic.SemanticToggleButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -78171,7 +78547,7 @@ sap.ui.define("sap/m/semantic/NegativeAction",['sap/m/semantic/SemanticButton'],
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -78219,7 +78595,7 @@ sap.ui.define("sap/m/semantic/OpenInAction",['sap/m/semantic/SemanticButton'], f
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -78260,7 +78636,7 @@ sap.ui.define("sap/m/semantic/PositiveAction",['sap/m/semantic/SemanticButton'],
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -78308,7 +78684,7 @@ sap.ui.define("sap/m/semantic/PrintAction",['sap/m/semantic/SemanticButton'], fu
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -78349,7 +78725,7 @@ sap.ui.define("sap/m/semantic/SaveAction",['sap/m/semantic/SemanticButton'], fun
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -78401,7 +78777,7 @@ sap.ui.define("sap/m/Dialog",['jquery.sap.global', './Bar', './InstanceManager',
 		 * @implements sap.ui.core.PopupInterface
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -80178,7 +80554,7 @@ sap.ui.define("sap/m/Input",['jquery.sap.global', './Bar', './Dialog', './InputB
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -82525,13 +82901,14 @@ sap.ui.define("sap/m/MessageBox",['jquery.sap.global', './Button', './Dialog', '
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Error'] Title of the error dialog
 				 * @param {string} [mOptions.id] ID for the error dialog. Intended for test scenarios, not recommended for productive apps
-				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the error dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string} [mOptions.styleClass] CSS style class which is added to the error dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
+				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] This option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * The usage of sap.ui.core.Control to set initialFocus is deprecated since version 1.30.4.
-				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [deprecated mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [deprecated mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
+                                 * @since 1.30
 				 * @static
 				 */
 				MessageBox.error = function (vMessage, mOptions) {
@@ -82578,13 +82955,14 @@ sap.ui.define("sap/m/MessageBox",['jquery.sap.global', './Button', './Dialog', '
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Information'] Title of the information dialog
 				 * @param {string} [mOptions.id] ID for the information dialog. Intended for test scenarios, not recommended for productive apps
-				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the information dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string} [mOptions.styleClass] CSS style class which is added to the information dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
+				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] This option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * The usage of sap.ui.core.Control to set initialFocus is deprecated since version 1.30.4.
-				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [deprecated mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [deprecated mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
+                                 * @since 1.30
 				 * @static
 				 */
 				MessageBox.information = function (vMessage, mOptions) {
@@ -82631,13 +83009,14 @@ sap.ui.define("sap/m/MessageBox",['jquery.sap.global', './Button', './Dialog', '
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Warning'] Title of the warning dialog
 				 * @param {string} [mOptions.id] ID to for the warning dialog. Intended for test scenarios, not recommended for productive apps
-				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the warning dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string} [mOptions.styleClass] CSS style class which is added to the warning dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
+				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] This option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * The usage of sap.ui.core.Control to set initialFocus is deprecated since version 1.30.4.
-				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [deprecated mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [deprecated mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
+                                 * @since 1.30
 				 * @static
 				 */
 				MessageBox.warning = function (vMessage, mOptions) {
@@ -82684,13 +83063,14 @@ sap.ui.define("sap/m/MessageBox",['jquery.sap.global', './Button', './Dialog', '
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Success'] Title of the success dialog
 				 * @param {string} [mOptions.id] ID for the success dialog. Intended for test scenarios, not recommended for productive apps
-				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the success dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string} [mOptions.styleClass] CSS style class which is added to the success dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
+				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] This option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * The usage of sap.ui.core.Control to set initialFocus is deprecated since version 1.30.4.
-				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [deprecated mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [deprecated mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
+                                 * @since 1.30
 				 * @static
 				 */
 				MessageBox.success = function (vMessage, mOptions) {
@@ -82741,7 +83121,7 @@ sap.ui.define("sap/m/MultiInput",['jquery.sap.global', './Input', './Token', './
 	 * @extends sap.m.Input
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -84184,7 +84564,7 @@ sap.ui.define("sap/m/P13nDialog",[
 	 *        tables.
 	 * @extends sap.m.Dialog
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @constructor
 	 * @public
 	 * @since 1.26.0
@@ -84918,7 +85298,7 @@ sap.ui.define("sap/m/ResponsivePopover",['jquery.sap.global', './Dialog', './Pop
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -85614,7 +85994,7 @@ sap.ui.define("sap/m/Select",['jquery.sap.global', './Bar', './Dialog', './Input
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -86261,8 +86641,8 @@ sap.ui.define("sap/m/Select",['jquery.sap.global', './Bar', './Dialog', './Input
 			// rendering phase is started
 			this._bRenderingPhase = true;
 
-			// note: in IE11 and Firefox 38, the focusout event is not fired when the select is removed
-			if (this.getFocusDomRef() === document.activeElement) {
+			// note: in Firefox 38, the focusout event is not fired when the select is removed
+			if (sap.ui.Device.browser.firefox && (this.getFocusDomRef() === document.activeElement)) {
 				this._handleFocusout();
 			}
 
@@ -87494,7 +87874,7 @@ sap.ui.define("sap/m/SelectDialog",['jquery.sap.global', './Button', './Dialog',
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -88540,7 +88920,7 @@ sap.ui.define("sap/m/TablePersoDialog",['jquery.sap.global', './Button', './Dial
 	 * @class Table Personalization Dialog
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @alias sap.m.TablePersoDialog
 	 */
 	var TablePersoDialog = ManagedObject.extend("sap.m.TablePersoDialog", /** @lends sap.m.TablePersoDialog */
@@ -89270,7 +89650,7 @@ sap.ui.define("sap/m/TableSelectDialog",['jquery.sap.global', './Button', './Dia
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -90297,7 +90677,7 @@ sap.ui.define("sap/m/TimePicker",['jquery.sap.global', './InputBase', './MaskInp
 		 * @extends sap.m.MaskInput
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -90574,6 +90954,7 @@ sap.ui.define("sap/m/TimePicker",['jquery.sap.global', './InputBase', './MaskInp
 		 * and <code>dateValue</code> properties with the input field.
 		 *
 		 * @private
+		 * @returns {boolean} true if <code>change</code> event was called, false otherwise.
 		 */
 		TimePicker.prototype._handleInputChange = function () {
 			var sValue = this._$Input.val(),
@@ -90616,6 +90997,7 @@ sap.ui.define("sap/m/TimePicker",['jquery.sap.global', './InputBase', './MaskInp
 			if (oPicker) {
 				oPicker.getContent()[0].setTimeValues(oDate);
 			}
+			return true;
 		};
 
 		/**
@@ -90623,14 +91005,16 @@ sap.ui.define("sap/m/TimePicker",['jquery.sap.global', './InputBase', './MaskInp
 		 *
 		 * @override
 		 * @param {jQuery.Event} oEvent Event object
+		 * @returns {boolean} true if <code>change</code> event was called, false otherwise.
 		 */
 		TimePicker.prototype.onChange = function(oEvent) {
 			// don't call InputBase onChange because this calls setValue what would trigger a new formatting
 
 			// check the control is editable or not
 			if (this.getEditable() && this.getEnabled()) {
-				this._handleInputChange();
+				return this._handleInputChange();
 			}
+			return false;
 		};
 
 		/**
@@ -91352,6 +91736,29 @@ sap.ui.define("sap/m/TimePicker",['jquery.sap.global', './InputBase', './MaskInp
 			this._oTimeSemanticMaskHelper = new TimeSemanticMaskHelper(this);
 		};
 
+		/**
+		 * Fires the change event for the listeners
+		 *
+		 * @protected
+		 * @param {String} sValue value of the input.
+		 * @param {Object} [oParams] extra event parameters.
+		 */
+		TimePicker.prototype.fireChangeEvent = function(sValue, oParams) {
+			if (sValue) {
+				sValue = sValue.trim();
+			}
+
+			if (sValue !== this._sLastChangeValue) {
+				//fire only when there is a change from a meaningful value or to a meaningful value
+				//not when the value changes from null to ""
+				if (sValue || this._sLastChangeValue) {
+					InputBase.prototype.fireChangeEvent.call(this, sValue, oParams);
+				}
+
+				this._sLastChangeValue = sValue;
+			}
+		};
+
 		var TimeSemanticMaskHelper = function(oTimePicker) {
 			var sDisplayFormat = oTimePicker.getDisplayFormat(),
 				sMask = sDisplayFormat,
@@ -91649,7 +92056,7 @@ sap.ui.define("sap/m/UploadCollection",['jquery.sap.global', './MessageBox', './
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -94132,7 +94539,7 @@ sap.ui.define("sap/m/semantic/SemanticSelect",['sap/m/semantic/SemanticControl',
 	 * @abstract
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -94289,7 +94696,7 @@ sap.ui.define("sap/m/semantic/SortSelect",['sap/m/semantic/SemanticSelect'], fun
 	 * @implements sap.m.semantic.ISort
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -94337,7 +94744,7 @@ sap.ui.define("sap/m/ActionSelect",['jquery.sap.global', './Select', './library'
 		 * @extends sap.m.Select
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -94581,7 +94988,7 @@ sap.ui.define("sap/m/ActionSheet",['jquery.sap.global', './Dialog', './Popover',
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -95053,6 +95460,9 @@ sap.ui.define("sap/m/ActionSheet",['jquery.sap.global', './Dialog', './Popover',
 			oButton.setType(sap.m.ButtonType.Transparent);
 		}
 		oButton.addStyleClass("sapMBtnInverted"); // dark background
+
+		this._parent && this._parent.invalidate();
+
 		return this;
 	};
 
@@ -95190,7 +95600,7 @@ sap.ui.define("sap/m/ComboBoxBase",['jquery.sap.global', './Bar', './ComboBoxBas
 		 * @extends sap.m.InputBase
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -96016,7 +96426,7 @@ sap.ui.define("sap/m/MultiComboBox",['jquery.sap.global', './Bar', './InputBase'
 	 * @extends sap.m.ComboBoxBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -98604,7 +99014,7 @@ sap.ui.define("sap/m/QuickView",[
 	 * @extends sap.m.QuickViewBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -98988,8 +99398,14 @@ sap.ui.define("sap/m/QuickView",[
 				// Marks items aggregation as changed and invalidate popover to trigger rendering
 				this._bItemsChanged = true;
 
-				if (this._bRendered && this._oPopover) {
-					this._oPopover.invalidate();
+				if (this._oPopover) {
+					if (arguments[0] != "pages") {
+						this._oPopover[sFuncName].apply(this._oPopover, arguments);
+					}
+
+					if (this._bRendered) {
+						this._oPopover.invalidate();
+					}
 				}
 
 				if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
@@ -99039,7 +99455,7 @@ sap.ui.define("sap/m/TablePersoController",['jquery.sap.global', './TablePersoDi
 	 * @class Table Personalization Controller
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @alias sap.m.TablePersoController
 	 */
 	var TablePersoController = ManagedObject.extend("sap.m.TablePersoController", /** @lends sap.m.TablePersoController */
@@ -99802,7 +100218,7 @@ sap.ui.define("sap/m/semantic/FilterSelect",['sap/m/semantic/SemanticSelect'], f
 	 * @implements sap.m.semantic.ISort
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -99849,7 +100265,7 @@ sap.ui.define("sap/m/semantic/GroupSelect",['sap/m/semantic/SemanticSelect'], fu
 	 * @implements sap.m.semantic.ISort
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -99914,7 +100330,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	 * @abstract
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -99969,6 +100385,15 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 				enableScrolling: {
 					type: "boolean",
 					group: "Behavior",
+					defaultValue: true
+				},
+
+				/**
+				 * Hides or shows the page footer
+				 */
+				showFooter: {
+					type: "boolean",
+					group: "Appearance",
 					defaultValue: true
 				}
 			},
@@ -100076,6 +100501,17 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 	SemanticPage.prototype.setShowSubHeader = function (bShowSubHeader, bSuppressInvalidate) {
 		this._getPage().setShowSubHeader(bShowSubHeader, bSuppressInvalidate);
+		this.setProperty("showSubHeader", bShowSubHeader, true);
+		return this;
+	};
+
+	SemanticPage.prototype.getShowFooter = function () {
+		return this._getPage().getShowFooter();
+	};
+
+	SemanticPage.prototype.setShowFooter = function (bShowFooter, bSuppressInvalidate) {
+		this._getPage().setShowFooter(bShowFooter, bSuppressInvalidate);
+		this.setProperty("showFooter", bShowFooter, true);
 		return this;
 	};
 
@@ -100619,7 +101055,7 @@ sap.ui.define("sap/m/semantic/ShareMenuPage",['jquery.sap.global', "sap/m/semant
 	 * @extends sap.m.semantic.SemanticPage
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -100803,7 +101239,7 @@ sap.ui.define("sap/m/ComboBox",['jquery.sap.global', './ComboBoxBase', './ComboB
 		 * @extends sap.m.ComboBoxBase
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -102151,7 +102587,7 @@ sap.ui.define("sap/m/MessagePopover",["jquery.sap.global", "./ResponsivePopover"
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -103320,7 +103756,7 @@ sap.ui.define("sap/m/SplitContainer",['jquery.sap.global', './library', 'sap/ui/
 	 *
 	 * NOTE: This control must be rendered as a full screen control in order to make the show/hide master area work properly.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -103885,6 +104321,12 @@ sap.ui.define("sap/m/SplitContainer",['jquery.sap.global', './library', 'sap/ui/
 	};
 
 	SplitContainer.prototype.onswiperight = function(oEvent) {
+		// Makes sure that the logic will work only when the device touch display
+		// BSP: 1580084594
+		if (sap.ui.Device.support.touch === false) {
+			return;
+		}
+
 		//only enabled on tablet or Windows 8
 		if ((sap.ui.Device.system.tablet || (sap.ui.Device.os.windows && sap.ui.Device.os.version >= 8))
 			&& (this._portraitHide() || this._hideMode())
@@ -106101,7 +106543,7 @@ sap.ui.define("sap/m/semantic/DetailPage",["sap/m/semantic/ShareMenuPage", "sap/
 	 * @extends sap.m.semantic.ShareMenuPage
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -106363,7 +106805,7 @@ sap.ui.define("sap/m/semantic/FullscreenPage",["sap/m/semantic/ShareMenuPage", "
 	 * @extends sap.m.semantic.ShareMenuPage
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -106628,7 +107070,7 @@ sap.ui.define("sap/m/semantic/MasterPage",[ 'jquery.sap.global', "sap/m/semantic
 	 * @extends sap.m.semantic.SemanticPage
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -106767,7 +107209,7 @@ sap.ui.define("sap/m/SplitApp",['jquery.sap.global', './SplitContainer', './libr
 	 * @extends sap.m.SplitContainer
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public

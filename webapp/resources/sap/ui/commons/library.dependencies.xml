@@ -846,7 +846,7 @@
       <module name="jquery.sap.global.js"/>
     </requires>
   </module>
-  <module name="sap/ui/commons/TextArea.js" size="11051" compressedSize="4404">
+  <module name="sap/ui/commons/TextArea.js" size="10943" compressedSize="4435">
     <description>Provides control sap.ui.commons.TextArea.</description>
     <requires>
       <module name="jquery.sap.global.js"/>
@@ -943,7 +943,7 @@
       <module name="sap/ui/core/Element.js"/>
     </requires>
   </module>
-  <module name="sap/ui/commons/Tree.js" size="27329" compressedSize="12191">
+  <module name="sap/ui/commons/Tree.js" size="29474" compressedSize="12465">
     <description>Provides control sap.ui.commons.Tree.</description>
     <requires>
       <module name="jquery.sap.global.js"/>
@@ -951,7 +951,7 @@
       <module name="sap/ui/core/Control.js"/>
     </requires>
   </module>
-  <module name="sap/ui/commons/TreeNode.js" size="16199" compressedSize="5995">
+  <module name="sap/ui/commons/TreeNode.js" size="17515" compressedSize="6149">
     <description>Provides control sap.ui.commons.TreeNode.</description>
     <requires>
       <module name="jquery.sap.global.js"/>

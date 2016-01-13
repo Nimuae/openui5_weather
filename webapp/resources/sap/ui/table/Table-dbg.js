@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 *
 	 *
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -1718,6 +1718,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				if ($this.hasClass("sapUiTableVScr")) {
 					$this.removeClass("sapUiTableVScr");
 				}
+
+				if (this._sScrollBarTimer != undefined) {
+					jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
+				}
 			} else {
 				// in case of scrollbar mode show or hide the scrollbar dependening on the
 				// calculated steps:
@@ -1739,33 +1743,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						bDoResize = true;
 					}
 				}
+
+				// update the scrollbar only if it is required
+				if (bOnAfterRendering || bForceUpdateVSb || iSteps !== this._oVSb.getSteps() || this.getFirstVisibleRow() !== this._oVSb.getScrollPosition()) {
+					jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
+					this._sScrollBarTimer = undefined;
+					// TODO: in case of bForceUpdateVSb the scrolling doesn't work anymore
+					//       height changes of the scrollbar should not require a re-rendering!
+					this._sScrollBarTimer = jQuery.sap.delayedCall(bOnAfterRendering ? 0 : 250, this, function() {
+						// When the scrollbar timer is planned iSteps might be 0 because the binding might not have data yet.
+						// This can even happen with JSON ListBinding if setProperty is called on a collection
+						// Make sure to get the current length from the binding.
+						var iSteps = 0;
+						if (oBinding) {
+							// the binding might have changed by the time the function gets called
+							iSteps = Math.max(0, (oBinding.getLength() || 0) - this.getVisibleRowCount());
+						}
+
+						if ($this) {
+							$this.toggleClass("sapUiTableVScr", iSteps > 0);
+						}
+
+						this._oVSb.setSteps(iSteps);
+						if (this._oVSb.getDomRef()) {
+							this._oVSb.rerender();
+						}
+						this._oVSb.setScrollPosition(this.getFirstVisibleRow());
+						this._sScrollBarTimer = undefined;
+					});
+				}
 			}
-
-			// update the scrollbar only if it is required
-			if (bOnAfterRendering || bForceUpdateVSb || iSteps !== this._oVSb.getSteps() || this.getFirstVisibleRow() !== this._oVSb.getScrollPosition()) {
-				jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
-				// TODO: in case of bForceUpdateVSb the scrolling doesn't work anymore
-				//       height changes of the scrollbar should not require a re-rendering!
-				this._sScrollBarTimer = jQuery.sap.delayedCall(bOnAfterRendering ? 0 : 250, this, function() {
-					// When the scrollbar timer is planned iSteps might be 0 because the binding might not have data yet.
-					// This can even happen with JSON ListBinding if setProperty is called on a collection
-					// Make sure to get the current length from the binding.
-					var iSteps = 0;
-					if (oBinding) {
-						// the binding might have changed by the time the function gets called
-						iSteps = Math.max(0, (oBinding.getLength() || 0) - this.getVisibleRowCount());
-					}
-
-					this._oVSb.setSteps(iSteps);
-					if (this._oVSb.getDomRef()) {
-						this._oVSb.rerender();
-					}
-					this._oVSb.setScrollPosition(this.getFirstVisibleRow());
-
-				});
-
-			}
-
 		} else {
 			// check for paging mode or scrollbar mode
 			if (this._oPaginator && this.getNavigationMode() === sap.ui.table.NavigationMode.Paginator) {
@@ -2405,7 +2412,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var $tableHeaders = $this.find(".sapUiTableCtrlFirstCol > th");
 
 		var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
-		if (bHasRowHeader) {
+		if (bHasRowHeader && $tableHeaders.length > 0) {
 			var oHiddenElement = $tableHeaders.get(0);
 			iInvisibleColWidth = oHiddenElement.getBoundingClientRect().right - oHiddenElement.getBoundingClientRect().left;
 			$tableHeaders = $tableHeaders.not(":nth-child(1)");
@@ -2541,7 +2548,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			var iHeight = Math.max($colHeaderContainer.height(), $jqo.height());
 			
 			// Height of one row within the header
-			var iRegularHeight = iHeight / iHeaderRowCount;
+			// avoid half pixels
+			var iRegularHeight = Math.floor(iHeight / iHeaderRowCount);
 			if (this._bjQueryLess18) {
 				$cols.height(iRegularHeight);
 				$jqo.height(iHeight);

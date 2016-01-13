@@ -1513,7 +1513,7 @@
 	icon: undefined, // sap.ui.core.URI
 	showIcon: true, // boolean
 	iconDensityAware: true, // boolean
-	buttonTooltip: "Submit", // string, since 1.28
+	buttonTooltip: Submit, // sap.ui.core.TooltipBase, since 1.28
 	ariaLabelForPicture: undefined, // string, since 1.30
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
@@ -6793,11 +6793,11 @@
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
-	sortItems: [], // sap.m.ViewSettingsItem
-	groupItems: [], // sap.m.ViewSettingsItem
-	filterItems: [], // sap.m.ViewSettingsItem
-	presetFilterItems: [], // sap.m.ViewSettingsItem
-	customTabs: [], // sap.m.ViewSettingsCustomTab
+	sortItems: [], // sap.m.ViewSettingsItem, since 1.16
+	groupItems: [], // sap.m.ViewSettingsItem, since 1.16
+	filterItems: [], // sap.m.ViewSettingsItem, since 1.16
+	presetFilterItems: [], // sap.m.ViewSettingsItem, since 1.16
+	customTabs: [], // sap.m.ViewSettingsCustomTab, since 1.30
 	selectedSortItem: undefined, // sap.m.ViewSettingsItem
 	selectedGroupItem: undefined, // sap.m.ViewSettingsItem
 	selectedPresetFilterItem: undefined, // sap.m.ViewSettingsItem
@@ -6833,11 +6833,11 @@
 	resetFilters="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
-		<sortItems></sortItems> <!-- sap.m.ViewSettingsItem -->
-		<groupItems></groupItems> <!-- sap.m.ViewSettingsItem -->
-		<filterItems></filterItems> <!-- sap.m.ViewSettingsItem -->
-		<presetFilterItems></presetFilterItems> <!-- sap.m.ViewSettingsItem -->
-		<customTabs></customTabs> <!-- sap.m.ViewSettingsCustomTab -->
+		<sortItems></sortItems> <!-- sap.m.ViewSettingsItem, since 1.16 -->
+		<groupItems></groupItems> <!-- sap.m.ViewSettingsItem, since 1.16 -->
+		<filterItems></filterItems> <!-- sap.m.ViewSettingsItem, since 1.16 -->
+		<presetFilterItems></presetFilterItems> <!-- sap.m.ViewSettingsItem, since 1.16 -->
+		<customTabs></customTabs> <!-- sap.m.ViewSettingsCustomTab, since 1.30 -->
 </ViewSettingsDialog>
 ]]></xmlTemplate>
 </Template>
@@ -7047,6 +7047,7 @@
 	showNavButton: false, // boolean
 	showSubHeader: true, // boolean
 	enableScrolling: true, // boolean
+	showFooter: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
@@ -7094,6 +7095,7 @@
 	showNavButton="false"
 	showSubHeader="true"
 	enableScrolling="true"
+	showFooter="true"
 	validateFieldGroup=""
 	navButtonPress="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -7309,6 +7311,7 @@
 	showNavButton: false, // boolean
 	showSubHeader: true, // boolean
 	enableScrolling: true, // boolean
+	showFooter: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
@@ -7356,6 +7359,7 @@
 	showNavButton="false"
 	showSubHeader="true"
 	enableScrolling="true"
+	showFooter="true"
 	validateFieldGroup=""
 	navButtonPress="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -7477,6 +7481,7 @@
 	showNavButton: false, // boolean
 	showSubHeader: true, // boolean
 	enableScrolling: true, // boolean
+	showFooter: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
@@ -7516,6 +7521,7 @@
 	showNavButton="false"
 	showSubHeader="true"
 	enableScrolling="true"
+	showFooter="true"
 	validateFieldGroup=""
 	navButtonPress="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -7759,6 +7765,7 @@
 	showNavButton: false, // boolean
 	showSubHeader: true, // boolean
 	enableScrolling: true, // boolean
+	showFooter: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
@@ -7785,6 +7792,7 @@
 	showNavButton="false"
 	showSubHeader="true"
 	enableScrolling="true"
+	showFooter="true"
 	validateFieldGroup=""
 	navButtonPress="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -7931,6 +7939,7 @@
 	showNavButton: false, // boolean
 	showSubHeader: true, // boolean
 	enableScrolling: true, // boolean
+	showFooter: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
@@ -7958,6 +7967,7 @@
 	showNavButton="false"
 	showSubHeader="true"
 	enableScrolling="true"
+	showFooter="true"
 	validateFieldGroup=""
 	navButtonPress="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->

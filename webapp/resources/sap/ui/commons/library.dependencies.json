@@ -843,8 +843,8 @@
     {
       "name" : "sap/ui/commons/TextArea.js",
       "description" : "Provides control sap.ui.commons.TextArea.",
-      "size" : 11051,
-      "compressedSize" : 4404,
+      "size" : 10943,
+      "compressedSize" : 4435,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/TextField.js", "sap/ui/commons/library.js"],
       "includes" : []
     },
@@ -939,16 +939,16 @@
     {
       "name" : "sap/ui/commons/Tree.js",
       "description" : "Provides control sap.ui.commons.Tree.",
-      "size" : 27329,
-      "compressedSize" : 12191,
+      "size" : 29474,
+      "compressedSize" : 12465,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/library.js", "sap/ui/core/Control.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/commons/TreeNode.js",
       "description" : "Provides control sap.ui.commons.TreeNode.",
-      "size" : 16199,
-      "compressedSize" : 5995,
+      "size" : 17515,
+      "compressedSize" : 6149,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/library.js", "sap/ui/core/CustomStyleClassSupport.js", "sap/ui/core/Element.js"],
       "includes" : []
     },

@@ -139,8 +139,8 @@
     {
       "name" : "sap/ui/unified/FileUploader.js",
       "description" : "Provides control sap.ui.unified.FileUploader.",
-      "size" : 47548,
-      "compressedSize" : 20208,
+      "size" : 47572,
+      "compressedSize" : 20222,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/unified/library.js"],
       "includes" : []
     },
@@ -155,8 +155,8 @@
     {
       "name" : "sap/ui/unified/FileUploaderRenderer.js",
       "description" : "Provides default renderer for control sap.ui.unified.FileUploader",
-      "size" : 3320,
-      "compressedSize" : 2021,
+      "size" : 3985,
+      "compressedSize" : 2307,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },

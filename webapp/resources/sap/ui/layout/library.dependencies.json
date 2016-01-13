@@ -75,8 +75,8 @@
     {
       "name" : "sap/ui/layout/ResponsiveFlowLayout.js",
       "description" : "Provides control sap.ui.layout.ResponsiveFlowLayout.",
-      "size" : 21052,
-      "compressedSize" : 8168,
+      "size" : 21204,
+      "compressedSize" : 8244,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/IntervalTrigger.js", "sap/ui/core/theming/Parameters.js", "sap/ui/layout/ResponsiveFlowLayoutData.js", "sap/ui/layout/library.js"],
       "includes" : []
     },

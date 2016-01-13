@@ -133,7 +133,7 @@
 	}
 }
 
-	
+
 .sapMBarLeft,
 .sapMBarRight {
 	position: absolute;
@@ -170,6 +170,10 @@
 
 .sapMBar .sapMLabel {
 	display: inline;
+}
+
+.sapMBarFlexBoxWidth100 {
+  width: 100%;
 }
 /* END "Bar.less" */
 
@@ -337,7 +341,15 @@ html[dir='rtl'] .sapMBsyIndIcon {
 	padding:          0;
 	vertical-align:   top;
 	border:           none;
-	cursor:           pointer;
+}
+
+.sapMBtn:not(.sapMBtnDisabled) {
+	cursor: pointer;
+}
+
+/* override the default cursor of .sapUiIcon */
+.sapMBtn .sapMBtnIcon {
+	cursor: inherit;
 }
 
 .sapMBtnBase {
@@ -415,10 +427,6 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 	display: inline;
 }
 
-.sapMBtnDisabled {
-	cursor: default;
-}
-
 /* END "Button.less" */
 
 /* START "Carousel.less" */
@@ -437,6 +445,11 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 	-ms-touch-action: pan-y;
 }
 
+//show the left and right arrows when the carousel is focused
+.sapMCrsl:focus .sapMCrslHud a {
+	opacity: 0.3;
+}
+
 .sapMCrsl.sapMCrslLeft {
 	text-align: left;
 }
@@ -450,7 +463,7 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 }
 
 .sapMCrsl.sapMCrslFluid.sapMCrslCenter>.sapMCrslInner>*:first-child {
-	margin-left: 0%;
+	margin-left: 0;
 }
 
 .sapMCrslInner {
@@ -632,6 +645,25 @@ div.sapMComboBoxBasePicker {
 /* END "ComboBoxBase.less" */
 
 /* START "CustomListItem.less" */
+
+/* ============================================= */
+/* CSS for controlsap.m/CustomListItem.control */
+/* ============================================= */
+
+.sapMCLI.sapMLIB{
+	padding: 0 1px;
+}
+
+.sapMCLI .sapMLIBSelectSL,
+.sapMCLI .sapMLIBSelectM{
+	margin-left: 0;
+}
+
+.sapMCLI .sapMLIBImgNav,
+.sapMCLI .sapMLIBSelectS,
+.sapMCLI .sapMLIBSelectD{
+	margin-right: 0;
+}
 
 /* END "CustomListItem.less" */
 
@@ -1851,15 +1883,20 @@ span.sapMImg {
 
 .sapMInputBase,
 .sapMInputBaseInner,
-.sapMInputBasePlaceholder {
+.sapMInputBasePlaceholder,
+.sapMInputBaseMessage {
 	box-sizing: border-box;
 }
 
 .sapMInputBasePlaceholder {
 	cursor: text;
+	position: absolute;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
-.sapMInputBaseDisabled > .sapMInputBaseReadonly, 
+.sapMInputBaseDisabled > .sapMInputBaseReadonly,
 .sapMInputBaseDisabled > .sapMInputBasePlaceholder {
 	cursor: default;
 }
@@ -1880,16 +1917,35 @@ span.sapMImg {
 	margin: 0;
 }
 
-/* remove user agent pseudo-element clear button (IE specifix) */
-.sapMInputBaseInner::-ms-clear {
+.sapMInputBase {
+	background: transparent;
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+}
 
-	/* note: don't use display: none; see BCP 1570024996 */
-	height: 0;
+.sapMILI-CTX .sapMInputBase {
+	display: block;
 }
 
 .sapMInputBaseInner {
 	-webkit-appearance: none;
 	border-radius: 0;
+	vertical-align: top;
+	margin: 0;
+	-moz-appearance: textfield;
+}
+
+.sapMInputBaseInner:focus {
+	outline: none;
+	outline-width: 0;
+}
+
+/* remove user agent pseudo-element clear button (IE specifix) */
+.sapMInputBaseInner::-ms-clear {
+
+	/* note: don't use display: none; see BCP 1570024996 */
+	height: 0;
 }
 
 .sapMPointer > .sapMInputBaseInner {
@@ -1903,7 +1959,8 @@ span.sapMImg {
 .sapMInputBaseInner[placeholder] {
 	text-overflow: ellipsis;
 }
-.sapMInputBaseInner::-webkit-input-placeholder{
+
+.sapMInputBaseInner::-webkit-input-placeholder {
 	text-overflow: ellipsis !important; /* important is necessary to overwrite inline style of shadow dom */
 }
 
@@ -1911,14 +1968,14 @@ span.sapMImg {
 	padding: 0.3125rem;
 	background: @sapUiFieldBackground;
 	display: inline-block;
-	box-sizing: border-box;
 }
 
 .sapMInputBaseMessageText {
 	width: 100%;
 }
 
-.sapMInputBaseInner:invalid{
+.sapMInputBaseInner:invalid {
+
 	/* disable native browser input validation visualization e.g. for type email or number */
 	box-shadow: none;
 }
@@ -2257,6 +2314,23 @@ td.sapUiFormElementLbl > .sapMLabel{
 	outline: none;
 }
 
+/* IE ignores outline-offset. Use an overlay: */
+.sapMLIBLegacyOutline:focus {
+  outline: none;
+  position: relative;
+}
+
+.sapMLIBLegacyOutline:focus::before {
+  content: "";
+  border: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
 .sapMLIBSelectS,
 .sapMLIBSelectSL,
 .sapMLIBSelectM,
@@ -2421,7 +2495,7 @@ td.sapUiFormElementLbl > .sapMLabel{
 
 	.sapMMsgPopoverTitleText,
 	.sapMMsgPopoverDescriptionText {
-		float: left;
+		display: block;
 		padding: 0 1rem 0 3rem;
 		margin-top: 1rem;
 	}
@@ -2914,7 +2988,6 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 /* END "NavContainer.less" */
 
 /* START "ObjectAttribute.less" */
-
 /* ============================================= */
 /* CSS for control sap.m/ObjectAttribute.control */
 /* ============================================= */
@@ -2925,9 +2998,18 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 	font-size: .875rem;
 }
 
+.sapMObjectAttributeActive {
+	pointer-events: none;
+}
+
 .sapMObjectAttributeActive .sapMText {
 	color: @sapUiLink;
 	cursor: pointer;
+	pointer-events: auto;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText {
+	pointer-events: auto;
 }
 
 .sapMObjectAttributeActive .sapMText:active,
@@ -3787,7 +3869,7 @@ html[data-sap-ui-os=win8].sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITB
 
 .sapMObjLTopRow {
 	float: left;
-	width: 100%
+	width: 100%;
 }
 
 .sapMObjLIntro {
@@ -3942,6 +4024,23 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	-webkit-transform: none; /* Chrome, Safari, Opera */
 	transform: none;
 }
+
+html[data-sap-ui-browser="ie9"] li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF >div {
+	display: block;
+}
+
+html[data-sap-ui-browser="ie9"] li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF >.sapMObjLTopRow:first-child {
+	padding-top: 1rem;
+}
+
+html[data-sap-ui-browser="ie9"] li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF >.sapMObjLTopRow:last-child {
+	padding-bottom: 1rem;
+}
+
+html[data-sap-ui-browser="ie9"] li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF >.sapMObjLTopRow {
+	padding-top: 0px; 
+	padding-bottom: 0px;
+}
 /* END "ObjectListItem.less" */
 
 /* START "ObjectNumber.less" */
@@ -3991,7 +4090,7 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 /* CSS for control sap.m/ObjectStatus.control */
 /* ============================================= */
 
-.sapMObjStatus {	
+.sapMObjStatus {
 }
 
 .sapMObjStatusText {
@@ -3999,12 +4098,13 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 
 .sapMObjStatusIcon {
 }
+
 .sapMObjStatusIcon > .sapUiIcon {
 	font-size: 1rem;
 }
 
 .sapMObjStatusIcon {
-	padding-right: .25rem;
+	padding-right: .5rem;
 }
 
 .sap-phone .sapMObjStatusIcon {
@@ -4014,6 +4114,42 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	padding-right: .25rem;
 }
 
+.sapUiTableCell .sapMObjStatusText,
+.sapUiTableCell .sapMObjStatusTitle,
+.sapUiTableCell .sapMObjStatusIcon .sapUiIcon,
+.sapMListTbl .sapMObjStatusText,
+.sapMListTbl .sapMObjStatusTitle,
+.sapMListTbl .sapMObjStatusIcon .sapUiIcon,
+.sapUiForm .sapMObjStatusIcon .sapUiIcon {
+	vertical-align: middle;
+}
+
+.sapUiForm .sapMObjStatusIcon,
+.sapUiForm .sapMObjStatusTitle,
+.sapUiForm .sapMObjStatusText {
+	overflow: hidden;
+	display: inline-block;
+	-webkit-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
+/*
+	FIX for 1580155978.
+	Fiori design guidelines say that statuses should be specially styled for forms
+	and share looks with other text only controls.
+*/
+.sapUiForm .sapMObjStatus > .sapMObjStatusIcon,
+.sapUiForm .sapMObjStatus > .sapMObjStatusTitle,
+.sapUiForm .sapMObjStatus > .sapMObjStatusText {
+	line-height: 3rem;
+}
+
+.sapUiSizeCompact .sapUiForm .sapMObjStatus > .sapMObjStatusIcon,
+.sapUiSizeCompact .sapUiForm .sapMObjStatus > .sapMObjStatusTitle,
+.sapUiSizeCompact .sapUiForm .sapMObjStatus > .sapMObjStatusText {
+	line-height: 2rem;
+}
 
 /* END "ObjectStatus.less" */
 
@@ -5412,7 +5548,8 @@ html[data-sap-ui-os^="Android"] {
 }
 
 .sapMSlt:not(.sapMSltDisabled),
-.sapMSlt:not(.sapMSltDisabled) > .sapMSltLabel {
+.sapMSlt:not(.sapMSltDisabled) > .sapMSltLabel,
+.sapMSltIconOnly:not(.sapMSltDisabled) .sapMSltIcon {
 	cursor: pointer;
 }
 
@@ -5460,6 +5597,9 @@ html[data-sap-ui-os^="Android"] {
 .sapMSltIcon {
 	position: absolute;
 	display: block;
+
+	/* prevent IE to focus the icon (non-focusable element) */
+	pointer-events: none;
 }
 
 .sapMSltAutoAdjustedWidth .sapMSltIcon {

@@ -108,7 +108,7 @@
       <module name="sap/ui/table/library.js"/>
     </requires>
   </module>
-  <module name="sap/ui/table/Table.js" size="204282" compressedSize="90598">
+  <module name="sap/ui/table/Table.js" size="204639" compressedSize="90813">
     <description>Provides control sap.ui.table.Table.</description>
     <requires>
       <module name="jquery.sap.global.js"/>

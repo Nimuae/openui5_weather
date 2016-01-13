@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/ElementM
 		 *
 		 * @namespace
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 * @public
 		 * @since 0.8.8
 		 * @alias sap.ui.commons.MessageBox

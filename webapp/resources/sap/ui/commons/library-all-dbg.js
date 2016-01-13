@@ -391,7 +391,7 @@ sap.ui.define("sap/ui/commons/ButtonRenderer",['jquery.sap.global'],
 
 	/**
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @namespace
 	 */
 	var ButtonRenderer = {
@@ -2272,7 +2272,7 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 	 * ListBox Renderer
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @namespace
 	 */
 	var ListBoxRenderer = {
@@ -2829,7 +2829,7 @@ sap.ui.define("sap/ui/commons/MenuItemBase",['jquery.sap.global'],
 	 * @extends sap.ui.unified.MenuItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @since 1.0.0
 	 * 
 	 * @deprecated Since version 1.21.0. 
@@ -5486,7 +5486,7 @@ sap.ui.define("sap/ui/commons/SegmentedButton",['jquery.sap.global', 'sap/ui/cor
 	 * The SegmentedButton provides a group of multiple buttons. Only one button can be active. The behaviour is more ore less like a radio button group.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.commons.ToolbarItem
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -6416,7 +6416,7 @@ sap.ui.define("sap/ui/commons/TextFieldRenderer",['jquery.sap.global', 'sap/ui/c
 	 * TextField Renderer
 	 * @namespace
 	 * @author SAP
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @since 0.9.0
 	 */
 	var TextFieldRenderer = {};
@@ -9206,14 +9206,14 @@ sap.ui.define("sap/ui/commons/library",['jquery.sap.global', 'sap/ui/base/DataTy
 	 * @namespace
 	 * @name sap.ui.commons
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.commons",
-		version: "1.32.7",
+		version: "1.32.9",
 		dependencies : ["sap.ui.core","sap.ui.layout","sap.ui.unified"],
 		types: [
 			"sap.ui.commons.ButtonStyle",
@@ -10460,7 +10460,7 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -11367,7 +11367,7 @@ sap.ui.define("sap/ui/commons/AccordionSection",['jquery.sap.global', './library
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -11713,7 +11713,7 @@ sap.ui.define("sap/ui/commons/Area",['jquery.sap.global', './library', 'sap/ui/c
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -11805,7 +11805,7 @@ sap.ui.define("sap/ui/commons/Button",['jquery.sap.global', './library', 'sap/ui
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -12142,7 +12142,7 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.TooltipBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -12791,7 +12791,7 @@ sap.ui.define("sap/ui/commons/Carousel",['jquery.sap.global', './library', 'sap/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -13604,7 +13604,7 @@ sap.ui.define("sap/ui/commons/CheckBox",['jquery.sap.global', './library', 'sap/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -13805,7 +13805,7 @@ sap.ui.define("sap/ui/commons/ColorPicker",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -15519,7 +15519,7 @@ sap.ui.define("sap/ui/commons/Dialog",['jquery.sap.global', './library', 'sap/ui
 		 *
 		 * @namespace
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -16657,7 +16657,7 @@ sap.ui.define("sap/ui/commons/FileUploader",['jquery.sap.global', './library', '
 	 * @extends sap.ui.unified.FileUploader
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -16710,7 +16710,7 @@ sap.ui.define("sap/ui/commons/FileUploaderParameter",['jquery.sap.global', './li
 	 * @extends sap.ui.unified.FileUploaderParameter
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -16762,7 +16762,7 @@ sap.ui.define("sap/ui/commons/FormattedTextView",['jquery.sap.global', './librar
 		 * @class
 		 * The FormattedTextView control allows the usage of a limited set of HTML tags for display.
 		 * @extends sap.ui.core.Control
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -17035,7 +17035,7 @@ sap.ui.define("sap/ui/commons/HorizontalDivider",['jquery.sap.global', './librar
 	 * @class
 	 * Divides the screen in visual areas.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -17100,7 +17100,7 @@ sap.ui.define("sap/ui/commons/Image",['jquery.sap.global', './library', 'sap/ui/
 	 * @implements sap.ui.commons.ToolbarItem,sap.ui.commons.FormattedTextViewControl
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -17209,7 +17209,7 @@ sap.ui.define("sap/ui/commons/ImageMap",['jquery.sap.global', './library', 'sap/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -17391,7 +17391,7 @@ sap.ui.define("sap/ui/commons/Label",['jquery.sap.global', './library', 'sap/ui/
 	 * @implements sap.ui.commons.ToolbarItem,sap.ui.core.Label
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -17658,7 +17658,7 @@ sap.ui.define("sap/ui/commons/Link",['jquery.sap.global', './library', 'sap/ui/c
 	 * @implements sap.ui.commons.ToolbarItem,sap.ui.commons.FormattedTextViewControl
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -17815,7 +17815,7 @@ sap.ui.define("sap/ui/commons/ListBox",['jquery.sap.global', './library', 'sap/u
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -19200,7 +19200,7 @@ sap.ui.define("sap/ui/commons/Menu",['jquery.sap.global', './MenuItemBase', './l
 	 * @extends sap.ui.unified.Menu
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @since 1.0.0
 	 *
 	 * @constructor
@@ -19249,7 +19249,7 @@ sap.ui.define("sap/ui/commons/MenuButton",['jquery.sap.global', './Button', './M
 	 * Common button control that opens a menu when clicked by the user. The control provides an API for configuring the docking position
 	 * of the menu.
 	 * @extends sap.ui.commons.Button
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -19548,7 +19548,7 @@ sap.ui.define("sap/ui/commons/MenuItem",['jquery.sap.global', './MenuItemBase', 
 	 * @extends sap.ui.unified.MenuItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @since 1.0.0
 	 *
 	 * @constructor
@@ -19600,7 +19600,7 @@ sap.ui.define("sap/ui/commons/MenuTextFieldItem",['jquery.sap.global', './MenuIt
 	 * @extends sap.ui.unified.MenuTextFieldItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -19648,7 +19648,7 @@ sap.ui.define("sap/ui/commons/Message",['jquery.sap.global', './Dialog', './libr
 	 * @class
 	 * Creates the "Message"s to be supplied to the "MessageBar" Control.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -19944,7 +19944,7 @@ sap.ui.define("sap/ui/commons/MessageList",['jquery.sap.global', './library', 's
 	 * @class
 	 * Instantiated by the "MessageBar" Control if the user requests to generate the corresponding "MessageList".
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -20162,7 +20162,7 @@ sap.ui.define("sap/ui/commons/MessageToast",['jquery.sap.global', './library', '
 	 * @class
 	 * Responsible for displaying the new incoming messages, one at the time, on top of the MessageBar.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -20422,7 +20422,7 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 	 * @class
 	 * Provides navigation between pages within a list of numbered pages.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -20861,7 +20861,7 @@ sap.ui.define("sap/ui/commons/Panel",['jquery.sap.global', './library', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -21736,7 +21736,7 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -22054,7 +22054,7 @@ sap.ui.define("sap/ui/commons/RadioButton",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -22358,7 +22358,7 @@ sap.ui.define("sap/ui/commons/RadioButtonGroup",['jquery.sap.global', './library
 	 * usage is supported.
 	 * 
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -23156,7 +23156,7 @@ sap.ui.define("sap/ui/commons/RatingIndicator",['jquery.sap.global', './library'
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -23650,7 +23650,7 @@ sap.ui.define("sap/ui/commons/ResponsiveContainer",['jquery.sap.global', './libr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -23856,7 +23856,7 @@ sap.ui.define("sap/ui/commons/ResponsiveContainerRange",['jquery.sap.global', '.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -23928,7 +23928,7 @@ sap.ui.define("sap/ui/commons/RichTooltip",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.TooltipBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -24148,7 +24148,7 @@ sap.ui.define("sap/ui/commons/RoadMap",['jquery.sap.global', './library', 'sap/u
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -24682,7 +24682,7 @@ sap.ui.define("sap/ui/commons/RoadMapStep",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -24951,7 +24951,7 @@ sap.ui.define("sap/ui/commons/RowRepeater",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -26501,7 +26501,7 @@ sap.ui.define("sap/ui/commons/RowRepeaterFilter",['jquery.sap.global', './librar
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -26570,7 +26570,7 @@ sap.ui.define("sap/ui/commons/RowRepeaterSorter",['jquery.sap.global', './librar
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -26637,7 +26637,7 @@ sap.ui.define("sap/ui/commons/SearchProvider",['jquery.sap.global', './library',
 	 * @class
 	 * A SearchProvider which can be attached to a Search Field.
 	 * @extends sap.ui.core.search.OpenSearchProvider
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -26703,7 +26703,7 @@ sap.ui.define("sap/ui/commons/Slider",['jquery.sap.global', './library', 'sap/ui
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -28368,7 +28368,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 	 * @class
 	 * Allows to split the screen into two areas. Make sure that the container for the splitter has an absolute height or set an absolute height for the splitter using the height property. Otherwise the height of the splitter is calculated by the height of its contents.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -29073,7 +29073,7 @@ sap.ui.define("sap/ui/commons/Tab",['jquery.sap.global', './Panel', './library']
 	 * @extends sap.ui.commons.Panel
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -29326,7 +29326,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -30345,7 +30345,7 @@ sap.ui.define("sap/ui/commons/TextField",['jquery.sap.global', './library', 'sap
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -31188,7 +31188,7 @@ sap.ui.define("sap/ui/commons/TextView",['jquery.sap.global', './library', 'sap/
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -31375,7 +31375,7 @@ sap.ui.define("sap/ui/commons/Title",['jquery.sap.global', './library', 'sap/ui/
 	 * @extends sap.ui.core.Title
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -31451,7 +31451,7 @@ sap.ui.define("sap/ui/commons/ToggleButton",['jquery.sap.global', './Button'],
 	 * @extends sap.ui.commons.Button
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -31549,7 +31549,7 @@ sap.ui.define("sap/ui/commons/Toolbar",['jquery.sap.global', './library', 'sap/u
 		 * @implements sap.ui.core.Toolbar
 		 *
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -32586,7 +32586,7 @@ sap.ui.define("sap/ui/commons/ToolbarSeparator",['jquery.sap.global', './library
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -32648,7 +32648,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	 * @class
 	 * Simple tree to display item in a hierarchical way
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -32836,7 +32836,8 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	Tree.prototype.expandAll = function(){
 		var aNodes = this._getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
-			aNodes[i].expand(true);
+			aNodes[i].expand(true, true);
+			this._adjustSelectionOnExpanding(aNodes[i]);
 		}
 	};
 
@@ -32851,8 +32852,11 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	Tree.prototype.collapseAll = function(){
 		var aNodes = this._getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
-			aNodes[i].collapse(true);
+			aNodes[i].collapse(true, true);
+			this._adjustSelectionOnCollapsing(aNodes[i]);
 		}
+
+		this._adjustFocus();
 	};
 
 	/***********************************************************************************
@@ -33051,7 +33055,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	 *
 	 * @private
 	 */
-	Tree.prototype.adjustFocus = function(){
+	Tree.prototype._adjustFocus = function(){
 
 		var oFocusableNode = this.$().find('.sapUiTreeNode[tabIndex="0"]');
 
@@ -33099,71 +33103,125 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	/***********************************************************************************
 	* HELPER METHODS - SELECTION MANAGEMENT
 	***********************************************************************************/
-	/**Adjusts the selection, when expanding, by re-selecting a children node when the expanded node was
-	   selected only to reprensented the selection of a children node
-	 * @param oExpandingDomNode The Node being expanded
+	/**
+	 * Adjusts the selection, when expanding, by re-selecting a children node when the expanded node was
+	 * selected only to represented the selection of a children node.
+	 * @param {sap.ui.commons.TreeNode} oExpandingNode The Node being expanded
 	 * @private
 	 */
-	Tree.prototype.adjustSelectionOnExpanding = function(oExpandingDomNode) {
-
-		var $Tree = this.$(),
-			$ExpandingDomNode = jQuery(oExpandingDomNode),
-			$DomSelectedNode,
-			$DomParent;
-
-		//Current node is a fake selection, remove it. A child will be either another fake selection or an actual one.
-		if ($ExpandingDomNode.hasClass("sapUiTreeNodeSelectedParent")) {
-			$ExpandingDomNode.removeClass("sapUiTreeNodeSelectedParent");
+	Tree.prototype._adjustSelectionOnExpanding = function(oExpandingNode) {
+		if (!oExpandingNode) {
+			return;
 		}
 
-		//If the actual selection now visible, remove all fake ones
-		var $DomActualSelection = $Tree.find(".sapUiTreeNodeSelected:visible");
-		if ($DomActualSelection.length) {
-			$Tree.find(".sapUiTreeNodeSelectedParent").removeClass("sapUiTreeNodeSelectedParent");
-		} else {
-			$DomSelectedNode = $Tree.find(".sapUiTreeNodeSelected");
-
-			//Find first visible parent node
-			$DomParent = $DomSelectedNode.parent(".sapUiTreeChildrenNodes").prev(".sapUiTreeNode");
-
-			while ($DomParent.length && !$DomParent.is(":visible")) {
-				$DomParent = $DomParent.parent(".sapUiTreeChildrenNodes").prev(".sapUiTreeNode");
-			}
-			$DomParent.addClass("sapUiTreeNodeSelectedParent");
+		var aExpandingParents = [];
+		if (oExpandingNode.getSelectedForNodes().length) {
+			aExpandingParents.push(oExpandingNode);
 		}
+		restoreSelectedChildren(oExpandingNode, aExpandingParents, null);
+
+		//update dom if necessary
+		var $ExpandingNode = oExpandingNode.$();
+		if ($ExpandingNode && $ExpandingNode.hasClass('sapUiTreeNodeSelectedParent')) {
+			$ExpandingNode.removeClass('sapUiTreeNodeSelectedParent');
+		}
+
+		//remove the remaining selectedparent classes from all expanded subnodes
+		var $SelectedChildrenForTheirChildren = oExpandingNode.$('children').find('.sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent');
+		$SelectedChildrenForTheirChildren.removeClass('sapUiTreeNodeSelectedParent');
 	};
 
-	/**Adjusts the selection, when collapsing, selecting a parent when the actual selected node is
+	/**
+	 * Removes the references inside the expanded node of its selected children, because
+	 * they are no longer needed.
+	 * @param {sap.ui.commons.TreeNode} oNode The current node to look at
+	 * @param {object} aExpandingParents Array of parents of the current node that have selectedForNodes references
+	 * @param {sap.ui.commons.TreeNode} oFirstCollapsedParent The topmost collapsed parent node of the current node
+	 */
+	function restoreSelectedChildren(oNode, aExpandingParents, oFirstCollapsedParent) {
+		var bIsExpanded = oNode.getExpanded(),
+			bNodeReferredInParents = false,
+			bIncludeInExpandingParents = bIsExpanded && !!oNode.getSelectedForNodes().length,
+			oFirstCollapsedParentNode = (oFirstCollapsedParent || bIsExpanded) ? oFirstCollapsedParent : oNode,
+			i;
+
+		//check if any of the expanded parents, that have references, refers the current node
+		//if so - remove the reference
+		for (i = 0; i < aExpandingParents.length; i++) {
+			if (aExpandingParents[i].getSelectedForNodes().indexOf(oNode.getId()) !== -1) {
+				bNodeReferredInParents = true;
+				aExpandingParents[i].removeAssociation("selectedForNodes", oNode, true);
+			}
+		}
+
+		//if the node is referred somewhere in its parents and it has a collapsed parent
+		//add a reference to the node in the first collapsed parent (if it is not already there)
+		if (oFirstCollapsedParentNode && bNodeReferredInParents && oFirstCollapsedParentNode !== oNode) {
+			if (oFirstCollapsedParentNode.getSelectedForNodes().indexOf(oNode.getId()) === -1) {
+				oFirstCollapsedParentNode.addAssociation("selectedForNodes", oNode, true);
+			}
+			oFirstCollapsedParentNode.$().addClass('sapUiTreeNodeSelectedParent');
+		}
+
+		//include the node in the expanding parents only if it has references to selected child nodes
+		if (bIncludeInExpandingParents) {
+			aExpandingParents.push(oNode);
+		}
+
+		var aNodes = oNode._getNodes();
+		for (i = 0; i < aNodes.length; i++) {
+			restoreSelectedChildren(aNodes[i], aExpandingParents, oFirstCollapsedParentNode);
+		}
+
+		//exclude the node from the expanding parents
+		if (bIncludeInExpandingParents) {
+			aExpandingParents.pop(oNode);
+		}
+	}
+
+	/**
+	 * Adds references inside the collapsed node of all its selected children recursively.
+	 * @param {sap.ui.commons.TreeNode} oNode The current node to look at
+	 * @param {sap.ui.commons.TreeNode} oRootNode The root node that was collapsed
+	 */
+	function rememberSelectedChildren(oNode, oRootNode, oTree) {
+		var aNodes = oNode._getNodes();
+		var oCurrentNode = null;
+		for (var i = 0; i < aNodes.length; i++) {
+			oCurrentNode = aNodes[i];
+
+			if (oTree.getSelectionMode() === sap.ui.commons.TreeSelectionMode.Multi && oCurrentNode.getIsSelected()) {
+				oTree._delMultiSelection(oCurrentNode);
+			}
+
+			if (oCurrentNode.getIsSelected()) {
+				oRootNode.addAssociation("selectedForNodes", oCurrentNode, true);
+			}
+
+			rememberSelectedChildren(oCurrentNode, oRootNode, oTree);
+		}
+	}
+
+	/**
+	 * Adjusts the selection, when collapsing, selecting a parent when the actual selected node is
 	 * not visible.
-	 * @param oDomCollapsingNode The Node being expanded
+	 * @param {sap.ui.commons.TreeNode} oCollapsingNode The Node being collapsed
 	 * @private
 	 */
-	Tree.prototype.adjustSelectionOnCollapsing = function(oDomCollapsingNode){
-		var that = this;
-		if (this.getSelectionMode() != sap.ui.commons.TreeSelectionMode.Multi) {
-			var $DomCollapsingNode = jQuery(oDomCollapsingNode),
-			sChildrenId = "#" + $DomCollapsingNode.attr("id") + "-children",
-			$DomActualSelSubNode = $DomCollapsingNode.siblings(sChildrenId).find(".sapUiTreeNodeSelected"),
-			$DomParentSelSubNode = $DomCollapsingNode.siblings(sChildrenId).find(".sapUiTreeNodeSelectedParent");
+	Tree.prototype._adjustSelectionOnCollapsing = function(oCollapsingNode) {
+		if (!oCollapsingNode) {
+			return;
+		}
 
-			if ($DomActualSelSubNode.length || $DomParentSelSubNode.length) {
-				$DomCollapsingNode.addClass("sapUiTreeNodeSelectedParent");
+		// the root node, which needs to update references for selected children,
+		// is also the first node to look at
+		rememberSelectedChildren(oCollapsingNode, oCollapsingNode, this);
 
-				if ($DomParentSelSubNode.length) {
-					$DomParentSelSubNode.removeClass("sapUiTreeNodeSelectedParent");
-				}
-			}
-		} else {
-			var $DomCollapsingNode = jQuery(oDomCollapsingNode),
-			sChildrenId = "#" + $DomCollapsingNode.attr("id") + "-children",
-			$DomActualSelSubNode = $DomCollapsingNode.siblings(sChildrenId).find(".sapUiTreeNodeSelected");
-			var aSelNode = $DomActualSelSubNode.control();
-			if (aSelNode) {
-				if (jQuery.isEmptyObject(aSelNode) == false) {
-					jQuery.each(aSelNode, function(sId, oNode){
-						that._delMultiSelection(oNode);
-					});
-				}
+		//update dom if necessary
+		if (oCollapsingNode.getSelectedForNodes().length) {
+			var $CollapsingNode = oCollapsingNode.$();
+			if ($CollapsingNode && !$CollapsingNode.hasClass('sapUiTreeNodeSelectedParent')) {
+				$CollapsingNode.addClass('sapUiTreeNodeSelectedParent');
 			}
 		}
 	};
@@ -33442,26 +33500,26 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	Tree.prototype._setNodeSelection = function(oNode, bIsSelected, bSuppressEvent) {
 		var aSelectedNodes = [],
 			aSelectedNodeContexts = [];
-		var oVisibleDomNode;
+		var oVisibleNode;
 
 		if (this.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Single) {
 			if (bIsSelected) {
 				var oSelectedNode = this.getSelection();
 				this._setSelectedNode(oNode, bSuppressEvent);
 				if (!oNode.isVisible()) {
-					oVisibleDomNode = this._getVisibleNode(oNode).getDomRef();
-					this.adjustSelectionOnCollapsing(oVisibleDomNode);
+					oVisibleNode = this._getVisibleNode(oNode);
+					this._adjustSelectionOnCollapsing(oVisibleNode);
 				}
 				if (oSelectedNode && !oSelectedNode.isVisible()) {
-					oVisibleDomNode = this._getVisibleNode(oSelectedNode).getDomRef();
-					this.adjustSelectionOnExpanding(oVisibleDomNode);
+					oVisibleNode = this._getVisibleNode(oSelectedNode);
+					this._adjustSelectionOnExpanding(oVisibleNode);
 				}
 				return;
 			} else {
 				this._delMultiSelection(oNode, bSuppressEvent);
 				if (!oNode.isVisible()) {
-					oVisibleDomNode = this._getVisibleNode(oNode).getDomRef();
-					this.adjustSelectionOnExpanding(oVisibleDomNode);
+					oVisibleNode = this._getVisibleNode(oNode);
+					this._adjustSelectionOnExpanding(oVisibleNode);
 				}
 			}
 		}
@@ -33555,7 +33613,7 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	 * @class
 	 * Tree node element
 	 * @extends sap.ui.core.Element
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -33606,6 +33664,12 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			nodes : {type : "sap.ui.commons.TreeNode", multiple : true, singularName : "node"}
 		},
 		associations : {
+			/**
+			 * When this node is collapsed and it has selected children, it looks as if it were
+			 * selected itself.
+			 * This association holds the references of the selected children.
+			 */
+			selectedForNodes : { type : "sap.ui.commons.TreeNode", multiple: true, singularName: "selectedForNode", visibility: "hidden" },
 
 			/**
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
@@ -33649,77 +33713,100 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	//***********************************************************************************
 
 	/**
-	 * Expands the node
-	 * @param {boolean} bExpandChildren
+	 * Expands the node.
+	 * @param {boolean} bExpandChildren Propagates expand to node's children
+	 * @param {boolean} bDisableExpandFinishedHandler Disables the expand finished handler
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeNode.prototype.expand = function(bExpandChildren){
+	TreeNode.prototype.expand = function(bExpandChildren, bDisableExpandFinishedHandler){
+		//Change property anyway. (Even if node has no expander)
+		this.setProperty("expanded", true, true); //Suppress Re-rendering
+
+		var expandFinished = null;
+		if (!bDisableExpandFinishedHandler) {
+			expandFinished = expandFinishedHandler.bind(this);
+		}
 
 		var oDomNode = this.$();
 		if (oDomNode.hasClass("sapUiTreeNodeCollapsed")) {
 			//If not, not an expandable node
 			oDomNode.toggleClass("sapUiTreeNodeCollapsed");
 			oDomNode.toggleClass("sapUiTreeNodeExpanded");
+			oDomNode.attr("aria-expanded", "true");
 
 			var oDomChildrenNodes = this.$("children");
 			if (oDomChildrenNodes) {
-				oDomChildrenNodes.stop(true, true);
-				oDomChildrenNodes.show(TreeNode.ANIMATION_DURATION,this.getCallbackFunction(this,oDomNode,false));
+				if (bExpandChildren) {
+					//show without animation
+					oDomChildrenNodes.show();
+				} else {
+					//stop any animations, before next animate
+					oDomChildrenNodes.stop(true, true);
+					oDomChildrenNodes.show(TreeNode.ANIMATION_DURATION, expandFinished);
+				}
 				//In Chrome jQuery .show() method sporadically fails to set display property to child nodes and they remain hidden.
+				//and it never came back from display block...
 				oDomChildrenNodes.css({display:'block'});
 			}
-			oDomNode.attr("aria-expanded", "true");
 			this.fireToggleOpenState({opened:true});
-
 		}
-		//Change property anyway. (Even if node has no expander)
-		this.setProperty("expanded", true, true); //Suppress Re-rendering
 
 		if (bExpandChildren) {
 			var aNodes = this._getNodes();
 			for (var i = 0;i < aNodes.length;i++) {
-				aNodes[i].expand(bExpandChildren);
+				aNodes[i].expand(bExpandChildren, true);
 			}
-		}
 
+			expandFinished && expandFinished();
+		}
 	};
 
 	/**
-	 * Collapses the node
-	 * @param {boolean} bCollapseChildren
+	 * Collapses the node.
+	 * @param {boolean} bCollapseChildren Propagates collapse to node's children
+	 * @param {boolean} bDisableCollapseFinishedHandler Disables the collapse finished handler
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TreeNode.prototype.collapse = function(bCollapseChildren){
+	TreeNode.prototype.collapse = function(bCollapseChildren, bDisableCollapseFinishedHandler){
+		//Change property anyway. (Even if node has no expander)
+		this.setProperty("expanded", false, true); //Suppress Re-rendering
+
+		var collapseFinished = null;
+		if (!bDisableCollapseFinishedHandler) {
+			collapseFinished = collapseFinishedHandler.bind(this);
+		}
 
 		var oDomNode = this.$();
-
 		if (oDomNode.hasClass("sapUiTreeNodeExpanded")) {
 			//If not, not a collapsable node
-
 			oDomNode.toggleClass("sapUiTreeNodeCollapsed");
 			oDomNode.toggleClass("sapUiTreeNodeExpanded");
+			oDomNode.attr("aria-expanded", "false");
 
 			var oDomChildrenNodes = this.$("children");
 			if (oDomChildrenNodes) {
-				oDomChildrenNodes.stop(true, true);
-				oDomChildrenNodes.hide(TreeNode.ANIMATION_DURATION,this.getCallbackFunction(this,oDomNode,true));
+				if (bCollapseChildren) {
+					//hide without animation
+					oDomChildrenNodes.hide();
+				} else {
+					//stop any animations, before next animate
+					oDomChildrenNodes.stop(true, true);
+					oDomChildrenNodes.hide(TreeNode.ANIMATION_DURATION, collapseFinished);
+				}
 			}
-			oDomNode.attr("aria-expanded", "false");
 			this.fireToggleOpenState({opened:false});
-
 		}
-		//Change property anyway. (Even if node has no expander)
-		this.setProperty("expanded", false, true); //Suppress Re-rendering
 
 		if (bCollapseChildren) {
 			var aNodes = this._getNodes();
 			for (var i = 0;i < aNodes.length;i++) {
-				aNodes[i].collapse(bCollapseChildren);
+				aNodes[i].collapse(bCollapseChildren, true);
 			}
-		}
 
+			collapseFinished && collapseFinished();
+		}
 	};
 
 	/**
@@ -33744,6 +33831,27 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	//***********************************************************************************
 	//* SELECTION PRIVATE METHODS
 	//***********************************************************************************
+
+	/**
+	 * Called only when the root expanding node has expanded, including children.
+	 */
+	function expandFinishedHandler() {
+		var oTree = this.getTree();
+		if (oTree) {
+			oTree._adjustSelectionOnExpanding(this);
+		}
+	}
+
+	/**
+	 * Called only when the root collapsing node has collapsed, including children.
+	 */
+	function collapseFinishedHandler() {
+		var oTree = this.getTree();
+		if (oTree) {
+			oTree._adjustSelectionOnCollapsing(this);
+			oTree._adjustFocus();
+		}
+	}
 
 	/**Select the node
 	 * @private
@@ -34035,26 +34143,6 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 		return true;
 	};
 
-
-	/**
-	* Used for Javascript closure.
-	* @private
-	* @return	Returns a function to be called as callback function for jQuery animation
-	*/
-	TreeNode.prototype.getCallbackFunction = function(oNode,oDomNode,bCollapsing){
-		var oTree = oNode.getTree();
-		if (bCollapsing) {
-			return function(){
-				oTree.adjustFocus();
-				oTree.adjustSelectionOnCollapsing(oDomNode);
-			};
-		} else {
-			return function(){
-				oTree.adjustSelectionOnExpanding(oDomNode);
-			};
-		}
-	};
-
 	/**
 	 * In case the selected node is not visible, change the scroll position of the
 	 * tree to get it into view.
@@ -34150,7 +34238,7 @@ sap.ui.define("sap/ui/commons/TriStateCheckBox",['jquery.sap.global', './library
 	 * TriStateCheckBox to reflect mixed state for checkboxes. The control can display three states, namely checked, unchecked and mixed. However, mixed state cannot be directly reached by user interaction on the particular control.
 	 * It can be only set by the control's public toggle function, to make a behaviour possible which is e.g. required in checkbox trees.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34330,7 +34418,7 @@ sap.ui.define("sap/ui/commons/ValueHelpField",['jquery.sap.global', './TextField
 	 * @extends sap.ui.commons.TextField
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34527,7 +34615,7 @@ sap.ui.define("sap/ui/commons/form/Form",['jquery.sap.global', 'sap/ui/commons/l
 	 * @extends sap.ui.layout.form.Form
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34608,7 +34696,7 @@ sap.ui.define("sap/ui/commons/form/FormContainer",['jquery.sap.global', 'sap/ui/
 	 * @extends sap.ui.layout.form.FormContainer
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34689,7 +34777,7 @@ sap.ui.define("sap/ui/commons/form/FormElement",['jquery.sap.global', 'sap/ui/co
 	 * @extends sap.ui.layout.form.FormElement
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34770,7 +34858,7 @@ sap.ui.define("sap/ui/commons/form/FormLayout",['jquery.sap.global', 'sap/ui/com
 	 * @extends sap.ui.layout.form.FormLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34825,7 +34913,7 @@ sap.ui.define("sap/ui/commons/form/GridContainerData",['jquery.sap.global', 'sap
 	 * @extends sap.ui.layout.form.GridContainerData
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34883,7 +34971,7 @@ sap.ui.define("sap/ui/commons/form/GridElementData",['jquery.sap.global', 'sap/u
 	 * @extends sap.ui.layout.form.GridElementData
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34942,7 +35030,7 @@ sap.ui.define("sap/ui/commons/form/GridLayout",['jquery.sap.global', 'sap/ui/com
 	 * @extends sap.ui.layout.form.GridLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -34995,7 +35083,7 @@ sap.ui.define("sap/ui/commons/form/ResponsiveLayout",['jquery.sap.global', 'sap/
 	 * @extends sap.ui.layout.form.ResponsiveLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -35046,7 +35134,7 @@ sap.ui.define("sap/ui/commons/form/SimpleForm",['jquery.sap.global', 'sap/ui/com
 	 * @class
 	 * Use the SimpleForm to create a form based on title, label and fields that are stacked in the content aggregation. Add Title to start a new FormContainer(Group). Add Label to start a new row in the container. Add Input/Display controls as needed. Use LayoutData to influence the layout for special cases in the Input/Display controls.
 	 * @extends sap.ui.layout.form.SimpleForm
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -35127,7 +35215,7 @@ sap.ui.define("sap/ui/commons/layout/BorderLayout",['jquery.sap.global', 'sap/ui
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -35498,7 +35586,7 @@ sap.ui.define("sap/ui/commons/layout/BorderLayoutArea",['jquery.sap.global', 'sa
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -35611,7 +35699,7 @@ sap.ui.define("sap/ui/commons/layout/HorizontalLayout",['jquery.sap.global', 'sa
 	 * @extends sap.ui.layout.HorizontalLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -35660,7 +35748,7 @@ sap.ui.define("sap/ui/commons/layout/MatrixLayoutCell",['jquery.sap.global', 'sa
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -35839,7 +35927,7 @@ sap.ui.define("sap/ui/commons/layout/MatrixLayoutRow",['jquery.sap.global', 'sap
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -35972,7 +36060,7 @@ sap.ui.define("sap/ui/commons/layout/PositionContainer",['jquery.sap.global', 's
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -36424,7 +36512,7 @@ sap.ui.define("sap/ui/commons/layout/ResponsiveFlowLayout",['jquery.sap.global',
 	 * @extends sap.ui.layout.ResponsiveFlowLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -36475,7 +36563,7 @@ sap.ui.define("sap/ui/commons/layout/ResponsiveFlowLayoutData",['jquery.sap.glob
 	 * @extends sap.ui.layout.ResponsiveFlowLayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -36552,7 +36640,7 @@ sap.ui.define("sap/ui/commons/layout/VerticalLayout",['jquery.sap.global', 'sap/
 	 * @extends sap.ui.layout.VerticalLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -36600,7 +36688,7 @@ sap.ui.define("sap/ui/commons/ApplicationHeader",['jquery.sap.global', './librar
 	 * @class
 	 * The application header control stands on the top of any application page. It consists of 4 areas: Logo area, Function area provided by application, Search area, Logout area.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -36851,7 +36939,7 @@ sap.ui.define("sap/ui/commons/Callout",['jquery.sap.global', './CalloutBase', '.
 	 * @extends sap.ui.commons.CalloutBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -36910,7 +36998,7 @@ sap.ui.define("sap/ui/commons/ComboBox",['jquery.sap.global', './TextField', './
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -38743,7 +38831,7 @@ sap.ui.define("sap/ui/commons/DatePicker",['jquery.sap.global', './TextField', '
 	 * @extends sap.ui.commons.TextField
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -39651,7 +39739,7 @@ sap.ui.define("sap/ui/commons/DropdownBox",['jquery.sap.global', './ComboBox', '
 	 * The control provides a field that allows end users to an entry out of a list of pre-defined items.
 	 * The choosable items can be provided in the form of a complete <code>ListBox</code>, single <code>ListItems</code>.
 	 * @extends sap.ui.commons.ComboBox
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -41355,7 +41443,7 @@ sap.ui.define("sap/ui/commons/InPlaceEdit",['jquery.sap.global', './TextField', 
 	 * @class
 	 * The InPlaceEdit is a functionality to have text in display mode that can be changed in place.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -42350,7 +42438,7 @@ sap.ui.define("sap/ui/commons/MenuBar",['jquery.sap.global', './Menu', './MenuIt
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -42928,7 +43016,7 @@ sap.ui.define("sap/ui/commons/MessageBar",['jquery.sap.global', './library', 'sa
 	 * @class
 	 * Creates an instance of a MessageBar Control, for displaying messages.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -43772,7 +43860,7 @@ sap.ui.define("sap/ui/commons/PasswordField",['jquery.sap.global', './TextField'
 	 * @extends sap.ui.commons.TextField
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -43841,7 +43929,7 @@ sap.ui.define("sap/ui/commons/RangeSlider",['jquery.sap.global', './Slider', './
 	 * @extends sap.ui.commons.Slider
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -44870,7 +44958,7 @@ sap.ui.define("sap/ui/commons/SearchField",['jquery.sap.global', './ComboBox', '
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -45885,7 +45973,7 @@ sap.ui.define("sap/ui/commons/TextArea",['jquery.sap.global', './TextField', './
 	 * @class
 	 * Control to enter or display multible row text.
 	 * @extends sap.ui.commons.TextField
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -46028,25 +46116,20 @@ sap.ui.define("sap/ui/commons/TextArea",['jquery.sap.global', './TextField', './
 	};
 
 	/**
-	 * Returns an object representing the serialized focus information.
-	 * Overwrites the standard function.
-	 * @return {object} An object representing the serialized focus information.
-	 * @private
-	 */
-	TextArea.prototype.getFocusInfo = function () {
-		return {id:this.getId(), cursorPos:this.getCursorPos()};
-	};
-
-	/**
 	 * Applies the focus info.
 	 * Overwrites the standard function.
 	 * @param {object} oFocusInfo Focusinfo object
 	 * @private
 	 */
 	TextArea.prototype.applyFocusInfo = function (oFocusInfo) {
-		this.focus();
+
+		TextField.prototype.applyFocusInfo.apply(this, arguments);
+
 		var oFocusDomRef = this.getFocusDomRef();
 		jQuery(oFocusDomRef).cursorPos(this.getCursorPos());
+
+		return this;
+
 	};
 
 	/**
@@ -46211,6 +46294,10 @@ sap.ui.define("sap/ui/commons/TextArea",['jquery.sap.global', './TextField', './
 
 		TextField.prototype.oninput.apply(this, arguments);
 
+		// save cursor position
+		var oDomRef = this.getDomRef();
+		this.setProperty('cursorPos', jQuery(oDomRef).cursorPos(), true); // no re-rendering!
+
 	};
 
 	/**
@@ -46290,7 +46377,7 @@ sap.ui.define("sap/ui/commons/layout/AbsoluteLayout",['jquery.sap.global', './Po
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -46845,7 +46932,7 @@ sap.ui.define("sap/ui/commons/layout/MatrixLayout",['jquery.sap.global', './Matr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -47003,7 +47090,7 @@ sap.ui.define("sap/ui/commons/AutoComplete",['jquery.sap.global', './ComboBox', 
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -47468,7 +47555,7 @@ sap.ui.define("sap/ui/commons/MessageBox",['jquery.sap.global', 'sap/ui/core/lib
 		 *
 		 * @namespace
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 * @public
 		 * @since 0.8.8
 		 * @alias sap.ui.commons.MessageBox

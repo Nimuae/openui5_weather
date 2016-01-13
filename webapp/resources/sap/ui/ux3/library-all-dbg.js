@@ -4413,14 +4413,14 @@ sap.ui.define("sap/ui/ux3/library",['jquery.sap.global',
 	 * @namespace
 	 * @name sap.ui.ux3
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.ux3",
-		version: "1.32.7",
+		version: "1.32.9",
 		dependencies : ["sap.ui.core","sap.ui.commons"],
 		types: [
 			"sap.ui.ux3.ActionBarSocialActions",
@@ -4814,7 +4814,7 @@ sap.ui.define("sap/ui/ux3/ActionBar",['jquery.sap.global', 'sap/ui/core/Control'
 	 * 
 	 * When using this control, please be aware that it fulfills rather specific requirements: it has been designed for and is used within composite controls QuickView and ThingInspector.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -6355,7 +6355,7 @@ sap.ui.define("sap/ui/ux3/Collection",['jquery.sap.global', 'sap/ui/core/Element
 	 * @class
 	 * Collection
 	 * @extends sap.ui.core.Element
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -6558,7 +6558,7 @@ sap.ui.define("sap/ui/ux3/CollectionInspector",['jquery.sap.global', 'sap/ui/cor
 	 * @class
 	 * CollectionInspector
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -7188,7 +7188,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	 * @class
 	 * DataSet
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -7964,7 +7964,7 @@ sap.ui.define("sap/ui/ux3/DataSetItem",['jquery.sap.global', 'sap/ui/core/Elemen
 	 * @class
 	 * DataSet Item
 	 * @extends sap.ui.core.Element
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -8076,7 +8076,7 @@ sap.ui.define("sap/ui/ux3/DataSetSimpleView",['jquery.sap.global', 'sap/ui/core/
 	 * DataSetSimpleView provides a simple view example for DataSet usage.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.ux3.DataSetView
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -8598,7 +8598,7 @@ sap.ui.define("sap/ui/ux3/ExactArea",['jquery.sap.global', 'sap/ui/commons/Toolb
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -8674,12 +8674,10 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 	function(jQuery, Element, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new ExactAttribute.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -8687,7 +8685,7 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -8695,32 +8693,32 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ExactAttribute = Element.extend("sap.ui.ux3.ExactAttribute", /** @lends sap.ui.ux3.ExactAttribute.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * The attribute name
 			 */
 			text : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Specifies whether the attribute shall be selected
 			 */
 			selected : {type : "boolean", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Specifies the width of the corresponding list in pixels. The value must be between 70 and 500.
 			 * @since 1.7.0
 			 */
 			width : {type : "int", group : "Misc", defaultValue : 168},
-	
+
 			/**
 			 * The order how the sublists of this attribute should be displayed.
 			 * @since 1.7.1
 			 */
 			listOrder : {type : "sap.ui.ux3.ExactOrder", defaultValue : sap.ui.ux3.ExactOrder.Select},
-	
+
 			/**
 			 * Specifies whether the attribute shall have sub values for visual purposes.
 			 * The indicator which is a little arrow beside an attribute in the list is computed automatically
@@ -8731,18 +8729,18 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 			 * showSubAttributesIndicator should be set to true.
 			 */
 			showSubAttributesIndicator : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * An example for additional data are database keys
 			 */
 			additionalData : {type : "object", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * The supplyAttributes event is only fired if supplyActive has value true which is the default. After firing the event, the attribute is automatically set to false.
 			 * The idea is that a supply function is called only once when the data is requested. To enable the event again it is possible to manually set the attribute back to true.
 			 */
 			supplyActive : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * If you want the supply function to be called on every select, you can set the autoActivateSupply attribute to true. In this case, supplyActive is automatically
 			 * set to true on every unselect.
@@ -8751,20 +8749,20 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 		},
 		defaultAggregation : "attributes",
 		aggregations : {
-	
+
 			/**
 			 * Values (sub attributes) of this attribute
 			 */
 			attributes : {type : "sap.ui.ux3.ExactAttribute", multiple : true, singularName : "attribute"}
 		},
 		events : {
-	
+
 			/**
 			 * A supply function is a handler which is attached to the supplyAttributes event. The event is fired when the corresponding ExactAttribute is selected, it was already selected when a handler is attached or function getAttributes() is called.
 			 */
 			supplyAttributes : {
 				parameters : {
-	
+
 					/**
 					 * The ExactAttribute
 					 */
@@ -8773,18 +8771,15 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 			}
 		}
 	}});
-	
-	
-	
-	
-	
-	
-	
+
 	(function() {
-	
+
 	ExactAttribute._MINWIDTH = 70;
 	ExactAttribute._MAXWIDTH = 500;
-	
+
+	ExactAttribute.prototype.onInit = function (){
+		this._getAttributesCallCount = 0;
+	};
 
 	/**
 	 * Scrolls the corresponding list of this attribute until the given direct child attribute is visible. If the corresponding list is not yet visible the call is buffered until the list is available.
@@ -8800,7 +8795,7 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 			this._scrollToAttributeId = undefined;
 			return;
 		}
-		
+
 		var oList = this.getChangeListener();
 		if (oList) {
 			oList = sap.ui.getCore().byId(oList.id);
@@ -8815,23 +8810,23 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 		}
 		this._scrollToAttributeId = oAttribute.getId();
 	};
-	
+
 	//*** Overridden API functions ***
-	
+
 	ExactAttribute.prototype.setText = function(sText) {
 		this.setProperty("text", sText, true);
 		this._handleChange(this, "text");
 		return this;
 	};
-	
-	
+
+
 	ExactAttribute.prototype.setWidth = function(iWidth) {
 		this._setWidth(iWidth);
 		this._handleChange(this, "width");
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * @param {string|sap.ui.core.TooltipBase} oTooltip
 	 * @see sap.ui.core.Element.prototype.setTooltip
@@ -8842,46 +8837,51 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 		this._handleChange(this, "tooltip", true);
 		return this;
 	};
-	
-	
+
+
 	ExactAttribute.prototype.setSelected = function(bSelected) {
 		this.setProperty("selected", bSelected, true);
-	
+
 		if (!this.getSelected()) {
 			this._clearSelection();
 		}
-	
+
 		this._handleChange(this, "selected");
 		return this;
 	};
-	
-	
+
+
 	ExactAttribute.prototype.setSupplyActive = function(bSupplyActive) {
 		this.setProperty("supplyActive", bSupplyActive, true);
 		return this;
 	};
-	
-	
+
 	ExactAttribute.prototype.setAutoActivateSupply = function(bAutoActivateSupply) {
 		this.setProperty("autoActivateSupply", bAutoActivateSupply, true);
 		return this;
 	};
-	
-	
+
+
 	ExactAttribute.prototype.setAdditionalData = function(oAdditionalData) {
 		this.setProperty("additionalData", oAdditionalData, true);
 		return this;
 	};
-	
-	
+
+
 	ExactAttribute.prototype.setListOrder = function(sListOrder) {
 		this.setProperty("listOrder", sListOrder, true);
 		this._handleChange(this, "order");
 		return this;
 	};
-	
-	
+
+
 	ExactAttribute.prototype.getAttributes = function() {
+		this._getAttributesCallCount++;
+
+		if (this._getAttributesCallCount > 1){
+			this.setSupplyActive(false);
+		}
+
 		if (this.hasListeners("supplyAttributes") && this.getSupplyActive()) {
 			this._bSuppressChange = true;
 			this._bChangedHappenedDuringSuppress = false;
@@ -8893,26 +8893,25 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 			}
 			this._bChangedHappenedDuringSuppress = undefined;
 		}
-		return this.getAggregation("attributes", []);
+
+		this._getAttributesCallCount--;
+		return this.getAttributesInternal();
 	};
-	
-	
+
 	ExactAttribute.prototype.insertAttribute = function(oAttribute, iIndex) {
 		this.insertAggregation("attributes", oAttribute, iIndex, true);
 		this._handleChange(this, "attributes");
 		this.setSupplyActive(false);
 		return this;
 	};
-	
-	
+
 	ExactAttribute.prototype.addAttribute = function(oAttribute) {
 		this.addAggregation("attributes", oAttribute, true);
 		this._handleChange(this, "attributes");
 		this.setSupplyActive(false);
 		return this;
 	};
-	
-	
+
 	ExactAttribute.prototype.removeAttribute = function(vElement) {
 		var oAtt = this.removeAggregation("attributes", vElement, true);
 		if (oAtt) {
@@ -8921,8 +8920,7 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 		}
 		return oAtt;
 	};
-	
-	
+
 	ExactAttribute.prototype.removeAllAttributes = function() {
 		var aAtts = this.getAttributesInternal();
 		for (var idx = 0; idx < aAtts.length; idx++) {
@@ -8934,8 +8932,7 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 		}
 		return aRes;
 	};
-	
-	
+
 	ExactAttribute.prototype.destroyAttributes = function() {
 		var aAtts = this.getAttributesInternal();
 		for (var idx = 0; idx < aAtts.length; idx++) {
@@ -8947,8 +8944,8 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 		}
 		return this;
 	};
-	
-	
+
+
 
 	/**
 	 * See attribute showSubAttributesIndicator
@@ -8960,8 +8957,8 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 	ExactAttribute.prototype.getShowSubAttributesIndicator_Computed = function() {
 		return this.hasListeners("supplyAttributes") && this.getSupplyActive() ? this.getShowSubAttributesIndicator() : this.getAttributesInternal().length > 0;
 	};
-	
-	
+
+
 	ExactAttribute.prototype.attachSupplyAttributes = function(oData, fnFunction, oListener) {
 		this.attachEvent("supplyAttributes", oData, fnFunction, oListener);
 		if (this.getSelected()) {
@@ -8969,11 +8966,9 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 		}
 		return this;
 	};
-	
-	
+
 	//*** Internal (may also used by Exact Control) functions ***
-	
-	
+
 	ExactAttribute.prototype._setProperty_Orig = ExactAttribute.prototype.setProperty;
 	/**
 	 * @param {string} sPropertyName
@@ -8984,7 +8979,7 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 	 */
 	ExactAttribute.prototype.setProperty = function(sPropertyName, oValue, bSuppressRerendering) {
 		this._setProperty_Orig(sPropertyName, oValue, bSuppressRerendering);
-	
+
 		if (sPropertyName == "selected") {
 			if (oValue) {
 				this.getAttributesInternal(true); //force init of attributes (e.g. call supply function)
@@ -8994,26 +8989,25 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 				}
 			}
 		}
-	
+
 		return this;
 	};
-	
-	
+
 	ExactAttribute.prototype.setChangeListener = function(oChangeListener) {
 		this._oChangeListener = oChangeListener;
 	};
-	
-	
+
+
 	ExactAttribute.prototype.getChangeListener = function(oChangeListener) {
 		return this._oChangeListener;
 	};
-	
-	
+
+
 	ExactAttribute.prototype.getAttributesInternal = function(bForceInit) {
 		return bForceInit ? this.getAttributes() : this.getAggregation("attributes", []);
 	};
-	
-	
+
+
 	ExactAttribute.prototype._handleChange = function(oSourceAttribute, sType) {
 		if (this._bSuppressChange) {
 			this._bChangedHappenedDuringSuppress = true;
@@ -9027,8 +9021,7 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 			this.getParent()._handleChange(oSourceAttribute, sType);
 		}
 	};
-	
-	
+
 	//Sets the selection property of the attribute and all its sub-attributes to false.
 	ExactAttribute.prototype._clearSelection = function(){
 		this.setProperty("selected", false, true);
@@ -9037,22 +9030,20 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 			aVals[idx]._clearSelection();
 		}
 	};
-	
-	
+
 	//Setter of the width property without invalidate and change notification
 	ExactAttribute.prototype._setWidth = function(iWidth) {
 		iWidth = Math.round(ExactAttribute._checkWidth(iWidth));
 		this.setProperty("width", iWidth, true);
 	};
-	
-	
+
 	//Checks whether the given width is within the allowed boundaries
 	ExactAttribute._checkWidth = function(iWidth) {
 		iWidth = Math.max(iWidth, ExactAttribute._MINWIDTH);
 		iWidth = Math.min(iWidth, ExactAttribute._MAXWIDTH);
 		return iWidth;
 	};
-	
+
 	}());
 
 	return ExactAttribute;
@@ -9092,7 +9083,7 @@ sap.ui.define("sap/ui/ux3/ExactList",['jquery.sap.global', 'sap/ui/commons/ListB
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -10624,7 +10615,7 @@ sap.ui.define("sap/ui/ux3/FacetFilter",['jquery.sap.global', 'sap/ui/core/Contro
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -10688,7 +10679,7 @@ sap.ui.define("sap/ui/ux3/FacetFilterList",['jquery.sap.global', 'sap/ui/commons
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -11012,7 +11003,7 @@ sap.ui.define("sap/ui/ux3/Feeder",['jquery.sap.global', 'sap/ui/commons/Button',
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -11349,7 +11340,7 @@ sap.ui.define("sap/ui/ux3/NavigationBar",['jquery.sap.global', 'sap/ui/core/Cont
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -12185,7 +12176,7 @@ sap.ui.define("sap/ui/ux3/NavigationItem",['jquery.sap.global', 'sap/ui/core/Ite
 	 * @extends sap.ui.core.Item
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -12257,7 +12248,7 @@ sap.ui.define("sap/ui/ux3/NotificationBar",['jquery.sap.global', 'sap/ui/core/Co
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -13683,7 +13674,7 @@ sap.ui.define("sap/ui/ux3/Notifier",['jquery.sap.global', 'sap/ui/commons/Callou
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -13990,7 +13981,7 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 	 * @implements sap.ui.core.PopupInterface
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -14399,7 +14390,7 @@ sap.ui.define("sap/ui/ux3/OverlayContainer",['jquery.sap.global', './Overlay', '
 	 * @extends sap.ui.ux3.Overlay
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -14556,7 +14547,7 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 	 * @class
 	 * Dialog implementation based on the Overlay. If used in a Shell it leaves the Tool-Palette, Pane-Bar and Header-Items accessible.
 	 * @extends sap.ui.ux3.Overlay
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -14870,7 +14861,7 @@ sap.ui.define("sap/ui/ux3/QuickView",['jquery.sap.global', 'sap/ui/commons/Callo
 	 * @extends sap.ui.commons.CalloutBase
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -15395,7 +15386,7 @@ sap.ui.define("sap/ui/ux3/Shell",['jquery.sap.global', 'sap/ui/commons/Menu', 's
 	 * The Ux3 GoldReflection Shell, which is an application frame with navigation capabilities.
 	 * It is supposed to be added to a direct child of the BODY tag of a page and there should be no other parts of the page consuming space outside the Shell.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -18054,7 +18045,7 @@ sap.ui.define("sap/ui/ux3/ThingAction",['jquery.sap.global', 'sap/ui/core/Elemen
 	 * @class
 	 * Thing Action for Swatch, QuickView, Thinginspector
 	 * @extends sap.ui.core.Element
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -18142,7 +18133,7 @@ sap.ui.define("sap/ui/ux3/ThingGroup",['jquery.sap.global', 'sap/ui/core/Element
 	 * @class
 	 * Thing Group Area
 	 * @extends sap.ui.core.Element
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -18211,7 +18202,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 	 * ThingViewer: Same as ThingInspector but decoupled from the Overlay and the ActionBar.
 	 * The control can be added to a Parent container that has a defined width. The ThingViewer fill the whole container. If the parent container has no width defined the control will not work properly.
 	 * @extends sap.ui.core.Control
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -18754,7 +18745,7 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 		 *
 		 * @namespace
 		 * @author SAP SE
-		 * @version 1.32.7
+		 * @version 1.32.9
 		 *
 		 * @constructor
 		 * @public
@@ -20137,7 +20128,7 @@ sap.ui.define("sap/ui/ux3/ExactBrowser",['jquery.sap.global', 'sap/ui/commons/Bu
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -20539,7 +20530,7 @@ sap.ui.define("sap/ui/ux3/Feed",['jquery.sap.global', 'sap/ui/commons/DropdownBo
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -21045,7 +21036,7 @@ sap.ui.define("sap/ui/ux3/FeedChunk",['jquery.sap.global', 'sap/ui/commons/MenuB
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -21747,7 +21738,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 	 * @class
 	 * Thing Inspector
 	 * @extends sap.ui.ux3.Overlay
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -22494,7 +22485,7 @@ sap.ui.define("sap/ui/ux3/Exact",['jquery.sap.global', 'sap/ui/commons/Button', 
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public

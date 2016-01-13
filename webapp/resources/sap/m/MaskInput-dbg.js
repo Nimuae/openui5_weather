@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 *
 	 * @author SAP SE
 	 * @extends sap.m.InputBase
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @private
@@ -174,6 +174,24 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	MaskInput.prototype.onkeydown = function (oEvent) {
 		InputBase.prototype.onkeydown.apply(this, arguments);
 		keyDownHandler.call(this, oEvent);
+	};
+
+	/**
+	 * Handles enter key. Shell subclasses override this method, bare in mind that [Enter] is not really handled here, but in {@link sap.m.MaskInput.prototype#onkeydown}.
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	MaskInput.prototype.onsapenter = function(oEvent) {
+		//Nothing to do, [Enter] is already handled in onkeydown part.
+	};
+
+	/**
+	 * Handles the <code>sapfocusleave</code> event of the mask input.
+	 * Shell subclasses override this method, bare in mind that <code>sapfocusleave</code> is handled by {@link sap.m.MaskInput.prototype#onfocusout}.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	MaskInput.prototype.onsapfocusleave = function(oEvent) {
 	};
 
 	MaskInput.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
@@ -897,8 +915,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 		if (this._sOldInputValue !== this._oTempValue.toString()) {
 			this.setValue(sValue);
-			this.onChange({value: sValue});
-			this.fireChangeEvent(sValue);
+			if (this.onChange && !this.onChange({value: sValue})) {//if the subclass didn't fire the "change" event by itself
+				this.fireChangeEvent(sValue);
+			}
 		}
 	}
 

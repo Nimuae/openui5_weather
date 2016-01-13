@@ -91,8 +91,8 @@
     {
       "name" : "sap/ui/table/Table.js",
       "description" : "Provides control sap.ui.table.Table.",
-      "size" : 204282,
-      "compressedSize" : 90598,
+      "size" : 204639,
+      "compressedSize" : 90813,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/IntervalTrigger.js", "sap/ui/core/ScrollBar.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/core/theming/Parameters.js", "sap/ui/model/SelectionModel.js", "sap/ui/model/ChangeReason.js", "sap/ui/table/Row.js", "sap/ui/table/library.js", "sap/ui/core/IconPool.js", "jquery.sap.dom.js"],
       "includes" : []
     },

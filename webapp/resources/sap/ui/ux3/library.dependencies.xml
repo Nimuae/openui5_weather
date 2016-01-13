@@ -108,7 +108,7 @@
       <module name="jquery.sap.global.js"/>
     </requires>
   </module>
-  <module name="sap/ui/ux3/ExactAttribute.js" size="11877" compressedSize="5414">
+  <module name="sap/ui/ux3/ExactAttribute.js" size="12004" compressedSize="5595">
     <description>Provides control sap.ui.ux3.ExactAttribute.</description>
     <requires>
       <module name="jquery.sap.global.js"/>

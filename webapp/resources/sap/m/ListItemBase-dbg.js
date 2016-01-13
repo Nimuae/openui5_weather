@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -409,7 +409,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aControls.forEach(function(sControl) {
 			sControl = "_o" + sControl + "Control";
 			if (this[sControl]) {
-				this[sControl].destroy("KeepDom");
+				this[sControl].destroy(true);
 				this[sControl] = null;
 			}
 		}, this);

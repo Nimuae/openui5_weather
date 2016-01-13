@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.32.7
+	 * @version 1.32.9
 	 *
 	 * @constructor
 	 * @public
@@ -616,6 +616,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Sets the selectedKey and is usable only when the control is initiated with the items aggregation.
 	 *
 	 * @param {string} sKey The key of the button to be selected
+	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
 	 * @override
 	 * @since 1.28.0
 	 */
@@ -637,6 +638,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 		this.setProperty("selectedKey", sKey, true);
+		return this;
 	};
 
 
@@ -741,6 +743,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this._syncSelect();
+		return this;
 	};
 
 	SegmentedButton.prototype._focusSelectedButton = function () {
