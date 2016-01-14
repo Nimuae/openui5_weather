@@ -14,6 +14,8 @@
         <content>
             <core:Icon
                 src="sap-icon://action-settings"
+                useIcontooltip="true"
+                tooltip="Einstellungen"
                 class="CustomizeBtn"
                 press="openSettingsPane" 
                 id="CustomizeBtn"/>
