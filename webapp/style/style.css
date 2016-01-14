@@ -63,6 +63,8 @@ html{
 	border: 2px solid #DDD;
 	padding: 0.5rem;
 	margin: 0.5rem;
+	box-shadow: 0px 0px 0.5rem #333;
+	border-radius: 0.2rem;
 }
 .TileTemp > *{
 }
@@ -137,6 +139,7 @@ html{
 .town{
 	font-size: 2rem !important;
 	margin-top: 0.5rem;
+	padding: 0.2rem;
 }
 
 
@@ -227,10 +230,16 @@ html{
 }
 
 .MainPage {
-	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#1a4d80+0,178299+50,2dabb3+100 */
-	background: #1a4d80; /* Old browsers */
-	background: -moz-linear-gradient(top,  #1a4d80 0%, #178299 50%, #2dabb3 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(top,  #1a4d80 0%,#178299 50%,#2dabb3 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom,  #1a4d80 0%,#178299 50%,#2dabb3 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1a4d80', endColorstr='#2dabb3',GradientType=0 ); /* IE6-9 */
+	/*background: #1a4d80;
+	background: -moz-linear-gradient(top,  #1a4d80 0%, #178299 50%, #2dabb3 100%);
+	background: -webkit-linear-gradient(top,  #1a4d80 0%,#178299 50%,#2dabb3 100%);
+	background: linear-gradient(to bottom,  #1a4d80 0%,#178299 50%,#2dabb3 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1a4d80', endColorstr='#2dabb3',GradientType=0 );*/
+
+	/*Radial Gradient */
+	background: #2dabb3;
+	background: -moz-radial-gradient(center, ellipse cover,  #2dabb3 0%, #1a4d80 100%);
+	background: -webkit-radial-gradient(center, ellipse cover,  #2dabb3 0%,#1a4d80 100%);
+	background: radial-gradient(ellipse at center,  #2dabb3 0%,#1a4d80 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2dabb3', endColorstr='#1a4d80',GradientType=1 );
 }

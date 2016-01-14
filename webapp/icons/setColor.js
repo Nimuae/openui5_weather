@@ -1,5 +1,4 @@
 var fs = require("fs");
-var path = require("path");
 
 console.log("Change SVG Color");
 var defaultColor = "black";
