@@ -172,7 +172,7 @@ hss.weather.view.Formatter = {
 		];
 		var overlay = "icons/raindrop.svg";
 		if(snow_icons.indexOf(icon) !== -1){
-			overlay = "icons/snowflake_new.svg";
+			overlay = "icons/snowflake.svg";
 		}
 		return overlay;
 	},
