@@ -115,6 +115,7 @@
                                 }"
                                 max="{
                                     parts: [ 
+                                        'data>/current_observation/precip_today_metric',
                                         'data>/forecast/simpleforecast/forecastday/0/qpf_allday/mm',
                                         'data>/forecast/simpleforecast/forecastday/1/qpf_allday/mm',
                                         'data>/forecast/simpleforecast/forecastday/2/qpf_allday/mm',
