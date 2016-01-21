@@ -12,13 +12,24 @@
         class="MainPage"
         showHeader="false">
         <content>
-            <core:Icon
-                src="sap-icon://action-settings"
-                useIcontooltip="true"
-                tooltip="Einstellungen"
-                class="CustomizeBtn"
-                press="openSettingsPane" 
-                id="CustomizeBtn"/>
+            <VBox class="AdditionalsIconBar">
+                <core:Icon
+                    src="sap-icon://action-settings"
+                    useIcontooltip="true"
+                    tooltip="Einstellungen"
+                    class="CustomizeBtn"
+                    press="openSettingsPane" 
+                    id="CustomizeBtn"
+                    width="1.25rem" />
+                <core:Icon
+                    src="sap-icon://question-mark"
+                    useIcontooltip="true"
+                    tooltip="Impressum"
+                    class="CustomizeBtn"
+                    press="openNoticePane" 
+                    id="SiteNoticeBtn"
+                    width="1.25rem" />
+            </VBox>
             <VBox
                 fitContainer="true"
                 justifyContent="Center"

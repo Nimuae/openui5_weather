@@ -1,0 +1,77 @@
+<!-- Author: Dominic Holzwarth -->
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns:l="sap.ui.layout"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:data="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    xmlns:hss="hss.weather.control">
+    <Dialog
+        id="NoticePane"
+        class="NoticePane"
+        showHeader="false"
+        contentWidth="500px"
+        contentHeight="700px"
+        draggable="true">
+        <Page
+            title="Impressum">
+            <content>
+                <l:Grid
+                    defaultSpan="L12 M12 S12"
+                    width="auto">
+                    <l:content>
+                        <f:SimpleForm
+                            minWidth="400"
+                            maxContainerCols="1"
+                            editable="true"
+                            layout="ResponsiveGridLayout"
+                            labelSpanL="3"
+                            labelSpanM="3"
+                            emptySpanL="4"
+                            emptySpanM="4"
+                            columnsL="1"
+                            columnsM="1">
+                            <f:content>
+                                <core:Title
+                                    text="Projekt" />
+                                <Text
+                                    text="Dies ist ein Schulprojekt der Hubert-Sternberg-Schule." />
+
+                                <core:Title
+                                    text="Entwicklung" />
+                                <Text
+                                    text="Die Anwendung wurde von Dominic Holzwarth, Tanja Weiser und Max Krupp (E3FIAE 2015/16) entwickelt." />
+
+                                <core:Title
+                                    text="Copyright" />
+                                <Link
+                                    href="http://www.flaticon.com/free-icon/snowflake_95900#term=snowflake&amp;page=5&amp;position=49"
+                                    target="__blank"
+                                    text="Snowflake Icon von Freepik (flaticon.com)" />
+                                <Link
+                                    href="http://www.danvierich.de/weather/"
+                                    target="__blank"
+                                    text="Wetter Icons von Dan Vierich (danvierich.de)" />
+                                <Link
+                                    href="http://openui5.org/"
+                                    target="__blank"
+                                    text="OpenUI5 Library von SAP SE (openui5.org)" />
+                                <Link
+                                    href="https://nodejs.org"
+                                    target="__blank"
+                                    text="Backend mit Node.js (nodejs.org)" />
+                            </f:content>
+                        </f:SimpleForm>
+                    </l:content>
+                </l:Grid>
+            </content>
+            <footer>
+                <Toolbar>
+                    <ToolbarSpacer />
+                    <Button text="Schließen" press="onNoticeClose" />
+                </Toolbar>
+            </footer>
+        </Page>
+    </Dialog>
+</core:FragmentDefinition>

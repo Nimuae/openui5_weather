@@ -1,3 +1,5 @@
+/* @author Dominic Holzwarth */
+
 jQuery.sap.require("hss.weather.view.Formatter");
 jQuery.sap.require("sap.m.MessageBox");
 
@@ -119,6 +121,20 @@ sap.ui.define([
 				this.oData_old = JSON.parse(JSON.stringify(oSettings));
 			});
 		},
+
+		/**
+		 * Open the notice dialog
+		 * @param  {sap.ui.base.Event} oEvent The UI event
+		 * @return {void}        Nothing
+		 */
+		openNoticePane: function(oEvent){
+			if(!this._noticeDialog){
+				this._noticeDialog = sap.ui.xmlfragment("noticeDialog", "hss.weather.view.NoticeDialog", this);
+
+				this.getView().addDependent(this._noticeDialog);
+			}
+			this._noticeDialog.open();
+		},
 		
 		/**
 		 * The UI event handler for settings dialog's save button
@@ -182,6 +198,14 @@ sap.ui.define([
 			}else{
 				self._settingsDialog.close();
 			}
+		},
+
+		/**
+		 * The UI event handler for notice dialog's close button
+		 * @return {void} Nothing
+		 */
+		onNoticeClose: function(){
+			this._noticeDialog.close();
 		},
 
 		/**

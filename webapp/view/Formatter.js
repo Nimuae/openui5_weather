@@ -1,3 +1,5 @@
+/* @author Dominic Holzwarth, Max Krupp, Tanja Weiser */
+
 jQuery.sap.includeScript("./resources/jquery-ui/jquery-ui.js");
 
 jQuery.sap.declare("hss.weather.view.Formatter");
