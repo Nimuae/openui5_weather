@@ -7,18 +7,56 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
     metadata: {
         properties: {
             value: { type: "float", defaultValue: 0.0 },
+            min: { type: "int", defaultValue: 0 },
+            max: { type: "int", defaultValue: 100 },
             unit: { type: "string", defaultValue: "%" },
             showValue: { type: "boolean", defaultValue: false },
             size: { type: "int", defaultValue: 100 },
-            overlay: { type: "string", defaultValue: "icons/raindrop.svg" }
+            overlay: { type: "string", defaultValue: "" }
         }
     },
 
     init: function(){
     },
 
-    setValue: function(val){
-        this.setProperty("value", Math.max(0, Math.min(100, val)));
+    setValue: function(value) {
+        var iMin = this.getMin();
+        var iMax = this.getMax();
+
+        if(value < iMin) {
+            console.error("Rainometer: Value " + value + " is out of bounds.");
+            this.setProperty("value", iMin);
+            return;
+        }
+        if(value > iMax) {
+            console.error("Rainometer: Value " + value + " is out of bounds.");
+            this.setProperty("value", iMax);
+            return;
+        }
+        this.setProperty("value", value);
+    },
+
+    getPercentValue: function(){
+        return this._getFValue()*100;
+    },
+
+    _getFValue: function() {
+        var fValue = this.getValue();
+        var iMin = this.getMin();
+        var iMax = this.getMax();
+
+        var iDiff = iMax - iMin;
+        if(iDiff === 0) {
+            return;
+        }
+
+        var fValue2;
+        if(fValue >= 0 && fValue <= 1) {
+            fValue2 = fValue;
+        }else{
+            fValue2 = fValue / iDiff;
+        }
+        return fValue2;
     },
 
     renderer: {
@@ -51,7 +89,7 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
 
             //outer > inner > gauge
             oRm.addClass("RainometerGauge");
-            var val = oControl.getProperty("value");
+            var val = oControl.getPercentValue();
             if(val > 5 && val < 95){
                 oRm.addClass("RainometerGaugeTopBorder");
             }
@@ -77,7 +115,7 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
                 oRm.addClass("RainometerNumberValue");
                 oRm.writeClasses();
                 oRm.write(">");
-                oRm.write(Number(oControl.getProperty("value")).toFixed(1));
+                oRm.write(Number(oControl.getValue()).toFixed(1));
                 oRm.write("</span>");
 
                 oRm.write("<span");

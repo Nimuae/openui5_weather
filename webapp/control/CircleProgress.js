@@ -8,6 +8,8 @@ sap.ui.core.Control.extend("hss.weather.control.CircleProgress", {
     metadata: {
         properties: {
             value: { type: "float", defaultValue: 0 },
+            min: { type: "int", defaultValue: 0 },
+            max: { type: "int", defaultValue: 100 },
             showValue: { type: "boolean", defaultValue: true },
             size: { type: "int", defaultValue: 100 },
             thickness: { type: "int", defaultValue: 0 },
@@ -20,8 +22,44 @@ sap.ui.core.Control.extend("hss.weather.control.CircleProgress", {
     init: function(){
     },
 
+    setValue: function(value) {
+        var iMin = this.getMin();
+        var iMax = this.getMax();
+
+        if(value < iMin) {
+            console.error("Circle Progress: Value " + value + " is out of bounds.");
+            this.setProperty("value", iMin);
+            return;
+        }
+        if(value > iMax) {
+            console.error("Circle Progress: Value " + value + " is out of bounds.");
+            this.setProperty("value", iMax);
+            return;
+        }
+        this.setProperty("value", value);
+    },
+
     getPercentValue: function(){
-        return Math.max(0, Math.min(Math.floor(this.getValue() * 100), 100));
+        return this._getFValue()*100;
+    },
+
+    _getFValue: function() {
+        var fValue = this.getValue();
+        var iMin = this.getMin();
+        var iMax = this.getMax();
+
+        var iDiff = iMax - iMin;
+        if(iDiff === 0) {
+            return;
+        }
+
+        var fValue2;
+        if(fValue >= 0 && fValue <= 1) {
+            fValue2 = fValue;
+        }else{
+            fValue2 = fValue / iDiff;
+        }
+        return fValue2;
     },
 
     renderer: {
@@ -42,7 +80,7 @@ sap.ui.core.Control.extend("hss.weather.control.CircleProgress", {
                 oRm.writeClasses();
                 oRm.writeStyles();
                 oRm.write(">");
-                oRm.write(oControl.getPercentValue() + "%");
+                oRm.write(Math.floor(oControl.getPercentValue()) + "%");
                 oRm.write("</div>");
             }
 
@@ -51,10 +89,10 @@ sap.ui.core.Control.extend("hss.weather.control.CircleProgress", {
     },
 
     onAfterRendering: function(){
-        var value = this.getValue();
+        var fValue = this._getFValue();
 
         this.$().circleProgress({
-            value: value,
+            value: fValue,
             size: this.getSize(),
             animation: false,
             emptyFill: this.getEmptyFill(),

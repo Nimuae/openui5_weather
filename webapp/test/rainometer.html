@@ -29,7 +29,11 @@
 						backgroundDesign: "Solid",
 						content: [
 							oRain = new hss.weather.control.Rainometer({
-								value: "{/value}"
+								value: "{/value}",
+								overlay: "../icons/raindrop.svg",
+								showValue: true,
+								unit: "mm",
+								max: 200
 							}),
 							oBtnMore = new sap.m.Button({
 								icon: "sap-icon://add",
@@ -44,17 +48,39 @@
 								}
 							}),
 							oProgress = new hss.weather.control.CircleProgress({
-								value: "{=${/value} / 100}"
+								value: "{/value}",
+								max: {
+									path: "/dat",
+									formatter: function(vals){
+										if(!vals){
+											return 100;
+										}
+										var max = 100;
+										for(var i = 0; i < vals.length; i++){
+											max = Math.max(max, vals[i].precip);
+										}
+										return max;
+									}
+								}
 							}),
 							oCompass = new hss.weather.control.Compass({
-								direction: 270
+								direction: "{=${/value} * 3.6}"
 							})
 						]
 					})
 				]
 			});
 			oApp.setModel(new sap.ui.model.json.JSONModel({
-				value: 25
+				value: 25,
+				dat: [
+					{
+						precip: 0
+					}, {
+						precip: 200
+					}, {
+						precip: 0
+					}
+				]
 			}));
 			oApp.placeAt("content");
 		</script>
