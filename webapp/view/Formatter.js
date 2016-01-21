@@ -173,5 +173,14 @@ hss.weather.view.Formatter = {
 			overlay = "icons/snowflake_new.svg";
 		}
 		return overlay;
+	},
+
+	/**
+	 * Get highest value from all the function's arguments and fall back to 100
+	 * @param {...Number} num A list of numbers of which the highest one is to be retrieved
+	 */
+	MaxPrecipValueMM: function(){
+		var iMax = Math.max.apply(null, arguments);
+		return Number.isNaN(iMax) ? 100 : Math.max(100, iMax);
 	}
 };

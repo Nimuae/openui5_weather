@@ -107,13 +107,22 @@
                             <hss:Rainometer
                                 id="RainometerPrecip"
                                 size="85"
-                                value="{data>/current_observation/precip_today_metric}"
                                 showValue="true"
                                 unit="mm"
                                 overlay="{
                                     path: 'data>/current_observation/icon',
                                     formatter: 'hss.weather.view.Formatter.RainometerOverlay'
-                                }" />
+                                }"
+                                max="{
+                                    parts: [ 
+                                        'data>/forecast/simpleforecast/forecastday/0/qpf_allday/mm',
+                                        'data>/forecast/simpleforecast/forecastday/1/qpf_allday/mm',
+                                        'data>/forecast/simpleforecast/forecastday/2/qpf_allday/mm',
+                                        'data>/forecast/simpleforecast/forecastday/3/qpf_allday/mm'
+                                    ],
+                                    formatter: 'hss.weather.view.Formatter.MaxPrecipValueMM'
+                                }"
+                                value="{data>/current_observation/precip_today_metric}" />
                             <VBox alignItems="Center">
                                 <Label
                                     text="Niederschlag"
@@ -132,7 +141,7 @@
                             <hss:CircleProgress
                                 id="CircleProgressHumidity"
                                 size="85"
-                                value="{=parseInt(${data>/current_observation/relative_humidity}.replace('%', ''), 10)/100 }"
+                                value="{=parseInt(${data>/current_observation/relative_humidity}.replace('%', ''), 10) }"
                                 visible="{settings>/show_humidity}" />
                             <layoutData>
                                 <l:GridData spanL="6" spanM="6" spanS="12" />

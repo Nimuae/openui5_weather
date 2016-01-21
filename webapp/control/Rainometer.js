@@ -33,7 +33,7 @@ sap.ui.core.Control.extend("hss.weather.control.Rainometer", {
             this.setProperty("value", iMax);
             return;
         }
-        this.setProperty("value", value);
+        this.setProperty("value", parseInt(value, 10));
     },
 
     getPercentValue: function(){

@@ -50,8 +50,9 @@ module.exports = function(){
 		},
 		"wind_kph": [0, 15],
 		"feelslike_c": [-30, 50],
-		"precip_today_metric": [0, 100],
-		"celsius": [-20.0, 40.0]
+		"precip_today_metric": [0, 300],
+		"celsius": [-20.0, 40.0],
+		"mm": [0, 300]
 	};
 
 	this.rand = function(min, max) {

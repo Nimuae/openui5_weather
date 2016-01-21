@@ -114,7 +114,7 @@ hss.weather.test.opa.modules.Display = function () {
 
 		//Assertions
 		Then.iSeeMatchingProperty("CircleProgressHumidity", "visible", true);
-		Then.iSeeMatchingProperty("CircleProgressHumidity", "value", 0.99);
+		Then.iSeeMatchingProperty("CircleProgressHumidity", "value", 99);
 		Then.iTeardownMyAppFrame();
 	});
 
