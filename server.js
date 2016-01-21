@@ -1,3 +1,5 @@
+/* @author Dominic Holzwarth */
+
 var express = require("express");
 
 var Service = require("./service.js");

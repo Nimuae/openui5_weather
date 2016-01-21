@@ -1,3 +1,5 @@
+/* @author Dominic Holzwarth */
+
 jQuery.sap.require("sap.ui.core.Control");
 jQuery.sap.declare("hss.weather.control.Compass");
 
